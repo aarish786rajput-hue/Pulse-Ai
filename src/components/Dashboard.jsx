@@ -245,151 +245,155 @@ export default function Dashboard({
           {/* Symptom Checker Shortcut */}
           <div
             onClick={() => onNavigate("symptom-checker")}
-          className="glass-panel interactive-card"
-          style={{ 
-            padding: "24px 22px", 
-            display: "flex", 
-            alignItems: "center", 
-            gap: "18px", 
-            borderRadius: "18px",
-            border: "1.5px solid var(--secondary-border)",
-            minHeight: "108px"
-          }}
-        >
-          <div style={{
-            width: "54px",
-            height: "54px",
-            borderRadius: "15px",
-            background: "linear-gradient(135deg, #10b981, #059669)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            boxShadow: "0 4px 14px rgba(16, 185, 129, 0.3)"
-          }}>
-            <Stethoscope size={26} color="#ffffff" strokeWidth={2.2} />
-          </div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
-              {lang === "hi" ? "लक्षण जांच विज़ार्ड" : "Symptom Checker"}
+            className="glass-panel interactive-card"
+            style={{ 
+              padding: "24px 22px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "18px", 
+              borderRadius: "18px",
+              border: "1.5px solid rgba(244, 63, 94, 0.35)",
+              background: "linear-gradient(135deg, rgba(244, 63, 94, 0.08), var(--bg-card) 60%)",
+              minHeight: "108px"
+            }}
+          >
+            <div style={{
+              width: "54px",
+              height: "54px",
+              borderRadius: "15px",
+              background: "linear-gradient(135deg, #f43f5e, #e11d48)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              boxShadow: "0 4px 14px rgba(244, 63, 94, 0.35)"
+            }}>
+              <Stethoscope size={26} color="#ffffff" strokeWidth={2.2} />
             </div>
-            <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
-              {lang === "hi" ? "कदम-दर-कदम लक्षण परीक्षण" : "Step-by-step triage guide"}
+            <div>
+              <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
+                {lang === "hi" ? "लक्षण जांच विज़ार्ड" : "Symptom Checker"}
+              </div>
+              <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
+                {lang === "hi" ? "कदम-दर-कदम लक्षण परीक्षण" : "Step-by-step triage guide"}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Medications */}
-        <div
-          onClick={() => onNavigate("medications")}
-          className="glass-panel interactive-card"
-          style={{ 
-            padding: "24px 22px", 
-            display: "flex", 
-            alignItems: "center", 
-            gap: "18px", 
-            borderRadius: "18px",
-            border: "1px solid var(--border-color)",
-            minHeight: "108px"
-          }}
-        >
-          <div style={{
-            width: "54px",
-            height: "54px",
-            borderRadius: "15px",
-            background: "linear-gradient(135deg, #0284c7, #38bdf8)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            boxShadow: "0 4px 14px rgba(2, 132, 199, 0.3)"
-          }}>
-            <Pill size={26} color="#ffffff" strokeWidth={2.2} />
-          </div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
-              {lang === "hi" ? "दवाइयां और खुराक" : "Medications"}
+          {/* Medications */}
+          <div
+            onClick={() => onNavigate("medications")}
+            className="glass-panel interactive-card"
+            style={{ 
+              padding: "24px 22px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "18px", 
+              borderRadius: "18px",
+              border: "1.5px solid rgba(236, 72, 153, 0.35)",
+              background: "linear-gradient(135deg, rgba(236, 72, 153, 0.08), var(--bg-card) 60%)",
+              minHeight: "108px"
+            }}
+          >
+            <div style={{
+              width: "54px",
+              height: "54px",
+              borderRadius: "15px",
+              background: "linear-gradient(135deg, #ec4899, #db2777)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              boxShadow: "0 4px 14px rgba(236, 72, 153, 0.35)"
+            }}>
+              <Pill size={26} color="#ffffff" strokeWidth={2.2} />
             </div>
-            <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
-              {lang === "hi" ? "दवाइयों का समय व सुरक्षा" : "Pills, schedule & safety check"}
+            <div>
+              <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
+                {lang === "hi" ? "दवाइयां और खुराक" : "Medications"}
+              </div>
+              <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
+                {lang === "hi" ? "दवाइयों का समय व सुरक्षा" : "Pills, schedule & safety check"}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Vitals & Trends */}
-        <div
-          onClick={() => onNavigate("vitals")}
-          className="glass-panel interactive-card"
-          style={{ 
-            padding: "24px 22px", 
-            display: "flex", 
-            alignItems: "center", 
-            gap: "18px", 
-            borderRadius: "18px",
-            border: "1px solid var(--border-color)",
-            minHeight: "108px"
-          }}
-        >
-          <div style={{
-            width: "54px",
-            height: "54px",
-            borderRadius: "15px",
-            background: "linear-gradient(135deg, #059669, #34d399)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            boxShadow: "0 4px 14px rgba(5, 150, 105, 0.3)"
-          }}>
-            <Activity size={26} color="#ffffff" strokeWidth={2.2} />
-          </div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
-              {lang === "hi" ? "वाइटल्स व रुझान" : "Vitals & Trends"}
+          {/* Vitals & Trends */}
+          <div
+            onClick={() => onNavigate("vitals")}
+            className="glass-panel interactive-card"
+            style={{ 
+              padding: "24px 22px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "18px", 
+              borderRadius: "18px",
+              border: "1.5px solid rgba(16, 185, 129, 0.35)",
+              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.08), var(--bg-card) 60%)",
+              minHeight: "108px"
+            }}
+          >
+            <div style={{
+              width: "54px",
+              height: "54px",
+              borderRadius: "15px",
+              background: "linear-gradient(135deg, #10b981, #059669)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              boxShadow: "0 4px 14px rgba(16, 185, 129, 0.35)"
+            }}>
+              <Activity size={26} color="#ffffff" strokeWidth={2.2} />
             </div>
-            <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
-              {lang === "hi" ? "बीपी, शुगर व स्वास्थ्य रुझान" : "BP, glucose & pulse analytics"}
+            <div>
+              <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
+                {lang === "hi" ? "वाइटल्स व रुझान" : "Vitals & Trends"}
+              </div>
+              <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
+                {lang === "hi" ? "बीपी, शुगर व स्वास्थ्य रुझान" : "BP, glucose & pulse analytics"}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Doctor Prep */}
-        <div
-          onClick={onOpenDoctorPrep}
-          className="glass-panel interactive-card"
-          style={{ 
-            padding: "24px 22px", 
-            display: "flex", 
-            alignItems: "center", 
-            gap: "18px", 
-            borderRadius: "18px",
-            border: "1px solid var(--border-color)",
-            minHeight: "108px"
-          }}
-        >
-          <div style={{
-            width: "54px",
-            height: "54px",
-            borderRadius: "15px",
-            background: "linear-gradient(135deg, #7c3aed, #a78bfa)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            boxShadow: "0 4px 14px rgba(124, 58, 237, 0.3)"
-          }}>
-            <Calendar size={26} color="#ffffff" strokeWidth={2.2} />
-          </div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
-              {t.doctorPrep}
+          {/* Doctor Prep */}
+          <div
+            onClick={onOpenDoctorPrep}
+            className="glass-panel interactive-card"
+            style={{ 
+              padding: "24px 22px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "18px", 
+              borderRadius: "18px",
+              border: "1.5px solid rgba(139, 92, 246, 0.35)",
+              background: "linear-gradient(135deg, rgba(139, 92, 246, 0.08), var(--bg-card) 60%)",
+              minHeight: "108px"
+            }}
+          >
+            <div style={{
+              width: "54px",
+              height: "54px",
+              borderRadius: "15px",
+              background: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              boxShadow: "0 4px 14px rgba(139, 92, 246, 0.35)"
+            }}>
+              <Calendar size={26} color="#ffffff" strokeWidth={2.2} />
             </div>
-            <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
-              {lang === "hi" ? "30 दिन का सारांश व 5 प्रश्न" : "Vitals summary & top 5 Qs"}
+            <div>
+              <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
+                {t.doctorPrep}
+              </div>
+              <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
+                {lang === "hi" ? "30 दिन का सारांश व 5 प्रश्न" : "Vitals summary & top 5 Qs"}
+              </div>
             </div>
           </div>
         </div>
-      </div>
     </div>
 
       {/* Vitals Summary Cards */}
@@ -431,7 +435,15 @@ export default function Dashboard({
 
         <div className="grid-4">
           {/* BP */}
-          <div className="glass-panel interactive-card" onClick={() => onNavigate("vitals")} style={{ padding: "20px" }}>
+          <div 
+            className="glass-panel interactive-card" 
+            onClick={() => onNavigate("vitals")} 
+            style={{ 
+              padding: "20px",
+              borderTop: "3.5px solid #f43f5e",
+              background: "linear-gradient(180deg, rgba(244, 63, 94, 0.08) 0%, var(--bg-card) 50%)"
+            }}
+          >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
               <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: 700 }}>
                 {t.bloodPressure}
@@ -444,13 +456,21 @@ export default function Dashboard({
               </span>
               <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>mmHg</span>
             </div>
-            <div style={{ fontSize: "0.78rem", color: "var(--secondary)", marginTop: "6px", fontWeight: 600 }}>
+            <div style={{ fontSize: "0.78rem", color: "#f43f5e", marginTop: "6px", fontWeight: 600 }}>
               ↓ {previousVital.bpSystolic}/{previousVital.bpDiastolic} {lang === "hi" ? "से बेहतर हुआ" : "improved"}
             </div>
           </div>
 
           {/* Blood Sugar */}
-          <div className="glass-panel interactive-card" onClick={() => onNavigate("vitals")} style={{ padding: "20px" }}>
+          <div 
+            className="glass-panel interactive-card" 
+            onClick={() => onNavigate("vitals")} 
+            style={{ 
+              padding: "20px",
+              borderTop: "3.5px solid #f59e0b",
+              background: "linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-card) 50%)"
+            }}
+          >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
               <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: 700 }}>
                 {t.fastingSugar}
@@ -465,13 +485,21 @@ export default function Dashboard({
               </span>
               <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>mg/dL</span>
             </div>
-            <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "6px" }}>
+            <div style={{ fontSize: "0.78rem", color: "#f59e0b", marginTop: "6px", fontWeight: 600 }}>
               {lang === "hi" ? "भोजन उपरांत:" : "Post-meal:"} <strong>{latestVital.bloodSugarPost} mg/dL</strong>
             </div>
           </div>
 
           {/* Heart Rate & SpO2 */}
-          <div className="glass-panel interactive-card" onClick={() => onNavigate("vitals")} style={{ padding: "20px" }}>
+          <div 
+            className="glass-panel interactive-card" 
+            onClick={() => onNavigate("vitals")} 
+            style={{ 
+              padding: "20px",
+              borderTop: "3.5px solid #10b981",
+              background: "linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, var(--bg-card) 50%)"
+            }}
+          >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
               <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: 700 }}>
                 {t.restingPulse}
@@ -484,13 +512,21 @@ export default function Dashboard({
               </span>
               <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>BPM</span>
             </div>
-            <div style={{ fontSize: "0.78rem", color: "var(--secondary)", marginTop: "6px", fontWeight: 600 }}>
+            <div style={{ fontSize: "0.78rem", color: "#10b981", marginTop: "6px", fontWeight: 600 }}>
               SpO2 {lang === "hi" ? "ऑक्सीजन:" : "Oxygen:"} <strong>{latestVital.spo2}%</strong>
             </div>
           </div>
 
           {/* Weight */}
-          <div className="glass-panel interactive-card" onClick={() => onNavigate("vitals")} style={{ padding: "20px" }}>
+          <div 
+            className="glass-panel interactive-card" 
+            onClick={() => onNavigate("vitals")} 
+            style={{ 
+              padding: "20px",
+              borderTop: "3.5px solid #06b6d4",
+              background: "linear-gradient(180deg, rgba(6, 182, 212, 0.08) 0%, var(--bg-card) 50%)"
+            }}
+          >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
               <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: 700 }}>
                 {t.bodyWeight}
@@ -503,7 +539,7 @@ export default function Dashboard({
               </span>
               <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>kg</span>
             </div>
-            <div style={{ fontSize: "0.78rem", color: "var(--secondary)", marginTop: "6px", fontWeight: 600 }}>
+            <div style={{ fontSize: "0.78rem", color: "#06b6d4", marginTop: "6px", fontWeight: 600 }}>
               {lang === "hi" ? "वजन में कमी (-0.6 kg)" : "Steady reduction (-0.6 kg)"}
             </div>
           </div>

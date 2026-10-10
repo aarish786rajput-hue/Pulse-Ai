@@ -40,28 +40,108 @@ export default function Sidebar({
       id: "overview",
       title: lang === "hi" ? "मुख्य सेवाएँ" : "Overview",
       items: [
-        { id: "dashboard", label: lang === "hi" ? "होम" : "Home", icon: Home },
-        { id: "symptom-checker", label: t.navSymptomChecker, icon: Stethoscope },
-        { id: "doctors", label: t.navDoctors, icon: BriefcaseMedical }
+        { 
+          id: "dashboard", 
+          label: lang === "hi" ? "होम" : "Home", 
+          icon: Home,
+          color: "#3b82f6",
+          bg: "rgba(59, 130, 246, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(59, 130, 246, 0.24), rgba(37, 99, 235, 0.32))",
+          borderColor: "rgba(59, 130, 246, 0.45)"
+        },
+        { 
+          id: "symptom-checker", 
+          label: t.navSymptomChecker, 
+          icon: Stethoscope,
+          color: "#f43f5e",
+          bg: "rgba(244, 63, 94, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(244, 63, 94, 0.24), rgba(225, 29, 72, 0.32))",
+          borderColor: "rgba(244, 63, 94, 0.45)"
+        },
+        { 
+          id: "doctors", 
+          label: t.navDoctors, 
+          icon: BriefcaseMedical,
+          color: "#10b981",
+          bg: "rgba(16, 185, 129, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(16, 185, 129, 0.24), rgba(5, 150, 105, 0.32))",
+          borderColor: "rgba(16, 185, 129, 0.45)"
+        }
       ]
     },
     {
       id: "records",
       title: lang === "hi" ? "मेडिकल रिकॉर्ड्स" : "Medical Records",
       items: [
-        { id: "reports", label: t.navReports, icon: FileText },
-        { id: "discharge", label: lang === "hi" ? "डिस्चार्ज सारांश" : (t.navDischarge || "Discharge Summary"), icon: ClipboardCheck },
-        { id: "profile", label: t.navProfile, icon: UserCheck }
+        { 
+          id: "reports", 
+          label: t.navReports, 
+          icon: FileText,
+          color: "#f59e0b",
+          bg: "rgba(245, 158, 11, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(245, 158, 11, 0.24), rgba(217, 119, 6, 0.32))",
+          borderColor: "rgba(245, 158, 11, 0.45)"
+        },
+        { 
+          id: "discharge", 
+          label: lang === "hi" ? "डिस्चार्ज सारांश" : (t.navDischarge || "Discharge Summary"), 
+          icon: ClipboardCheck,
+          color: "#8b5cf6",
+          bg: "rgba(139, 92, 246, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(139, 92, 246, 0.24), rgba(124, 58, 237, 0.32))",
+          borderColor: "rgba(139, 92, 246, 0.45)"
+        },
+        { 
+          id: "profile", 
+          label: t.navProfile, 
+          icon: UserCheck,
+          color: "#06b6d4",
+          bg: "rgba(6, 182, 212, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(6, 182, 212, 0.24), rgba(8, 145, 178, 0.32))",
+          borderColor: "rgba(6, 182, 212, 0.45)"
+        }
       ]
     },
     {
       id: "monitoring",
       title: lang === "hi" ? "दैनिक देखभाल व वाइटल्स" : "Daily Monitoring",
       items: [
-        { id: "medications", label: t.navMedications, icon: Pill },
-        { id: "devices", label: lang === "hi" ? "स्मार्ट वॉच व डिवाइसेज" : (t.navDevices || "Smart Watch & Devices"), icon: Watch },
-        { id: "vitals", label: t.navVitals, icon: TrendingUp },
-        { id: "timeline", label: t.navTimeline, icon: History }
+        { 
+          id: "medications", 
+          label: t.navMedications, 
+          icon: Pill,
+          color: "#ec4899",
+          bg: "rgba(236, 72, 153, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(236, 72, 153, 0.24), rgba(219, 39, 119, 0.32))",
+          borderColor: "rgba(236, 72, 153, 0.45)"
+        },
+        { 
+          id: "devices", 
+          label: lang === "hi" ? "स्मार्ट वॉच व डिवाइसेज" : (t.navDevices || "Smart Watch & Devices"), 
+          icon: Watch,
+          color: "#14b8a6",
+          bg: "rgba(20, 184, 166, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(20, 184, 166, 0.24), rgba(13, 148, 136, 0.32))",
+          borderColor: "rgba(20, 184, 166, 0.45)"
+        },
+        { 
+          id: "vitals", 
+          label: t.navVitals, 
+          icon: TrendingUp,
+          color: "#10b981",
+          bg: "rgba(16, 185, 129, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(16, 185, 129, 0.24), rgba(5, 150, 105, 0.32))",
+          borderColor: "rgba(16, 185, 129, 0.45)"
+        },
+        { 
+          id: "timeline", 
+          label: t.navTimeline, 
+          icon: History,
+          color: "#6366f1",
+          bg: "rgba(99, 102, 241, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(99, 102, 241, 0.24), rgba(79, 70, 229, 0.32))",
+          borderColor: "rgba(99, 102, 241, 0.45)"
+        }
       ]
     }
   ];
@@ -80,35 +160,58 @@ export default function Sidebar({
           display: "flex",
           alignItems: "center",
           justifyContent: isOpen ? "space-between" : "center",
-          padding: isOpen ? "10px 13px" : "10px 0",
+          padding: isOpen ? "8px 10px" : "8px 0",
           borderRadius: "12px",
           background: isActive 
-            ? "linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(37, 99, 235, 0.25))" 
+            ? (item.activeGradient || "rgba(59, 130, 246, 0.2)") 
             : "transparent",
           border: isActive 
-            ? "1px solid rgba(59, 130, 246, 0.32)" 
+            ? `1px solid ${item.borderColor || "rgba(59, 130, 246, 0.35)"}` 
             : "1px solid transparent",
-          color: isActive ? "#ffffff" : "var(--text-muted)",
-          fontWeight: isActive ? 700 : 500,
+          color: isActive ? "#ffffff" : "var(--text-main)",
+          fontWeight: isActive ? 800 : 600,
           cursor: "pointer",
           transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
           textAlign: "left",
           width: "100%",
           position: "relative",
-          boxShadow: isActive ? "0 2px 12px rgba(59, 130, 246, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12)" : "none"
+          boxShadow: isActive ? `0 2px 14px ${item.bg}, inset 0 1px 0 rgba(255, 255, 255, 0.12)` : "none"
         }}
         className={!isActive ? "sidebar-item-hover" : ""}
         title={!isOpen ? item.label : undefined}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: isOpen ? "flex-start" : "center" }}>
-          <Icon size={19} color={isActive ? "var(--primary-light)" : "var(--text-muted)"} style={{ flexShrink: 0 }} />
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", justifyContent: isOpen ? "flex-start" : "center" }}>
+          {/* Vibrant Rounded Icon Container */}
+          <div style={{
+            width: "32px",
+            height: "32px",
+            borderRadius: "9px",
+            background: isActive ? item.color : item.bg,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: isActive ? "#ffffff" : item.color,
+            boxShadow: isActive ? `0 3px 10px ${item.bg}` : "none",
+            flexShrink: 0,
+            transition: "all 0.2s ease"
+          }}>
+            <Icon size={16} strokeWidth={isActive ? 2.5 : 2.2} />
+          </div>
+
           {isOpen && (
-            <span style={{ fontSize: "0.88rem", fontWeight: isActive ? 700 : 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <span style={{ 
+              fontSize: "0.86rem", 
+              fontWeight: isActive ? 800 : 600, 
+              color: isActive ? "var(--text-highlight)" : "var(--text-main)", 
+              overflow: "hidden", 
+              textOverflow: "ellipsis", 
+              whiteSpace: "nowrap" 
+            }}>
               {item.label}
             </span>
           )}
         </div>
-        {isOpen && isActive && <ChevronRight size={14} color="var(--primary-light)" />}
+        {isOpen && isActive && <ChevronRight size={14} color={item.color} />}
       </button>
     );
   };

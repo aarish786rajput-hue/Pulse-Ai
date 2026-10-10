@@ -263,6 +263,17 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(148, 163, 184, 0.45);
 }
 
+/* Sidebar Nav Item Hover Micro-animation */
+.sidebar-item-hover:hover {
+  background: var(--bg-card-hover) !important;
+  color: var(--text-highlight) !important;
+  transform: translateX(3px);
+}
+
+.sidebar-item-hover:hover div > div {
+  transform: scale(1.08);
+}
+
 .main-wrapper {
   flex: 1;
   display: flex;
@@ -645,8 +656,8 @@ select option {
 .nav-box-btn {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 14px;
+  gap: 8px;
+  padding: 6px 14px 6px 8px;
   border-radius: 11px;
   border: 1px solid var(--border-color);
   background: var(--bg-elevated);
@@ -668,11 +679,7 @@ select option {
 }
 
 .nav-box-btn.active {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.16), rgba(37, 99, 235, 0.24));
-  border-color: rgba(59, 130, 246, 0.4);
-  color: var(--primary-light);
   font-weight: 700;
-  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .header-icon-btn {

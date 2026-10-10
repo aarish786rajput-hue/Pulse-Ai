@@ -163,9 +163,10 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
           onClick={() => setActiveTab("schedule")}
           className="btn"
           style={{
-            background: activeTab === "schedule" ? "linear-gradient(135deg, var(--primary), var(--primary-dark))" : "var(--bg-elevated)",
+            background: activeTab === "schedule" ? "linear-gradient(135deg, #ec4899, #db2777)" : "var(--bg-elevated)",
             color: activeTab === "schedule" ? "#ffffff" : "var(--text-muted)",
             border: activeTab === "schedule" ? "none" : "1px solid var(--border-color)",
+            boxShadow: activeTab === "schedule" ? "0 4px 14px rgba(236, 72, 153, 0.35)" : "none",
             fontWeight: 700
           }}
         >
@@ -175,9 +176,10 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
           onClick={() => setActiveTab("interactions")}
           className="btn"
           style={{
-            background: activeTab === "interactions" ? "linear-gradient(135deg, #d97706, #b45309)" : "var(--bg-elevated)",
+            background: activeTab === "interactions" ? "linear-gradient(135deg, #f59e0b, #d97706)" : "var(--bg-elevated)",
             color: activeTab === "interactions" ? "#ffffff" : "var(--text-muted)",
             border: activeTab === "interactions" ? "none" : "1px solid var(--border-color)",
+            boxShadow: activeTab === "interactions" ? "0 4px 14px rgba(245, 158, 11, 0.35)" : "none",
             fontWeight: 700
           }}
         >

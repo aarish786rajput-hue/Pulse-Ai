@@ -34,20 +34,47 @@ const SUPPORTED_NAV_LANGUAGES = [
 ];
 
 const NAV_LINKS = [
-  { id: "dashboard", label: "Home", labelHi: "होम", icon: Home },
-  { id: "reports", label: "Lab Reports", labelHi: "लैब रिपोर्ट्स", icon: FileText },
-  { id: "doctors", label: "Find Doctors", labelHi: "डॉक्टर खोजें", icon: Stethoscope },
+  { 
+    id: "dashboard", 
+    label: "Home", 
+    labelHi: "होम", 
+    icon: Home,
+    color: "#3b82f6",
+    bg: "rgba(59, 130, 246, 0.16)",
+    activeBg: "linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(37, 99, 235, 0.28))",
+    borderColor: "rgba(59, 130, 246, 0.45)"
+  },
+  { 
+    id: "reports", 
+    label: "Lab Reports", 
+    labelHi: "लैब रिपोर्ट्स", 
+    icon: FileText,
+    color: "#f59e0b",
+    bg: "rgba(245, 158, 11, 0.16)",
+    activeBg: "linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.28))",
+    borderColor: "rgba(245, 158, 11, 0.45)"
+  },
+  { 
+    id: "doctors", 
+    label: "Find Doctors", 
+    labelHi: "डॉक्टर खोजें", 
+    icon: Stethoscope,
+    color: "#10b981",
+    bg: "rgba(16, 185, 129, 0.16)",
+    activeBg: "linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.28))",
+    borderColor: "rgba(16, 185, 129, 0.45)"
+  },
 ];
 
 const SEARCH_CATEGORIES = [
-  { id: "passport", label: "Doctor Health Passport (PDF)", labelHi: "डॉक्टर हेल्थ पासपोर्ट (PDF)", tab: "passport", icon: FileCheck2, keywords: ["passport", "pdf", "print", "summary", "पासपोर्ट", "प्रिंट", "डॉक्टर"] },
-  { id: "doctors", label: "Specialist Doctors", labelHi: "विशेषज्ञ डॉक्टर", tab: "doctors", icon: Stethoscope, keywords: ["doctor", "dentist", "dermatologist", "eye", "skin", "डॉक्टर", "दंत", "क्लिनिक"] },
-  { id: "copilot", label: "AI Health Copilot", labelHi: "एआई स्वास्थ्य कोपायलट", tab: "copilot", icon: Sparkles, keywords: ["ai", "copilot", "ask", "chat", "voice", "सवाल", "मदद", "कोपायलट"] },
-  { id: "symptom-checker", label: "Symptom Checker", labelHi: "लक्षण जांच विज़ार्ड", tab: "symptom-checker", icon: Activity, keywords: ["symptom", "fever", "pain", "headache", "dizzy", "cough", "दर्द", "बुखार", "चक्कर"] },
-  { id: "medications", label: "Medications & Safety", labelHi: "दवाइयां और सुरक्षा", tab: "medications", icon: Pill, keywords: ["medicine", "pill", "tablet", "statin", "telmisartan", "metformin", "dawa", "दवाई", "गोली"] },
-  { id: "reports", label: "Lab Test Reports", labelHi: "लैब टेस्ट रिपोर्ट", tab: "reports", icon: FileText, keywords: ["report", "lab", "test", "hba1c", "blood", "sugar", "रिपोर्ट", "जांच"] },
-  { id: "vitals", label: "Vitals & Physiological Trends", labelHi: "वाइटल्स व रुझान", tab: "vitals", icon: Activity, keywords: ["vitals", "bp", "blood pressure", "glucose", "pulse", "बीपी", "शुगर", "पल्स"] },
-  { id: "profile", label: "Health Profile & ABHA", labelHi: "स्वास्थ्य प्रोफ़ाइल व आभा", tab: "profile", icon: User, keywords: ["profile", "abha", "id", "allergy", "आभा", "प्रोफाइल"] }
+  { id: "passport", label: "Doctor Health Passport (PDF)", labelHi: "डॉक्टर हेल्थ पासपोर्ट (PDF)", tab: "passport", icon: FileCheck2, color: "#10b981", bg: "rgba(16, 185, 129, 0.16)", keywords: ["passport", "pdf", "print", "summary", "पासपोर्ट", "प्रिंट", "डॉक्टर"] },
+  { id: "doctors", label: "Specialist Doctors", labelHi: "विशेषज्ञ डॉक्टर", tab: "doctors", icon: Stethoscope, color: "#06b6d4", bg: "rgba(6, 182, 212, 0.16)", keywords: ["doctor", "dentist", "dermatologist", "eye", "skin", "डॉक्टर", "दंत", "क्लिनिक"] },
+  { id: "copilot", label: "AI Health Copilot", labelHi: "एआई स्वास्थ्य कोपायलट", tab: "copilot", icon: Sparkles, color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.16)", keywords: ["ai", "copilot", "ask", "chat", "voice", "सवाल", "मदद", "कोपायलट"] },
+  { id: "symptom-checker", label: "Symptom Checker", labelHi: "लक्षण जांच विज़ार्ड", tab: "symptom-checker", icon: Activity, color: "#f43f5e", bg: "rgba(244, 63, 94, 0.16)", keywords: ["symptom", "fever", "pain", "headache", "dizzy", "cough", "दर्द", "बुखार", "चक्कर"] },
+  { id: "medications", label: "Medications & Safety", labelHi: "दवाइयां और सुरक्षा", tab: "medications", icon: Pill, color: "#ec4899", bg: "rgba(236, 72, 153, 0.16)", keywords: ["medicine", "pill", "tablet", "statin", "telmisartan", "metformin", "dawa", "दवाई", "गोली"] },
+  { id: "reports", label: "Lab Test Reports", labelHi: "लैब टेस्ट रिपोर्ट", tab: "reports", icon: FileText, color: "#f59e0b", bg: "rgba(245, 158, 11, 0.16)", keywords: ["report", "lab", "test", "hba1c", "blood", "sugar", "रिपोर्ट", "जांच"] },
+  { id: "vitals", label: "Vitals & Physiological Trends", labelHi: "वाइटल्स व रुझान", tab: "vitals", icon: Activity, color: "#10b981", bg: "rgba(16, 185, 129, 0.16)", keywords: ["vitals", "bp", "blood pressure", "glucose", "pulse", "बीपी", "शुगर", "पल्स"] },
+  { id: "profile", label: "Health Profile & ABHA", labelHi: "स्वास्थ्य प्रोफ़ाइल व आभा", tab: "profile", icon: User, color: "#3b82f6", bg: "rgba(59, 130, 246, 0.16)", keywords: ["profile", "abha", "id", "allergy", "आभा", "प्रोफाइल"] }
 ];
 
 export default function TopHeader({
@@ -210,10 +237,31 @@ export default function TopHeader({
                 key={link.id}
                 onClick={() => onNavigate && onNavigate(link.id)}
                 className={`nav-box-btn ${isActive ? "active" : ""}`}
+                style={{
+                  background: isActive ? link.activeBg : "var(--bg-elevated)",
+                  borderColor: isActive ? link.borderColor : "var(--border-color)",
+                  color: isActive ? "#ffffff" : "var(--text-main)",
+                  boxShadow: isActive 
+                    ? `0 2px 14px ${link.bg}, inset 0 1px 0 rgba(255, 255, 255, 0.12)` 
+                    : "var(--glass-highlight), var(--shadow-sm)"
+                }}
                 title={lang === "hi" ? link.labelHi : link.label}
               >
-                <Icon size={15} color={isActive ? "var(--primary)" : "currentColor"} />
-                <span>{lang === "hi" ? link.labelHi : link.label}</span>
+                <div style={{
+                  width: "22px",
+                  height: "22px",
+                  borderRadius: "7px",
+                  background: isActive ? link.color : link.bg,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: isActive ? "#ffffff" : link.color,
+                  flexShrink: 0,
+                  transition: "all 0.2s ease"
+                }}>
+                  <Icon size={13} strokeWidth={isActive ? 2.5 : 2.2} />
+                </div>
+                <span style={{ fontWeight: isActive ? 700 : 600 }}>{lang === "hi" ? link.labelHi : link.label}</span>
               </button>
             );
           })}
@@ -356,12 +404,14 @@ export default function TopHeader({
                         width: "28px",
                         height: "28px",
                         borderRadius: "8px",
-                        background: "var(--primary-soft)",
+                        background: item.bg || "rgba(59, 130, 246, 0.16)",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center"
+                        justifyContent: "center",
+                        color: item.color || "var(--primary)",
+                        flexShrink: 0
                       }}>
-                        <Icon size={15} color="var(--primary)" />
+                        <Icon size={15} color={item.color || "var(--primary)"} />
                       </div>
                       <span style={{ fontSize: "0.84rem", fontWeight: 700, color: "var(--text-highlight)" }}>
                         {lang === "hi" ? item.labelHi : item.label}
@@ -388,9 +438,10 @@ export default function TopHeader({
             title={lang === "hi" ? "डॉक्टर हेल्थ पासपोर्ट (PDF)" : "Doctor Health Passport (PDF)"}
             aria-label="Doctor Health Passport"
             style={{
-              color: "var(--primary)",
-              borderColor: "var(--primary-border)",
-              background: "var(--primary-soft)"
+              color: "#10b981",
+              borderColor: "rgba(16, 185, 129, 0.35)",
+              background: "rgba(16, 185, 129, 0.12)",
+              boxShadow: "0 2px 8px rgba(16, 185, 129, 0.18)"
             }}
           >
             <FileCheck2 size={17} />

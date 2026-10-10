@@ -454,14 +454,14 @@ export default function DoctorsDashboard({
                   gap: "7px",
                   padding: "9px 16px",
                   borderRadius: "14px",
-                  border: isSelected ? "1.5px solid var(--primary)" : "1px solid var(--border-color)",
-                  background: isSelected ? "linear-gradient(135deg, var(--primary), var(--primary-dark))" : "var(--bg-card)",
+                  border: isSelected ? "1.5px solid #10b981" : "1px solid var(--border-color)",
+                  background: isSelected ? "linear-gradient(135deg, #10b981, #059669)" : "var(--bg-card)",
                   color: isSelected ? "#ffffff" : "var(--text-main)",
                   fontWeight: isSelected ? 800 : 600,
                   fontSize: "0.84rem",
                   cursor: "pointer",
                   whiteSpace: "nowrap",
-                  boxShadow: isSelected ? "var(--shadow-sm)" : "none",
+                  boxShadow: isSelected ? "0 4px 14px rgba(16, 185, 129, 0.35)" : "none",
                   transition: "all 0.18s ease"
                 }}
               >
