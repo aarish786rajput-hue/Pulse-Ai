@@ -2,12 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { 
   FileText, 
   UploadCloud, 
-  Sparkles, 
   ArrowRight, 
   Search, 
-  MessageSquareHeart, 
   Building2, 
   Calendar, 
+  User,
   Eye, 
   X, 
   FileCheck2, 
@@ -274,72 +273,65 @@ export default function ReportExplainer({
       </div>
 
       {/* Active Report Overview Card */}
-      <div className="glass-panel" style={{ padding: "22px 26px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px", marginBottom: "16px" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "4px" }}>
-              <h2 style={{ fontSize: "1.3rem", fontWeight: 800 }}>
-                {activeReport.title}
-              </h2>
-              <span className={`badge ${
-                activeReport.overallRisk === "Moderate" ? "badge-borderline" : "badge-good"
-              }`}>
-                {activeReport.overallRisk} Attention
-              </span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "16px", fontSize: "0.84rem", color: "var(--text-muted)", flexWrap: "wrap" }}>
-              <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                <Building2 size={14} /> {activeReport.lab}
-              </span>
-              <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                <Calendar size={14} /> {activeReport.date}
-              </span>
-              <span>Patient: <strong>{activeReport.patientName} ({activeReport.ageGender})</strong></span>
-            </div>
+      <div 
+        className="glass-panel" 
+        style={{ 
+          padding: "18px 24px",
+          borderRadius: "16px",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-color)",
+          boxShadow: "var(--shadow-sm)"
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "14px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+            <h2 style={{ fontSize: "1.28rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
+              {activeReport.title}
+            </h2>
+            <span className={`badge ${
+              activeReport.overallRisk === "Moderate" ? "badge-borderline" : "badge-good"
+            }`} style={{ fontSize: "0.78rem", padding: "4px 10px" }}>
+              {activeReport.overallRisk} Attention
+            </span>
           </div>
 
-          <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
-            {activeReport.previewUrl && (
-              <button
-                type="button"
-                onClick={() => setShowDocPreviewModal(true)}
-                className="btn btn-secondary"
-                style={{ fontSize: "0.84rem", display: "inline-flex", alignItems: "center", gap: "6px" }}
-              >
-                <Eye size={16} color="var(--primary)" />
-                <span>{lang === "hi" ? "मूल दस्तावेज़ देखें" : "View Scanned Document"}</span>
-              </button>
-            )}
+          {activeReport.previewUrl && (
             <button
-              onClick={() => onAskCopilot(`Can you explain my whole ${activeReport.title} and summarize what I need to do?`)}
+              type="button"
+              onClick={() => setShowDocPreviewModal(true)}
               className="btn btn-secondary"
-              style={{ fontSize: "0.84rem" }}
+              style={{ fontSize: "0.84rem", display: "inline-flex", alignItems: "center", gap: "6px", height: "36px", padding: "0 14px", borderRadius: "10px" }}
             >
-              <MessageSquareHeart size={16} color="var(--primary)" />
-              <span>{lang === "hi" ? "कोपायलट से चर्चा करें" : "Discuss with Copilot"}</span>
+              <Eye size={15} color="var(--primary)" />
+              <span>{lang === "hi" ? "मूल दस्तावेज़ देखें" : "View Scanned Document"}</span>
             </button>
-          </div>
+          )}
         </div>
 
-        {/* AI Synthesis Box */}
-        <div style={{
-          background: "var(--primary-soft)",
-          border: "1px solid var(--primary-border)",
-          borderRadius: "12px",
-          padding: "14px 18px",
-          display: "flex",
-          alignItems: "center",
-          gap: "12px"
+        {/* Clean Metadata Details Row */}
+        <div style={{ 
+          display: "flex", 
+          alignItems: "center", 
+          gap: "20px", 
+          fontSize: "0.85rem", 
+          color: "var(--text-muted)", 
+          flexWrap: "wrap", 
+          marginTop: "12px",
+          paddingTop: "12px",
+          borderTop: "1px solid var(--border-color)"
         }}>
-          <Sparkles size={20} color="var(--primary)" style={{ flexShrink: 0 }} />
-          <div>
-            <div style={{ fontSize: "0.78rem", color: "var(--primary)", fontWeight: 800, textTransform: "uppercase" }}>
-              {lang === "hi" ? "पल्स-एआई क्लिनिकल सारांश" : "PulseAI Clinical Synthesis"}
-            </div>
-            <div style={{ fontSize: "0.92rem", color: "var(--text-main)", marginTop: "2px" }}>
-              {activeReport.headlineSummary}
-            </div>
-          </div>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            <Building2 size={15} color="var(--primary)" /> 
+            <span>{activeReport.lab}</span>
+          </span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            <Calendar size={15} color="var(--primary)" /> 
+            <span>{activeReport.date}</span>
+          </span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            <User size={15} color="var(--primary)" /> 
+            <span>{lang === "hi" ? "मरीज़:" : "Patient:"} <strong style={{ color: "var(--text-main)" }}>{activeReport.patientName} ({activeReport.ageGender})</strong></span>
+          </span>
         </div>
       </div>
 
