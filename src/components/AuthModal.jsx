@@ -813,12 +813,12 @@ export default function AuthModal({
                     onChange={(e) => setDocSpecialty(e.target.value)}
                     style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--border-color)", background: "var(--bg-elevated)", color: "var(--text-main)" }}
                   >
-                    <option value="cardiologist">Cardiologist (हृदय रोग)</option>
-                    <option value="physician">General Physician (सामान्य)</option>
-                    <option value="dentist">Dentist (दंत चिकित्सक)</option>
-                    <option value="pediatrician">Pediatrician (शिशु रोग)</option>
-                    <option value="dermatologist">Dermatologist (त्वचा)</option>
-                    <option value="orthopedic">Orthopedic (हड्डी)</option>
+                    <option value="cardiologist">{lang === "hi" ? "कार्डियोलॉजिस्ट" : "Cardiologist"}</option>
+                    <option value="physician">{lang === "hi" ? "जनरल फिजिशियन" : "General Physician"}</option>
+                    <option value="dentist">{lang === "hi" ? "डेंटिस्ट" : "Dentist"}</option>
+                    <option value="pediatrician">{lang === "hi" ? "पीडियाट्रिशियन" : "Pediatrician"}</option>
+                    <option value="dermatologist">{lang === "hi" ? "डर्मेटोलॉजिस्ट" : "Dermatologist"}</option>
+                    <option value="orthopedic">{lang === "hi" ? "ऑर्थोपेडिक" : "Orthopedic"}</option>
                   </select>
                 </div>
                 <div>
