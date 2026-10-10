@@ -752,9 +752,7 @@ export default function ReportExplainer({
             type="text"
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            placeholder={lang === "hi" 
-              ? `इस रिपोर्ट के बायोमार्कर खोजें (जैसे: 'Glucose', 'Creatinine', 'TSH', 'Hemoglobin')...` 
-              : `Search biomarkers in this report (e.g. 'Glucose', 'Creatinine', 'TSH', 'Hemoglobin')...`}
+            placeholder={lang === "hi" ? "बायोमार्कर खोजें..." : "Search biomarkers..."}
             style={{ paddingLeft: "44px", height: "46px", borderRadius: "12px" }}
           />
         </div>

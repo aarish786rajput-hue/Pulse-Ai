@@ -347,7 +347,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
                 type="text"
                 value={testMedName}
                 onChange={(e) => setTestMedName(e.target.value)}
-                placeholder="Type medicine name (e.g. 'Ibuprofen', 'Aspirin', 'Warfarin', 'Calcium')..."
+                placeholder={lang === "hi" ? "दवाई का नाम लिखें..." : "Search medicine name..."}
                 style={{ flex: 1 }}
               />
               <button type="submit" className="btn btn-primary" style={{ whiteSpace: "nowrap" }}>

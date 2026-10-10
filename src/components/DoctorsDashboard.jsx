@@ -340,7 +340,7 @@ export default function DoctorsDashboard({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={lang === "hi" ? "डॉक्टर का नाम, विशेषता (Dentist, Skin, Eye), या क्लीनिक खोजें..." : "Search doctor name, specialty (Dentist, Skin, Eye, Heart), clinic or symptom..."}
+              placeholder={lang === "hi" ? "डॉक्टर या विशेषता खोजें..." : "Search doctor or specialty..."}
               style={{
                 paddingLeft: "42px",
                 borderRadius: "12px",
