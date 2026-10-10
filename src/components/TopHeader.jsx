@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { LogoIcon } from "./BrandLogo";
 import { 
   AlertOctagon, 
+  Languages, 
   Sun, 
   Moon, 
   Search, 
@@ -15,8 +16,7 @@ import {
   Activity,
   Pill,
   User,
-  Menu,
-  ChevronDown
+  Menu
 } from "lucide-react";
 import { translations } from "../data/translations";
 
@@ -64,7 +64,6 @@ export default function TopHeader({
   onNavigate
 }) {
   const t = translations[lang] || translations.en;
-  const currentLangObj = SUPPORTED_NAV_LANGUAGES.find(l => l.id === lang) || SUPPORTED_NAV_LANGUAGES[0];
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
@@ -243,7 +242,7 @@ export default function TopHeader({
             boxShadow: isSearchOpen ? "0 0 14px rgba(2, 132, 199, 0.22)" : "var(--shadow-sm)",
             transition: "all 0.2s ease"
           }}>
-            <Search size={16} color="var(--primary)" style={{ flexShrink: 0, marginRight: "8px" }} />
+            <Search size={16} color="var(--primary)" style={{ flexShrink: 0, marginRight: "10px" }} />
             <input
               ref={searchInputRef}
               type="text"
@@ -253,17 +252,17 @@ export default function TopHeader({
                 setIsSearchOpen(true);
               }}
               onFocus={() => setIsSearchOpen(true)}
-              placeholder={lang === "hi" ? "वाइटल्स, डॉक्टर, रिपोर्ट खोजें..." : "Search vitals, reports, doctors..."}
+              placeholder="Search..."
               style={{
                 background: "transparent",
                 border: "none",
                 outline: "none",
                 width: "100%",
-                fontSize: "0.84rem",
+                fontSize: "0.85rem",
                 color: "var(--text-highlight)"
               }}
             />
-            {searchQuery ? (
+            {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
@@ -279,23 +278,6 @@ export default function TopHeader({
               >
                 <X size={14} />
               </button>
-            ) : (
-              <kbd 
-                className="hide-on-mobile"
-                style={{
-                  fontSize: "0.68rem",
-                  fontWeight: 700,
-                  color: "var(--text-dim)",
-                  background: "var(--bg-card)",
-                  border: "1px solid var(--border-color)",
-                  borderRadius: "5px",
-                  padding: "2px 6px",
-                  pointerEvents: "none",
-                  whiteSpace: "nowrap"
-                }}
-              >
-                Ctrl K
-              </kbd>
             )}
           </div>
         </form>
@@ -397,52 +379,32 @@ export default function TopHeader({
       </div>
 
       {/* ── ZONE 3 (RIGHT): Action Cluster (Passport + SOS + Theme + Language) ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
         {/* Doctor Health Passport Quick Button */}
         {onOpenHealthPassport && (
           <button
             onClick={onOpenHealthPassport}
             className="header-icon-btn"
-            title={lang === "hi" ? "डॉक्टर हेल्थ पासपोर्ट (PDF सारांश देखें व प्रिंट करें)" : "Doctor Health Passport (PDF Summary)"}
+            title={lang === "hi" ? "डॉक्टर हेल्थ पासपोर्ट (PDF)" : "Doctor Health Passport (PDF)"}
             aria-label="Doctor Health Passport"
             style={{
               color: "var(--primary)",
               borderColor: "var(--primary-border)",
-              background: "var(--primary-soft)",
-              width: "auto",
-              padding: "0 12px",
-              gap: "6px",
-              display: "flex",
-              alignItems: "center",
-              fontWeight: 700,
-              fontSize: "0.8rem"
+              background: "var(--primary-soft)"
             }}
           >
-            <FileCheck2 size={16} />
-            <span className="hide-on-mobile">
-              {lang === "hi" ? "हेल्थ पासपोर्ट (PDF)" : "Health Passport"}
-            </span>
+            <FileCheck2 size={17} />
           </button>
         )}
 
-        {/* SOS Emergency Button (Icon + SOS Badge) */}
+        {/* SOS Emergency Button (Icon Only, Prominent Red Alert Pulse) */}
         <button
           onClick={onOpenEmergency}
           className="sos-icon-btn"
           title={t.sosIce || "Emergency SOS ID"}
           aria-label="Emergency SOS ID"
-          style={{
-            width: "auto",
-            padding: "0 12px",
-            gap: "5px",
-            display: "flex",
-            alignItems: "center"
-          }}
         >
-          <AlertOctagon size={16} strokeWidth={2.5} />
-          <span style={{ fontSize: "0.78rem", fontWeight: 800, letterSpacing: "0.04em" }}>
-            SOS
-          </span>
+          <AlertOctagon size={18} strokeWidth={2.4} />
         </button>
 
         {/* Vertical Divider */}
@@ -460,26 +422,15 @@ export default function TopHeader({
           </button>
         )}
 
-        {/* Multilingual Selector: Displays Active Language Flag + Label */}
+        {/* Multilingual Selector Icon Button with Dropdown Popup */}
         <div ref={langContainerRef} style={{ position: "relative" }}>
           <button
             onClick={() => setIsLangOpen(prev => !prev)}
             className={`header-icon-btn ${isLangOpen ? "is-active" : ""}`}
-            style={{
-              width: "auto",
-              padding: "0 10px",
-              gap: "6px",
-              display: "flex",
-              alignItems: "center"
-            }}
             title="Change Language / भाषा बदलें"
             aria-label="Language Selector"
           >
-            <span style={{ fontSize: "1rem", lineHeight: 1 }}>{currentLangObj.flag}</span>
-            <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--text-highlight)" }} className="hide-on-mobile">
-              {currentLangObj.label}
-            </span>
-            <ChevronDown size={13} color="var(--text-muted)" />
+            <Languages size={17} color="var(--primary)" />
           </button>
 
           {isLangOpen && (
