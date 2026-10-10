@@ -18,7 +18,7 @@ export const mockDischargeSummaries = [
     statusBadge: "good",
     
     // Simple Explanation
-    simpleDiagnosis: "Stomach Infection with Fluid Loss (पेट का इन्फेक्शन व कमजोरी)",
+    simpleDiagnosis: "Stomach Infection with Fluid Loss",
     originalMedicalDiagnosis: "Acute Infectious Gastroenteritis with Moderate Dehydration & Hypokalemia (Resolved)",
     simpleSummary: "Aarish was admitted with acute vomiting, stomach cramps, and weakness. He was administered IV rehydration fluids, electrolyte correction, and targeted antibiotics. After 72 hours, his vitals, appetite, and electrolytes fully normalized, and he was approved for safe home discharge.",
     

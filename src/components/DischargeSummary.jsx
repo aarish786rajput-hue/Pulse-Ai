@@ -35,7 +35,14 @@ export default function DischargeSummary({ patient, lang = "en", onAskCopilot })
       const saved = localStorage.getItem("pulseai_user_discharge_summaries");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((item) => ({
+            ...item,
+            simpleDiagnosis: item.simpleDiagnosis
+              ? item.simpleDiagnosis.replace(/\s*\(पेट का इन्फेक्शन व कमजोरी\)/g, "").trim()
+              : item.simpleDiagnosis
+          }));
+        }
       }
     } catch (e) {
       console.error("Failed to load discharge summaries from storage", e);
@@ -147,7 +154,7 @@ export default function DischargeSummary({ patient, lang = "en", onAskCopilot })
         dischargeStatus: "Stable & Discharged Home",
         statusBadge: "good",
         previewUrl: dataUrl,
-        simpleDiagnosis: "Recovered from Acute Illness (बीमारी से रिकवरी व सुधार)",
+        simpleDiagnosis: "Recovered from Acute Illness",
         originalMedicalDiagnosis: "Scanned Discharge Protocol & Clinical Assessment",
         simpleSummary:
           "The patient received hospital care, initial monitoring, and stabilizing medical therapy. The vital signs have normalized, and the patient is advised to continue home rest, follow prescribed diet guidelines, and take scheduled medications as instructed.",
@@ -282,9 +289,6 @@ export default function DischargeSummary({ patient, lang = "en", onAskCopilot })
               <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: 0, color: "var(--text-main)", letterSpacing: "-0.01em" }}>
                 {lang === "hi" ? "अस्पताल डिस्चार्ज सारांश" : "Discharge Summary"}
               </h1>
-              <span className="badge badge-good" style={{ fontSize: "0.8rem", padding: "4px 10px" }}>
-                <ShieldCheck size={13} /> {lang === "hi" ? "मरीज़-अनुकूल व्याख्या" : "Patient-Friendly Guide"}
-              </span>
             </div>
             <p style={{ color: "var(--text-muted)", fontSize: "0.88rem", marginTop: "6px", marginBottom: 0 }}>
               {lang === "hi"
@@ -602,10 +606,7 @@ export default function DischargeSummary({ patient, lang = "en", onAskCopilot })
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
               <div>
-                <span className="badge badge-primary" style={{ fontSize: "0.76rem", marginBottom: "6px" }}>
-                  {activeSummary.department}
-                </span>
-                <h2 style={{ fontSize: "1.35rem", fontWeight: 800, margin: "4px 0", color: "var(--text-highlight)" }}>
+                <h2 style={{ fontSize: "1.35rem", fontWeight: 800, margin: "0 0 6px 0", color: "var(--text-highlight)" }}>
                   {activeSummary.hospital}
                 </h2>
                 <div style={{ display: "flex", alignItems: "center", gap: "16px", fontSize: "0.85rem", color: "var(--text-muted)", flexWrap: "wrap", marginTop: "6px" }}>
@@ -656,7 +657,7 @@ export default function DischargeSummary({ patient, lang = "en", onAskCopilot })
                 {lang === "hi" ? "मुख्य कारण (Simple Diagnosis):" : "Simple Diagnosis:"}
               </div>
               <div style={{ fontSize: "1.15rem", fontWeight: 800, color: "var(--primary)", marginTop: "4px" }}>
-                {activeSummary.simpleDiagnosis}
+                {activeSummary.simpleDiagnosis?.replace(/\s*\(पेट का इन्फेक्शन व कमजोरी\)/g, "").trim()}
               </div>
               <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", marginTop: "4px" }}>
                 {lang === "hi" ? "मेडिकल टर्म:" : "Medical Term:"} <em>{activeSummary.originalMedicalDiagnosis}</em>
