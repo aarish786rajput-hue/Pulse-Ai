@@ -141,5 +141,127 @@ export const sampleReports = [
       "My ESR is slightly above range at 22. Does this need a repeat test or is it insignificant?",
       "My blood counts are optimal—can I maintain my current diet?"
     ]
+  },
+  {
+    id: "rep_thyroid_panel",
+    title: "Thyroid Function Test (TFT - T3, T4, TSH)",
+    date: "October 08, 2026",
+    lab: "Apollo Diagnostics Centre",
+    patientName: "Rahul Sharma",
+    ageGender: "45 / M",
+    overallRisk: "Borderline",
+    headlineSummary: "TSH is slightly elevated (4.85 mIU/L), indicating early subclinical hypothyroidism. Free T3 and Free T4 remain within normal biological limits.",
+    parameters: [
+      {
+        name: "TSH (Thyroid Stimulating Hormone)",
+        value: 4.85,
+        unit: "mIU/L",
+        reference: "0.45 - 4.50 mIU/L",
+        status: "borderline",
+        plainExplanation: "Pituitary hormone that prompts thyroid to work. Slightly elevated, meaning thyroid gland is working a bit slowly.",
+        actionItem: "Re-check in 6-8 weeks with your doctor; maintain adequate dietary selenium and zinc."
+      },
+      {
+        name: "Free T4 (Free Thyroxine)",
+        value: 1.25,
+        unit: "ng/dL",
+        reference: "0.82 - 1.77 ng/dL",
+        status: "good",
+        plainExplanation: "Active circulating thyroid hormone controlling metabolic rate. Within healthy balance.",
+        actionItem: "Normal metabolic energy regulation."
+      },
+      {
+        name: "Free T3 (Free Triiodothyronine)",
+        value: 3.10,
+        unit: "pg/mL",
+        reference: "2.0 - 4.4 pg/mL",
+        status: "good",
+        plainExplanation: "Potent active thyroid hormone supporting body temperature and energy. Normal.",
+        actionItem: "Optimal cellular metabolism."
+      },
+      {
+        name: "Anti-TPO Antibodies",
+        value: 18,
+        unit: "IU/mL",
+        reference: "< 34 IU/mL (Negative)",
+        status: "good",
+        plainExplanation: "Autoantibody test. Normal value rules out active autoimmune thyroiditis (Hashimoto's).",
+        actionItem: "No autoimmune thyroid damage detected."
+      }
+    ],
+    doctorQuestions: [
+      "My TSH is 4.85 mIU/L with normal T3/T4. Does this warrant starting low-dose Thyroxine or observing?",
+      "Should I retest morning fasting TSH in 8 weeks?"
+    ]
+  },
+  {
+    id: "rep_liver_kidney",
+    title: "Comprehensive Liver & Kidney Profile (LFT & KFT)",
+    date: "September 14, 2026",
+    lab: "Max Super Speciality Lab",
+    patientName: "Rahul Sharma",
+    ageGender: "45 / M",
+    overallRisk: "Optimal",
+    headlineSummary: "Hepatic detoxification enzymes and renal clearance markers are completely normal. Robust liver and kidney filtration.",
+    parameters: [
+      {
+        name: "Serum Creatinine",
+        value: 0.90,
+        unit: "mg/dL",
+        reference: "0.70 - 1.20 mg/dL",
+        status: "good",
+        plainExplanation: "Kidney filtration waste marker. Excellent clearance rate.",
+        actionItem: "Kidneys filtering efficiently; keep drinking 2.5L water daily."
+      },
+      {
+        name: "Blood Urea Nitrogen (BUN)",
+        value: 14.5,
+        unit: "mg/dL",
+        reference: "7.0 - 20.0 mg/dL",
+        status: "good",
+        plainExplanation: "Byproduct of protein breakdown. Normal range confirms balanced protein metabolism.",
+        actionItem: "Stable kidney clearance."
+      },
+      {
+        name: "SGPT / ALT (Liver Enzyme)",
+        value: 28,
+        unit: "U/L",
+        reference: "< 45 U/L",
+        status: "good",
+        plainExplanation: "Primary liver cellular integrity enzyme. Safe and normal level with zero signs of fatty liver inflammation.",
+        actionItem: "Liver health in optimal condition."
+      },
+      {
+        name: "SGOT / AST (Liver & Heart Enzyme)",
+        value: 24,
+        unit: "U/L",
+        reference: "< 40 U/L",
+        status: "good",
+        plainExplanation: "Enzyme present in liver and muscle tissue. Optimal reading.",
+        actionItem: "Balanced cellular markers."
+      },
+      {
+        name: "Total Bilirubin",
+        value: 0.8,
+        unit: "mg/dL",
+        reference: "0.2 - 1.2 mg/dL",
+        status: "good",
+        plainExplanation: "Bile pigment processed by liver. Optimal, ruling out jaundice or bile duct obstruction.",
+        actionItem: "Healthy bile flow."
+      },
+      {
+        name: "Serum Albumin",
+        value: 4.4,
+        unit: "g/dL",
+        reference: "3.5 - 5.2 g/dL",
+        status: "good",
+        plainExplanation: "Crucial protein produced by liver maintaining blood vessel osmotic fluid pressure. Strong level.",
+        actionItem: "Excellent nutritional protein synthesis."
+      }
+    ],
+    doctorQuestions: [
+      "Both liver enzymes and kidney creatinine are optimal—can I continue my current medication schedule safely?",
+      "Are any special precautions needed for my annual screening?"
+    ]
   }
 ];

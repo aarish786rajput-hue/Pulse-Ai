@@ -262,6 +262,8 @@ export default function App() {
                 onAskCopilot={(q) => handleNavigate('copilot', q)}
                 pendingUploadFile={pendingUploadFile}
                 onClearPendingFile={() => setPendingUploadFile(null)}
+                onUpdateVitals={handleAddVital}
+                onAddTimelineEvent={handleAddTimelineEvent}
               />
             )}
             {activeTab === 'discharge' && (
