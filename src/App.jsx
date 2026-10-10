@@ -288,6 +288,7 @@ export default function App() {
                 lang={lang}
                 onAskCopilot={(q) => handleNavigate('copilot', q)}
                 onUpdateVitals={handleAddVital}
+                onOpenEmergency={() => setIsEmergencyOpen(true)}
               />
             )}
             {activeTab === 'vitals' && (
