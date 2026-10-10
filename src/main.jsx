@@ -22,7 +22,9 @@ class ErrorBoundary extends Component {
       localStorage.removeItem('pulseai_patients');
       localStorage.removeItem('pulseai_lang');
       localStorage.removeItem('pulseai_theme');
-    } catch (_) {}
+    } catch {
+      // ignore
+    }
     window.location.reload();
   };
 

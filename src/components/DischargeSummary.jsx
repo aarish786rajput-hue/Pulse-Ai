@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   ClipboardCheck,
-  Building2,
   Calendar,
   User,
   Phone,
@@ -9,7 +8,6 @@ import {
   CheckCircle2,
   XCircle,
   Pill,
-  Activity,
   HeartHandshake,
   UploadCloud,
   Camera,
@@ -18,13 +16,10 @@ import {
   Trash2,
   Check,
   MessageSquareHeart,
-  FileText,
   Clock,
-  ShieldCheck,
   Utensils,
   Footprints,
-  Droplets,
-  HelpCircle
+  Droplets
 } from "lucide-react";
 import { mockDischargeSummaries } from "../data/mockDischargeData";
 

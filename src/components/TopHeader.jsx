@@ -14,7 +14,8 @@ import {
   Check,
   Activity,
   Pill,
-  User
+  User,
+  Menu
 } from "lucide-react";
 import { translations } from "../data/translations";
 
@@ -50,8 +51,9 @@ const SEARCH_CATEGORIES = [
 export default function TopHeader({
   activeTab,
   onOpenEmergency,
-  onOpenDoctorPrep,
-  isSidebarOpen,
+  _onOpenDoctorPrep,
+  _isSidebarOpen,
+  onToggleSidebar,
   lang,
   setLang,
   theme,
@@ -144,6 +146,31 @@ export default function TopHeader({
     }}>
       {/* ── ZONE 1 (LEFT): Brand Title + Nav Links ── */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+        {/* Mobile Hamburger Toggle Button */}
+        {onToggleSidebar && (
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            className="show-on-mobile mobile-menu-btn"
+            style={{
+              display: "none",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "36px",
+              height: "36px",
+              borderRadius: "10px",
+              background: "var(--bg-elevated)",
+              border: "1px solid var(--border-color)",
+              color: "var(--text-main)",
+              cursor: "pointer",
+              padding: 0
+            }}
+            aria-label="Toggle navigation drawer"
+          >
+            <Menu size={18} />
+          </button>
+        )}
+
         {/* Brand Logo & Heading: Health Command Center */}
         <div 
           onClick={() => onNavigate && onNavigate("dashboard")}

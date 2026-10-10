@@ -13,7 +13,6 @@ import {
   History,
   CheckCircle2,
   ChevronLeft,
-  Calendar,
   MessageSquare,
   Sparkles,
   Plus
@@ -37,7 +36,7 @@ export default function FloatingCopilot({
   patient, 
   lang = "en", 
   onNavigate,
-  activeTab
+  _activeTab
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -74,94 +73,6 @@ export default function FloatingCopilot({
     setTimeout(() => setNotificationMsg(""), 2600);
   };
 
-  // Welcome message customized to current patient and selected language
-  const getInitialMessage = useCallback(() => {
-    const pName = patient?.name || "Patient";
-    const conditions = patient?.conditions?.map(c => typeof c === "string" ? c : c.name).join(", ") || "General Wellness";
-    
-    if (chatLang === "hi") {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `नमस्ते ${pName} जी! 🙏 मैं आपका **AI Copilot** हूँ।\n\nआपकी प्रोफाइल (*${conditions}*) के अनुसार, मैं आपकी दवाओं, लैब रिपोर्ट्स या किसी भी स्वास्थ्य समस्या में सहायता के लिए तैयार हूँ।\n\nटाइप करें, फ़ोटो 📷 भेजें या माइक 🎙️ दबाकर सीधे बोलें!`,
-        timestamp: "अभी",
-        triageLevel: "routine"
-      };
-    } else if (chatLang === "bn") {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `নমস্কার ${pName} বাবু! 🙏 আমি আপনার **AI Copilot**।\n\nআপনার স্বাস্থ্য প্রোফাইল (*${conditions}*) অনুযায়ী ওষুধ, ল্যাব রিপোর্ট বা যে কোনো শারীরিক সমস্যায় সাহায্যের জন্য প্রস্তুত।\n\nটাইপ করুন, ছবি 📷 পাঠান বা মাইক 🎙️ চেপে কথা বলুন!`,
-        timestamp: "এখনই",
-        triageLevel: "routine"
-      };
-    } else if (chatLang === "mr") {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `नमस्कार ${pName} जी! 🙏 मी तुमचा **AI Copilot** आहे.\n\nतुमची प्रोफाइल (*${conditions}*) पाहून मी औषधे, लॅब रिपोर्ट्स आणि आरोग्याबाबत मदत करण्यास तयार आहे.\n\nटाईप करा, फोटो 📷 पाठवा किंवा माईक 🎙️ दाबून बोला!`,
-        timestamp: "आत्ता",
-        triageLevel: "routine"
-      };
-    } else if (chatLang === "pa") {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ${pName} ਜੀ! 🙏 ਮੈਂ ਤੁਹਾਡਾ **AI Copilot** ਹਾਂ।\n\nਤੁਹਾਡੀ ਪ੍ਰੋਫਾਈਲ (*${conditions}*) ਅਨੁਸਾਰ ਮੈਂ ਦਵਾਈਆਂ, ਲੈਬ ਰਿਪੋਰਟਾਂ ਅਤੇ ਸਿਹਤ ਸੰਬੰਧੀ ਸਵਾਲਾਂ ਲਈ ਹਾਜ਼ਰ ਹਾਂ। ਤੁਸੀ ਫ਼ੋਟੋ 📷 ਵੀ ਭੇਜ ਸਕਦੇ ਹੋ!`,
-        timestamp: "ਹੁਣੇ",
-        triageLevel: "routine"
-      };
-    } else if (chatLang === "ta") {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `வணக்கம் ${pName}! 🙏 நான் உங்கள் **AI Copilot**.\n\nமருந்துகள், பரிசோதனை அறிக்கைகள் மற்றும் உடல்நல ஆலோசனைகளுக்கு நான் உதவ தயாராக உள்ளேன். நீங்கள் தட்டச்சு செய்யலாம் அல்லது புகைப்படம் 📷 பகிரலாம்!`,
-        timestamp: "இப்போது",
-        triageLevel: "routine"
-      };
-    } else if (chatLang === "te") {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `నమస్కారం ${pName}! 🙏 నేను మీ **AI Copilot**.\n\nమీ మందులు, ల్యాబ్ రిపోర్టులు మరియు ఆరోగ్య ప్రశ్నలకు సహాయం చేయడానికి నేను సిద్ధంగా ఉన్నాను. టైప్ చేయండి లేదా ఫోటో 📷 పంపండి!`,
-        timestamp: "ఇప్పుడు",
-        triageLevel: "routine"
-      };
-    } else if (chatLang === "gu") {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `નમસ્તે ${pName} જી! 🙏 હું તમારો **AI Copilot** છું.\n\nતમારી પ્રોફાઇલ (*${conditions}*) મુજબ દવાઓ, લેબ રિપોર્ટ કે આરોગ્ય અંગે મદદ માટે તૈયાર છું.\n\nટાઈપ કરો, ફોટો 📷 મોકલો અથવા માઇક 🎙️ દબાવીને બોલો!`,
-        timestamp: "હમણાં",
-        triageLevel: "routine"
-      };
-    } else if (chatLang === "kn") {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `ನಮಸ್ಕಾರ ${pName} ಅವರೇ! 🙏 ನಾನು ನಿಮ್ಮ **AI Copilot**.\n\nನಿಮ್ಮ ಪ್ರೊಫೈಲ್ (*${conditions}*) ಆಧಾರದ ಮೇಲೆ ಔಷಧಿಗಳು, ಲ್ಯಾಬ್ ವರದಿಗಳು ಅಥವಾ ಆರೋಗ್ಯದ ಕುರಿತು ಸಹಾಯ ಮಾಡಲು ಸಿದ್ಧನಾಗಿದ್ದೇನೆ.\n\nಟೈಪ್ ಮಾಡಿ, ಫೋಟೋ 📷 ಕಳುಹಿಸಿ ಅಥವಾ ಮೈಕ್ 🎙️ ಒತ್ತಿ ಮಾತನಾಡಿ!`,
-        timestamp: "ಈಗ",
-        triageLevel: "routine"
-      };
-    } else if (chatLang === "hinglish") {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `Namaste ${pName} ji! 👋 Main aapka personal **AI Copilot** hoon.\n\nAapki medical history (*${conditions}*) mere paas updated hai. Aap mujhse apni **sugar, BP, medicines, lab reports ya kisi bhi lakshan** ke baare me pooch sakte hain.\n\nType karein, photo 📷 upload karein ya **Mic 🎙️** dabakar bolein!`,
-        timestamp: "Just now",
-        triageLevel: "routine"
-      };
-    } else {
-      return {
-        id: "msg_init",
-        sender: "bot",
-        content: `Hello ${pName}! 👋 I am your **AI Copilot**.\n\nI have reviewed your active profile (*${conditions}*). Feel free to ask me anything about your medications, upload photos of reports/medicines 📷, or ask in plain language!`,
-        timestamp: "Just now",
-        triageLevel: "routine"
-      };
-    }
-  }, [patient, chatLang]);
-
   // Messages start completely empty until the user sends a command/query
   const [messages, setMessages] = useState([]);
 
@@ -195,7 +106,7 @@ export default function FloatingCopilot({
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
-        } catch (_) {}
+        } catch {}
       }
       setIsListening(false);
       showNotification(chatLang === "hi" ? "माइक बंद किया गया" : "Microphone stopped");
@@ -308,7 +219,7 @@ export default function FloatingCopilot({
   };
 
   // Send message
-  const handleSendMessage = async (textToSend) => {
+  const handleSendMessage = useCallback(async (textToSend) => {
     const text = (textToSend || inputQuery).trim();
     if ((!text && !selectedImage) || isThinking) return;
 
@@ -317,12 +228,15 @@ export default function FloatingCopilot({
 
     const userContent = text || (chatLang === "hi" ? "📷 फ़ोटो का विश्लेषण करें" : "📷 Please analyze this photo");
 
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
     const userMsg = {
-      id: `usr_${Date.now()}`,
+      id: `usr_${now.getTime()}`,
       sender: "user",
       content: userContent,
       image: currentImg?.dataUrl || null,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      timestamp: timeStr
     };
 
     const updatedMessages = [...messages, userMsg];
@@ -346,12 +260,13 @@ export default function FloatingCopilot({
         chatLang
       );
 
+      const botTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       const botMsg = {
         id: `bot_${Date.now()}`,
         sender: "bot",
         content: botResponse.text,
         triageLevel: botResponse.triageLevel || "routine",
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        timestamp: botTime
       };
 
       setMessages(prev => [...prev, botMsg]);
@@ -369,7 +284,7 @@ export default function FloatingCopilot({
     } finally {
       setIsThinking(false);
     }
-  };
+  }, [inputQuery, selectedImage, isThinking, chatLang, messages, patient, lang]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -626,8 +541,7 @@ export default function FloatingCopilot({
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
-            animation: "slideUpFade 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
-            position: "fixed"
+            animation: "slideUpFade 0.28s cubic-bezier(0.16, 1, 0.3, 1)"
           }}
         >
           {/* Toast Notification */}

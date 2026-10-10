@@ -199,6 +199,7 @@ export default function App() {
             onOpenEmergency={() => setIsEmergencyOpen(true)}
             onOpenDoctorPrep={() => setIsDoctorPrepOpen(true)}
             isSidebarOpen={isSidebarOpen}
+            onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
             lang={lang}
             setLang={setLang}
             theme={theme}

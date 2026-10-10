@@ -3,6 +3,7 @@
   "plugins": ["react", "oxc"],
   "rules": {
     "react/rules-of-hooks": "error",
+    "react/preserve-manual-memoization": "off",
     "react/only-export-components": ["warn", { "allowConstantExport": true }]
   }
 }

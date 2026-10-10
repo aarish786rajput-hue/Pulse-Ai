@@ -23,11 +23,6 @@ export function setStoredApiKey(key) {
 function generateIntelligentMedicalResponse(userQuery, patient, activeLang = "hinglish") {
   const query = (userQuery || "").toLowerCase();
   const patientName = patient?.name || "Patient";
-  const conditionsStr = patient?.conditions?.map(c => typeof c === "string" ? c : c.name).join(", ") || "General Wellness";
-  const allergiesStr = patient?.allergies?.map(a => typeof a === "string" ? a : a.allergen).join(", ") || "None";
-  const medsStr = patient?.todayMedications?.map(m => m.name).join(", ") || "Prescribed medicines";
-  const emergencyPhone = patient?.emergencyContact?.phone || "112 / 102";
-
   const cleanQuery = query.trim().replace(/[?!.,]/g, "");
 
   // 1. Friendly Greetings (hi, hello, namaste, नमस्ते, etc.) - Warm, polite 1-2 sentence reply without clinical bullet dumps!

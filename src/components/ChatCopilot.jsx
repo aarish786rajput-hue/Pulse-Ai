@@ -70,165 +70,6 @@ const LANG_VOICE_MAP = {
   kn: "kn-IN"
 };
 
-  const getWelcomeMessage = useCallback((patientData, currentLang) => {
-    const conditions = patientData?.conditions?.map(c => typeof c === "string" ? c : c.name).join(", ") || "None";
-    const allergies = patientData?.allergies?.map(a => typeof a === "string" ? a : a.allergen).join(", ") || "None reported";
-    const meds = patientData?.todayMedications?.map(m => m.name).join(", ") || "None";
-    const pName = patientData?.name || "Patient";
-
-    if (currentLang === "hi") {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `नमस्ते ${pName} जी 👋! मैं आपका **सरल एआई स्वास्थ्य सहायक (AI Copilot)** हूँ।
-
-आपकी प्रोफ़ाइल की वर्तमान स्थिति:
-• **स्वास्थ्य स्थिति:** ${conditions}
-• **नियमित दवाएं:** ${meds}
-• **एलर्जी:** ${allergies}
-
-आप मुझसे अपनी **जांच रिपोर्ट, दवाओं की टाइमिंग, खानपान या किसी भी परेशानी** के बारे में बेहद आसान हिंदी में पूछ सकते हैं। आप नीचे **माइक 🎙️ दबाकर बोल भी सकते हैं!**`,
-        triageLevel: "routine",
-        timestamp: "अभी"
-      };
-    } else if (currentLang === "hinglish") {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `Namaste ${pName} ji 👋! Main aapka **AI Health Copilot** hoon.
-
-Aapki medical profile mere paas ready hai:
-• **Health Condition:** ${conditions}
-• **Medicines:** ${meds}
-• **Allergies:** ${allergies}
-
-Aap mujhse apni **sugar, BP, lab reports, dawai ya khane-peene** ke bare me bilkul aasan Hinglish me pooch sakte hain. Neeche **Mic 🎙️ button** dabakar bol bhi sakte hain!`,
-        triageLevel: "routine",
-        timestamp: "Just now"
-      };
-    } else if (currentLang === "bn") {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `নমস্কার ${pName} বাবু 👋! আমি আপনার **AI Health Copilot**।
-
-আপনার বর্তমান শারীরিক তথ্য:
-• **শারীরিক অবস্থা:** ${conditions}
-• **ওষুধ:** ${meds}
-• **অ্যালার্জি:** ${allergies}
-
-আপনি আমাকে **প্রেসক্রিপশন, রক্তের রিপোর্ট, ওষুধের সময় বা খাওয়া-দাওয়া** নিয়ে সহজ বাংলায় প্রশ্ন করতে পারেন। নিচে **মাইক্রোফোন 🎙️ চেপে কথাও বলতে পারেন!**`,
-        triageLevel: "routine",
-        timestamp: "এখনই"
-      };
-    } else if (currentLang === "mr") {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `नमस्कार ${pName} जी 👋! मी तुमचा **AI Health Copilot** आहे.
-
-तुमची आरोग्य माहिती:
-• **आरोग्य स्थिती:** ${conditions}
-• **चालू औषधे:** ${meds}
-• **अ‍ॅलर्जी:** ${allergies}
-
-तुम्ही मला तुमच्या **लॅब टेस्ट रिपोर्ट्स, औषधांच्या वेळा किंवा आहाराबद्दल** सोप्या मराठीत विचारू शकता. खाली **माईक 🎙️ दाबून बोलू शकता!**`,
-        triageLevel: "routine",
-        timestamp: "आत्ता"
-      };
-    } else if (currentLang === "pa") {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ${pName} ਜੀ 👋! ਮੈਂ ਤੁਹਾਡਾ **AI Health Copilot** ਹਾਂ।
-
-ਤੁਹਾਡੀ ਸਿਹਤ ਜਾਣਕਾਰੀ:
-• **ਸਿਹਤ ਸਥਿਤੀ:** ${conditions}
-• **ਦਵਾਈਆਂ:** ${meds}
-• **ਐਲਰਜੀ:** ${allergies}
-
-ਤੁਸੀਂ ਮੇਰੇ ਤੋਂ ਆਪਣੀਆਂ **ਰਿਪੋਰਟਾਂ, ਦਵਾਈਆਂ ਦੇ ਸਮੇਂ ਜਾਂ ਖਾਣ-ਪੀਣ** ਬਾਰੇ ਆਸਾਨ ਪੰਜਾਬੀ ਵਿੱਚ ਪੁੱਛ ਸਕਦੇ ਹੋ। ਹੇਠਾਂ **ਮਾਈਕ 🎙️ ਦਬਾ ਕੇ ਬੋਲ ਵੀ ਸਕਦੇ ਹੋ!**`,
-        triageLevel: "routine",
-        timestamp: "ਹੁਣੇ"
-      };
-    } else if (currentLang === "ta") {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `வணக்கம் ${pName} 👋! நான் உங்கள் **AI Health Copilot**.
-
-உங்கள் உடல்நல விவரங்கள்:
-• **உடல்நிலை:** ${conditions}
-• **மருந்துகள்:** ${meds}
-• **ஒவ்வாமை (Allergies):** ${allergies}
-
-உங்கள் **பரிசோதனை முடிவுகள், மருந்து எடுத்துக்கொள்ளும் நேரம் அல்லது உணவுமுறை** பற்றி எளிய தமிழில் கேட்கலாம். கீழே உள்ள **மைக் 🎙️ அழுத்தி பேசலாம்!**`,
-        triageLevel: "routine",
-        timestamp: "இப்போது"
-      };
-    } else if (currentLang === "te") {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `నమస్కారం ${pName} గారు 👋! నేను మీ **AI Health Copilot**.
-
-మీ ఆరోగ్య వివరాలు:
-• **ఆరోగ్య పరిస్థితి:** ${conditions}
-• **మందులు:** ${meds}
-• **అలెర్జీలు:** ${allergies}
-
-మీ **ల్యాబ్ రిపోర్టులు, మందుల సమయం లేదా ఆహారం** గురించి సరళమైన తెలుగులో అడగవచ్చు. క్రింద ఉన్న **మైక్ 🎙️ నొక్కి మాట్లాడవచ్చు!**`,
-        triageLevel: "routine",
-        timestamp: "ఇప్పుడు"
-      };
-    } else if (currentLang === "gu") {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `નમસ્તે ${pName} જી 👋! હું તમારો **AI Health Copilot** છું.
-
-તમારી આરોગ્ય વિગતો:
-• **આરોગ્ય સ્થિતિ:** ${conditions}
-• **દવાઓ:** ${meds}
-• **એલર્જી:** ${allergies}
-
-તમે તમારા **લેબ રિપોર્ટ, દવાનો સમય કે આહાર** વિશે સરળ ગુજરાતીમાં પૂછી શકો છો. નીચે **માઇક 🎙️ દબાવીને બોલી શકો છો!**`,
-        triageLevel: "routine",
-        timestamp: "હમણાં"
-      };
-    } else if (currentLang === "kn") {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `ನಮಸ್ಕಾರ ${pName} ಅವರೇ 👋! ನಾನು ನಿಮ್ಮ **AI Health Copilot**.
-
-ನಿಮ್ಮ ಆರೋಗ್ಯ ವಿವರಗಳು:
-• **ಆರೋಗ್ಯ ಸ್ಥಿತಿ:** ${conditions}
-• **ಔಷಧಿಗಳು:** ${meds}
-• **ಅಲರ್ಜಿಗಳು:** ${allergies}
-
-ನಿಮ್ಮ **ಲ್ಯಾಬ್ ವರದಿಗಳು, ಔಷಧಿಗಳ ಸಮಯ ಅಥವಾ ಆಹಾರ** ಕುರಿತು ಸರಳ ಕನ್ನಡದಲ್ಲಿ ಕೇಳಬಹುದು. ಕೆಳಗಿನ **ಮೈಕ್ 🎙️ ಒತ್ತಿ ಮಾತನಾಡಬಹುದು!**`,
-        triageLevel: "routine",
-        timestamp: "ಈಗ"
-      };
-    } else {
-      return {
-        id: "m_welcome",
-        sender: "bot",
-        content: `Hello ${pName} 👋! I am your **AI Health Copilot**.
-
-I have your active health records ready:
-• **Conditions:** ${conditions}
-• **Medicines:** ${meds}
-• **Allergies:** ${allergies}
-
-You can ask me about **lab test results, sugar/BP readings, drug safety, or simple diet tips** in everyday plain language. Tap the **Mic 🎙️** to speak or type below!`,
-        triageLevel: "routine",
-        timestamp: "Just now"
-      };
-    }
-  }, []);
-
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -280,57 +121,50 @@ You can ask me about **lab test results, sugar/BP readings, drug safety, or simp
     const query = (customText || input).trim();
     if (!query || isLoading) return;
 
-    const userMessage = {
-      id: `u_${Date.now()}`,
-      sender: "user",
-      content: query,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setMessages((prev) => {
-      const newHistory = [...prev, userMessage];
-      setIsLoading(true);
-
-      sendChatMessage(newHistory, patient, lang, chatLang)
-        .then((result) => {
-          const botMessage = {
-            id: `b_${Date.now()}`,
-            sender: "bot",
-            content: result.text,
-            triageLevel: result.triageLevel,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          };
-          setMessages((current) => {
-            const finalMsgs = [...current, botMessage];
-            persistSession(finalMsgs, currentSessionId);
-            return finalMsgs;
-          });
-        })
-        .catch((err) => {
-          console.error(err);
-          setMessages((current) => [
-            ...current,
-            {
-              id: `b_err_${Date.now()}`,
-              sender: "bot",
-              content: chatLang === "hi" 
-                ? "अनुरोध प्रोसेस करने में समस्या आई। कृपया पुनः प्रयास करें।"
-                : (chatLang === "hinglish" ? "Thoda technical issue aaya. Kripya dobara poochiye." : "I encountered a momentary issue. Please try again or rephrase."),
-              triageLevel: "routine",
-              timestamp: "Now"
-            }
-          ]);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-
-      return newHistory;
-    });
-
     setInput("");
     setInterimTranscript("");
-  }, [input, isLoading, patient, lang, chatLang, currentSessionId, persistSession]);
+
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const userMessage = {
+      id: `u_${now.getTime()}`,
+      sender: "user",
+      content: query,
+      timestamp: timeStr
+    };
+
+    const newHistory = [...messages, userMessage];
+    setMessages(newHistory);
+    setIsLoading(true);
+
+    try {
+      const result = await sendChatMessage(newHistory, patient, lang, chatLang);
+      const botMessage = {
+        id: `b_${Date.now()}`,
+        sender: "bot",
+        content: result.text,
+        triageLevel: result.triageLevel,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      const finalMsgs = [...newHistory, botMessage];
+      setMessages(finalMsgs);
+      persistSession(finalMsgs, currentSessionId);
+    } catch (err) {
+      console.error(err);
+      setMessages([...newHistory, {
+        id: `b_err_${Date.now()}`,
+        sender: "bot",
+        content: chatLang === "hi" 
+          ? "अनुरोध प्रोसेस करने में समस्या आई। कृपया पुनः प्रयास करें।"
+          : (chatLang === "hinglish" ? "Thoda technical issue aaya. Kripya dobara poochiye." : "I encountered a momentary issue. Please try again or rephrase."),
+        triageLevel: "routine",
+        timestamp: "Now"
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [input, isLoading, messages, patient, lang, chatLang, currentSessionId, persistSession]);
 
   useEffect(() => {
     if (initialQuery) {
@@ -505,13 +339,13 @@ You can ask me about **lab test results, sugar/BP readings, drug safety, or simp
       const updated = existing.filter(s => s.id !== currentSessionId);
       localStorage.setItem("pulseai_copilot_sessions", JSON.stringify(updated));
       setSessions(updated);
-    } catch (_) {}
+    } catch {}
 
     // Reset conversation
     setMessages([]);
     setInput("");
     setInterimTranscript("");
-    setCurrentSessionId(`session_${Date.now()}`);
+    setCurrentSessionId(() => `session_${Date.now()}`);
     if (isSpeaking) {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
@@ -541,10 +375,10 @@ You can ask me about **lab test results, sugar/BP readings, drug safety, or simp
 
       if (sessionId === currentSessionId) {
         setMessages([]);
-        setCurrentSessionId(`session_${Date.now()}`);
+        setCurrentSessionId(() => `session_${Date.now()}`);
       }
       showNotification(chatLang === "hi" ? "सत्र हटाया गया" : "Session Removed");
-    } catch (_) {}
+    } catch {}
   };
 
   // ── CLEAR ALL HISTORY ───────────────────────────────────────────────────

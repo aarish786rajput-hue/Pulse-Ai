@@ -7,21 +7,16 @@ import {
   Flame,
   Moon,
   Battery,
-  BatteryCharging,
-  Wifi,
   RefreshCw,
   Bluetooth,
   CheckCircle2,
   AlertTriangle,
   Radio,
-  Sliders,
   Sparkles,
   MessageSquareHeart,
-  Smartphone,
   Check,
   X,
-  PhoneCall,
-  Info
+  PhoneCall
 } from "lucide-react";
 
 export default function DeviceManager({ patient, lang = "en", onAskCopilot, onUpdateVitals }) {
@@ -132,8 +127,6 @@ export default function DeviceManager({ patient, lang = "en", onAskCopilot, onUp
     let height = (canvas.height = canvas.offsetHeight || 130);
 
     let offset = 0;
-    const points = [];
-    const maxPoints = 200;
 
     const generateWaveValue = (x) => {
       const cycle = (x % 100);
@@ -466,8 +459,8 @@ export default function DeviceManager({ patient, lang = "en", onAskCopilot, onUp
                 </h1>
                 <p style={{ color: "var(--text-muted)", fontSize: "0.88rem", margin: "4px 0 0 0" }}>
                   {lang === "hi"
-                    ? "अपनी स्मार्ट वॉच को कनेक्ट करें और बीपी, पल्स व दिल की धड़कन का लाइव डेटा आसान भाषा में देखें।"
-                    : "Pair your smartwatch to monitor real-time Blood Pressure, Pulse, SpO2 & Heart Rate in simple, everyday language."}
+                    ? `${patient?.name ? patient.name + " के लिए " : ""}अपनी स्मार्ट वॉच को कनेक्ट करें और बीपी, पल्स व दिल की धड़कन का लाइव डेटा आसान भाषा में देखें।`
+                    : `Live telemetry for ${patient?.name || "Patient"} — pair your smartwatch to monitor real-time Blood Pressure, Pulse, SpO2 & Heart Rate.`}
                 </p>
               </div>
             </div>
@@ -1044,6 +1037,14 @@ export default function DeviceManager({ patient, lang = "en", onAskCopilot, onUp
                 ? "नीचे दी गई लोकप्रिय स्मार्ट वॉच में से चुनें या अपने कंप्यूटर/फोन के ब्लूटूथ से कनेक्ट करें:"
                 : "Select your smartwatch model from the verified list below or scan for nearby Bluetooth devices:"}
             </p>
+
+            {/* Connecting Feedback Banner */}
+            {isScanning && (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "10px", marginBottom: "12px", background: "var(--primary-soft)", borderRadius: "10px", color: "var(--primary)", fontWeight: 700, fontSize: "0.85rem" }}>
+                <RefreshCw size={15} className="spin" />
+                <span>{lang === "hi" ? "ब्लूटूथ डिवाइस से कनेक्ट हो रहा है..." : "Connecting & syncing device..."}</span>
+              </div>
+            )}
 
             {/* List of watches */}
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "320px", overflowY: "auto" }}>

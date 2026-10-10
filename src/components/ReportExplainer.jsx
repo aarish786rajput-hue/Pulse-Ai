@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { 
   FileText, 
   UploadCloud, 
@@ -79,15 +79,7 @@ export default function ReportExplainer({
     setTimeout(() => setToastMessage(""), 3500);
   };
 
-  // Process file passed from Dashboard quick upload
-  useEffect(() => {
-    if (pendingUploadFile) {
-      processUploadedFile(pendingUploadFile);
-      if (onClearPendingFile) onClearPendingFile();
-    }
-  }, [pendingUploadFile]);
-
-  const processUploadedFile = (file) => {
+  const processUploadedFile = useCallback((file) => {
     if (!file) return;
 
     setIsAnalyzing(true);
@@ -144,7 +136,18 @@ export default function ReportExplainer({
     };
 
     reader.readAsDataURL(file);
-  };
+  }, [lang, patient]);
+
+  // Process file passed from Dashboard quick upload
+  useEffect(() => {
+    if (pendingUploadFile) {
+      const timer = setTimeout(() => {
+        processUploadedFile(pendingUploadFile);
+        if (onClearPendingFile) onClearPendingFile();
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [pendingUploadFile, processUploadedFile, onClearPendingFile]);
 
   const handleDeleteReport = (idToDelete, e) => {
     if (e) {

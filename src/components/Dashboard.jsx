@@ -7,7 +7,6 @@ import {
   ShieldCheck, 
   Calendar, 
   Clock, 
-  FileText, 
   PlusCircle, 
   Stethoscope,
   HeartPulse,
@@ -17,7 +16,6 @@ import {
   Activity
 } from "lucide-react";
 import { translations } from "../data/translations";
-import { calculateAge } from "../utils/dateUtils";
 
 export default function Dashboard({
   patient,

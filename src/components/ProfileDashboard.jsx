@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import { 
   User, 
-  ShieldCheck, 
   ShieldAlert, 
   Activity, 
   Scale, 
