@@ -326,7 +326,7 @@ STRICT SIMPLICITY INSTRUCTIONS (MANDATORY):
 4. If the user gives a greeting (e.g. "hi", "hello", "namaste"), reply with a warm, friendly 1-sentence greeting.
 5. In severe emergencies (chest pain, stroke signs, difficulty breathing), immediately advise urgent hospital emergency care.`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -585,7 +585,7 @@ Extract the laboratory test results and output a single strictly valid JSON obje
 
 CRITICAL: Return ONLY raw valid JSON without markdown fences (no \`\`\`json or \`\`\`).`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
