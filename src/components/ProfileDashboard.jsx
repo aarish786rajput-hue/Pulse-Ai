@@ -18,9 +18,12 @@ import {
   Trash2,
   Calendar,
   CreditCard,
-  Flame
+  Flame,
+  MapPin,
+  Navigation
 } from "lucide-react";
 import { calculateAge } from "../utils/dateUtils";
+import { getLiveGpsAddress } from "../utils/geolocation";
 
 export default function ProfileDashboard({ 
   patient, 
@@ -52,12 +55,43 @@ export default function ProfileDashboard({
   const [formHeight, setFormHeight] = useState(patient.heightCm || 170);
   const [formWeight, setFormWeight] = useState(patient.weightKg || 70);
   const [formBloodGroup, setFormBloodGroup] = useState(patient.bloodGroup || "O+");
+  const [formAddress, setFormAddress] = useState(patient.address || "Flat 402, Green Valley Apts, Sector 14, Gurugram, Haryana - 122001");
+  const [isGpsLoading, setIsGpsLoading] = useState(false);
+  const [gpsStatusMsg, setGpsStatusMsg] = useState("");
   const [formEmergencyName, setFormEmergencyName] = useState(patient.emergencyContact?.name || "");
   const [formEmergencyPhone, setFormEmergencyPhone] = useState(patient.emergencyContact?.phone || "");
   const [formEmergencyRelation, setFormEmergencyRelation] = useState(patient.emergencyContact?.relation || "");
   const [formPhysicianName, setFormPhysicianName] = useState(patient.primaryPhysician?.name || "");
   const [formPhysicianPhone, setFormPhysicianPhone] = useState(patient.primaryPhysician?.phone || "");
   const [formDiet, setFormDiet] = useState(patient.lifestyle?.dietType || "");
+
+  // Detect Live GPS Address
+  const handleDetectLiveGps = async () => {
+    setIsGpsLoading(true);
+    setGpsStatusMsg(lang === "hi" ? "📡 उपग्रह GPS से सटीक पता खोजा जा रहा है..." : "📡 Acquiring satellite GPS location & address...");
+    try {
+      const res = await getLiveGpsAddress();
+      const addr = res?.address || res?.formattedAddress;
+      if (addr) {
+        setFormAddress(addr);
+        setGpsStatusMsg(
+          lang === "hi" 
+            ? `✅ GPS से पता प्राप्त हुआ (सटीकता: ±${res.accuracy || 15}m)` 
+            : `✅ Live GPS address synced (Accuracy: ±${res.accuracy || 15}m)`
+        );
+      }
+    } catch (err) {
+      console.warn("GPS detection error in ProfileDashboard:", err);
+      setGpsStatusMsg(
+        lang === "hi" 
+          ? `⚠️ GPS त्रुटि: ${err.message || "स्थान प्राप्त नहीं हो सका"}` 
+          : `⚠️ GPS Notice: ${err.message || "Could not fetch location"}`
+      );
+    } finally {
+      setIsGpsLoading(false);
+      setTimeout(() => setGpsStatusMsg(""), 6000);
+    }
+  };
 
   // Initialize and open edit modal
   const startEditing = () => {
@@ -69,6 +103,8 @@ export default function ProfileDashboard({
     setFormHeight(patient.heightCm || 170);
     setFormWeight(patient.weightKg || 70);
     setFormBloodGroup(patient.bloodGroup || "O+");
+    setFormAddress(patient.address || "Flat 402, Green Valley Apts, Sector 14, Gurugram, Haryana - 122001");
+    setGpsStatusMsg("");
     setFormEmergencyName(patient.emergencyContact?.name || "");
     setFormEmergencyPhone(patient.emergencyContact?.phone || "");
     setFormEmergencyRelation(patient.emergencyContact?.relation || "");
@@ -183,6 +219,7 @@ export default function ProfileDashboard({
       weightKg: weightVal,
       bmi: newBmi,
       bloodGroup: formBloodGroup,
+      address: formAddress,
       emergencyContact: {
         ...patient.emergencyContact,
         name: formEmergencyName,
@@ -453,6 +490,25 @@ export default function ProfileDashboard({
                   </div>
                 </div>
               )}
+
+              {/* Row 4: Residential Address Badge */}
+              <div style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                background: "var(--bg-elevated)",
+                border: "1px solid var(--border-color)",
+                borderRadius: "10px",
+                padding: "6px 14px",
+                fontSize: "0.84rem",
+                color: "var(--text-main)",
+                maxWidth: "680px"
+              }}>
+                <MapPin size={14} color="var(--primary)" style={{ flexShrink: 0 }} />
+                <span style={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {patient.address || (lang === "hi" ? "आवासीय पता दर्ज नहीं है" : "No address specified")}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -913,6 +969,24 @@ export default function ProfileDashboard({
                 <Phone size={14} /> {lang === "hi" ? "क्लिनिक" : "Clinic"}
               </a>
             </div>
+
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              background: "var(--bg-elevated)",
+              padding: "12px 14px",
+              borderRadius: "10px",
+              border: "1px solid var(--border-color)"
+            }}>
+              <div style={{ width: "100%" }}>
+                <div style={{ fontSize: "0.74rem", color: "var(--text-muted)", fontWeight: 700 }}>{lang === "hi" ? "आवासीय पता" : "RESIDENTIAL ADDRESS"}</div>
+                <div style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--text-highlight)", marginTop: "4px", display: "flex", alignItems: "flex-start", gap: "8px" }}>
+                  <MapPin size={15} color="var(--primary)" style={{ flexShrink: 0, marginTop: "2px" }} />
+                  <span>{patient.address || "Flat 402, Green Valley Apts, Sector 14, Gurugram, Haryana - 122001"}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -932,6 +1006,62 @@ export default function ProfileDashboard({
               <div>
                 <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 700 }}>{lang === "hi" ? "पूरा नाम" : "Full Name"}</label>
                 <input type="text" value={formName} onChange={(e) => setFormName(e.target.value)} required />
+              </div>
+
+              {/* Residential Address with Live Satellite GPS Auto-Fill */}
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                  <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 700, display: "flex", alignItems: "center", gap: "6px" }}>
+                    <MapPin size={14} color="var(--primary)" />
+                    {lang === "hi" ? "आवासीय पता (Residential Address)" : "Residential Address"}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleDetectLiveGps}
+                    disabled={isGpsLoading}
+                    style={{
+                      background: "rgba(16, 185, 129, 0.12)",
+                      border: "1px solid rgba(16, 185, 129, 0.35)",
+                      color: "#10b981",
+                      borderRadius: "6px",
+                      padding: "4px 10px",
+                      fontSize: "0.76rem",
+                      fontWeight: 700,
+                      cursor: isGpsLoading ? "not-allowed" : "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      transition: "all 0.2s ease"
+                    }}
+                    title="Automatically fill address using real-time device GPS"
+                  >
+                    <Navigation size={12} className={isGpsLoading ? "spin" : ""} />
+                    {isGpsLoading 
+                      ? (lang === "hi" ? "GPS खोज रहा है..." : "Locating GPS...") 
+                      : (lang === "hi" ? "📡 लाइव GPS ऑटो-फिल" : "📡 Live GPS Auto-Fill")}
+                  </button>
+                </div>
+                <textarea
+                  rows={2}
+                  value={formAddress}
+                  onChange={(e) => setFormAddress(e.target.value)}
+                  placeholder={lang === "hi" ? "मकान नं, सड़क, क्षेत्र, शहर, पिन कोड..." : "Flat/House No, Street, Landmark, City, State - Pincode..."}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid var(--border-color)",
+                    background: "var(--bg-elevated)",
+                    color: "var(--text-main)",
+                    fontSize: "0.88rem",
+                    resize: "vertical"
+                  }}
+                />
+                {gpsStatusMsg && (
+                  <div style={{ fontSize: "0.75rem", marginTop: "4px", color: gpsStatusMsg.startsWith("✅") ? "var(--status-good-text)" : "var(--primary)", fontWeight: 600 }}>
+                    {gpsStatusMsg}
+                  </div>
+                )}
               </div>
 
               {/* DOB & Auto-Computed Age Fields */}

@@ -418,6 +418,7 @@ export default function App() {
           isOpen={isHealthPassportOpen}
           onClose={() => setIsHealthPassportOpen(false)}
           patient={currentPatient}
+          onUpdatePatient={updateCurrentPatient}
           lang={lang}
         />
         <ApiKeyModal

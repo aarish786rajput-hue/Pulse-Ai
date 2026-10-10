@@ -16,15 +16,20 @@ import {
   Heart,
   FileText,
   ExternalLink,
-  Maximize2
+  Maximize2,
+  MapPin,
+  Navigation,
+  Edit3
 } from "lucide-react";
 import { calculateAge } from "../utils/dateUtils";
 import { generatePatientReports } from "../data/sampleReports";
+import { getLiveGpsAddress } from "../utils/geolocation";
 
 export default function DoctorHealthPassportModal({
   isOpen,
   onClose,
   patient,
+  onUpdatePatient,
   lang = "en"
 }) {
   const [includeDemographics, setIncludeDemographics] = useState(true);
@@ -49,10 +54,80 @@ export default function DoctorHealthPassportModal({
     return `PHP-2026-${rawId}-8842`;
   });
 
+  // ── Address State & Live Satellite GPS Auto-Detection ─────────────────────
+  const [currentAddress, setCurrentAddress] = useState(
+    patient?.address || "Sector 62, Noida, Uttar Pradesh, India"
+  );
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [addressInput, setAddressInput] = useState(
+    patient?.address || "Sector 62, Noida, Uttar Pradesh, India"
+  );
+  const [isGpsLoading, setIsGpsLoading] = useState(false);
+  const [gpsStatusMsg, setGpsStatusMsg] = useState("");
+
+  const [prevAddressProp, setPrevAddressProp] = useState(patient?.address);
+  if (patient?.address !== prevAddressProp) {
+    setPrevAddressProp(patient?.address);
+    if (patient?.address) {
+      setCurrentAddress(patient.address);
+      setAddressInput(patient.address);
+    }
+  }
+
+  // Live GPS Fetch Handler
+  const handleDetectLiveGps = async () => {
+    setIsGpsLoading(true);
+    setGpsStatusMsg(
+      lang === "hi"
+        ? "🛰️ लाइव सैटेलाइट GPS खोजा जा रहा है..."
+        : "🛰️ Acquiring live satellite GPS location..."
+    );
+
+    try {
+      const result = await getLiveGpsAddress();
+      if (result && result.address) {
+        setAddressInput(result.address);
+        setCurrentAddress(result.address);
+        if (onUpdatePatient) {
+          onUpdatePatient({ address: result.address });
+        }
+        setGpsStatusMsg(
+          lang === "hi"
+            ? `✅ लाइव GPS से पता प्राप्त हुआ! (सटीकता ±${result.accuracy}m)`
+            : `✅ Live GPS address acquired! (Accuracy ±${result.accuracy}m)`
+        );
+      }
+    } catch (err) {
+      setGpsStatusMsg(
+        lang === "hi"
+          ? `⚠️ GPS त्रुटि: ${err.message || "लोकेशन नहीं मिल सकी"}`
+          : `⚠️ GPS Error: ${err.message || "Failed to acquire location"}`
+      );
+    } finally {
+      setIsGpsLoading(false);
+      setTimeout(() => setGpsStatusMsg(""), 5000);
+    }
+  };
+
+  // Save manual/updated address
+  const handleSaveAddress = () => {
+    if (!addressInput.trim()) return;
+    const trimmed = addressInput.trim();
+    setCurrentAddress(trimmed);
+    if (onUpdatePatient) {
+      onUpdatePatient({ address: trimmed });
+    }
+    setIsEditingAddress(false);
+    setGpsStatusMsg(
+      lang === "hi" ? "✅ पता सुरक्षित कर लिया गया।" : "✅ Address saved."
+    );
+    setTimeout(() => setGpsStatusMsg(""), 3500);
+  };
+
   // 3 Targeted body-pathway & blood reports dynamically bound to current patient's essential data
   const pathwayReports = useMemo(() => {
-    return generatePatientReports(patient);
-  }, [patient]);
+    return generatePatientReports({ ...patient, address: currentAddress });
+  }, [patient, currentAddress]);
 
   const [selectedReportIndex, setSelectedReportIndex] = useState(0);
   const [fullDetailReport, setFullDetailReport] = useState(null);
@@ -517,11 +592,170 @@ Generated via PulseAI ABDM Health Platform`;
                     </strong>
                   </div>
 
-                  <div>
-                    <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Residential Address</span>
-                    <span style={{ color: "#0f172a", fontSize: "12px" }}>
-                      {patient?.address || "Sector 62, Noida, Uttar Pradesh, India"}
-                    </span>
+                  <div style={{ gridColumn: "span 2" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                      <span style={{ color: "#64748b", fontSize: "11px", display: "flex", alignItems: "center", gap: "4px" }}>
+                        <MapPin size={13} color="#0284c7" />
+                        <strong>RESIDENTIAL ADDRESS (निवास पता)</strong>
+                      </span>
+
+                      <div className="no-print" style={{ display: "flex", gap: "6px" }}>
+                        <button
+                          type="button"
+                          onClick={handleDetectLiveGps}
+                          disabled={isGpsLoading}
+                          style={{
+                            background: isGpsLoading ? "#e2e8f0" : "#0284c7",
+                            color: "#ffffff",
+                            border: "none",
+                            borderRadius: "6px",
+                            padding: "3px 9px",
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "5px",
+                            cursor: isGpsLoading ? "not-allowed" : "pointer",
+                            transition: "all 0.15s ease",
+                            boxShadow: "0 1px 3px rgba(2, 132, 199, 0.2)"
+                          }}
+                          title="Click to automatically fill address using device live GPS location"
+                        >
+                          <Navigation size={12} />
+                          <span>{isGpsLoading ? (lang === "hi" ? "GPS खोज रहा है..." : "Locating GPS...") : (lang === "hi" ? "📡 लाइव GPS से भरें" : "📡 Live GPS Auto-Fill")}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAddressInput(currentAddress);
+                            setIsEditingAddress(!isEditingAddress);
+                          }}
+                          style={{
+                            background: "#f1f5f9",
+                            color: "#0f172a",
+                            border: "1px solid #cbd5e1",
+                            borderRadius: "6px",
+                            padding: "3px 8px",
+                            fontSize: "11px",
+                            fontWeight: 600,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px",
+                            cursor: "pointer"
+                          }}
+                        >
+                          <Edit3 size={11} />
+                          <span>{isEditingAddress ? (lang === "hi" ? "बंद करें" : "Cancel") : (lang === "hi" ? "बदलें / जोड़ें" : "Edit / Add")}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Current Address Display */}
+                    {!isEditingAddress ? (
+                      <div style={{ color: "#0f172a", fontSize: "12.5px", fontWeight: 600, background: "#ffffff", padding: "6px 10px", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
+                        {currentAddress}
+                      </div>
+                    ) : (
+                      /* Address Input Section with Live GPS Auto-Fill Controls */
+                      <div className="no-print" style={{ background: "#ffffff", border: "1.5px solid #0284c7", borderRadius: "8px", padding: "10px", marginTop: "4px" }}>
+                        <textarea
+                          rows={2}
+                          value={addressInput}
+                          onChange={(e) => setAddressInput(e.target.value)}
+                          placeholder={lang === "hi" ? "पूरा पता दर्ज करें (मकान/फ्लैट नं., क्षेत्र, शहर, राज्य, पिनकोड) या लाइव GPS बटन दबाएं..." : "Enter full address (Flat/Street, City, State, Pincode) or click Live GPS button..."}
+                          style={{
+                            width: "100%",
+                            padding: "8px",
+                            borderRadius: "6px",
+                            border: "1px solid #cbd5e1",
+                            fontSize: "12px",
+                            resize: "vertical",
+                            outline: "none",
+                            fontFamily: "inherit",
+                            boxSizing: "border-box"
+                          }}
+                        />
+
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px", flexWrap: "wrap", gap: "8px" }}>
+                          <button
+                            type="button"
+                            onClick={handleDetectLiveGps}
+                            disabled={isGpsLoading}
+                            style={{
+                              background: "#f0f9ff",
+                              color: "#0369a1",
+                              border: "1px solid #bae6fd",
+                              borderRadius: "6px",
+                              padding: "4px 10px",
+                              fontSize: "11px",
+                              fontWeight: 700,
+                              cursor: isGpsLoading ? "not-allowed" : "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "5px"
+                            }}
+                          >
+                            <Navigation size={12} />
+                            <span>{lang === "hi" ? "📡 लाइव GPS से ऑटो-डिटेक्ट करें" : "📡 Auto-Detect with Live GPS"}</span>
+                          </button>
+
+                          <div style={{ display: "flex", gap: "6px" }}>
+                            <button
+                              type="button"
+                              onClick={() => setIsEditingAddress(false)}
+                              style={{
+                                background: "#f8fafc",
+                                border: "1px solid #cbd5e1",
+                                borderRadius: "6px",
+                                padding: "4px 10px",
+                                fontSize: "11px",
+                                cursor: "pointer"
+                              }}
+                            >
+                              {lang === "hi" ? "रद्द करें" : "Cancel"}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={handleSaveAddress}
+                              style={{
+                                background: "#10b981",
+                                color: "#ffffff",
+                                border: "none",
+                                borderRadius: "6px",
+                                padding: "4px 14px",
+                                fontSize: "11.5px",
+                                fontWeight: 800,
+                                cursor: "pointer",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "4px"
+                              }}
+                            >
+                              <Check size={13} />
+                              <span>{lang === "hi" ? "पता सुरक्षित करें" : "Save Address"}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* GPS Status Message Toast/Badge */}
+                    {gpsStatusMsg && (
+                      <div style={{
+                        marginTop: "5px",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        padding: "3px 8px",
+                        borderRadius: "5px",
+                        background: gpsStatusMsg.includes("⚠️") ? "#fef2f2" : "#ecfdf5",
+                        color: gpsStatusMsg.includes("⚠️") ? "#dc2626" : "#059669",
+                        border: gpsStatusMsg.includes("⚠️") ? "1px solid #fecaca" : "1px solid #a7f3d0"
+                      }}>
+                        {gpsStatusMsg}
+                      </div>
+                    )}
                   </div>
 
                   <div>
