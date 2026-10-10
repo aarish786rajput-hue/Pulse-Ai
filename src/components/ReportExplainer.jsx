@@ -8,7 +8,10 @@ import {
   X, 
   FileCheck2, 
   Camera,
-  HelpCircle
+  HelpCircle,
+  ChevronDown,
+  Trash2,
+  Check
 } from "lucide-react";
 import { sampleReports } from "../data/sampleReports";
 import { analyzeReportFile } from "../services/geminiService";
@@ -20,17 +23,57 @@ export default function ReportExplainer({
   pendingUploadFile,
   onClearPendingFile
 }) {
-  const [reports, setReports] = useState(sampleReports);
-  const [selectedReportId, setSelectedReportId] = useState(sampleReports[0].id);
+  const [reports, setReports] = useState(() => {
+    try {
+      const saved = localStorage.getItem("pulseai_user_reports");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error("Failed to load reports from storage", e);
+    }
+    return sampleReports;
+  });
+
+  const [selectedReportId, setSelectedReportId] = useState(() => {
+    try {
+      const saved = localStorage.getItem("pulseai_user_reports");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed[0].id;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return sampleReports[0]?.id || "";
+  });
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [scanningPhase, setScanningPhase] = useState(1);
   const [isDragOver, setIsDragOver] = useState(false);
   const [showDocPreviewModal, setShowDocPreviewModal] = useState(false);
+  
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+  const dropdownRef = useRef(null);
 
-  const activeReport = reports.find(r => r.id === selectedReportId) || reports[0];
+  const activeReport = reports.find(r => r.id === selectedReportId) || reports[0] || null;
+
+  // Auto-close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (pendingUploadFile) {
@@ -67,7 +110,15 @@ export default function ReportExplainer({
 
         clearTimeout(phaseTimer1);
         clearTimeout(phaseTimer2);
-        setReports((prev) => [analyzed, ...prev]);
+        setReports((prev) => {
+          const updated = [analyzed, ...prev];
+          try {
+            localStorage.setItem("pulseai_user_reports", JSON.stringify(updated));
+          } catch (e) {
+            console.error(e);
+          }
+          return updated;
+        });
         setSelectedReportId(analyzed.id);
       } catch (err) {
         console.error("Report processing error:", err);
@@ -77,6 +128,44 @@ export default function ReportExplainer({
     };
 
     reader.readAsDataURL(file);
+  };
+
+  const handleDeleteReport = (idToDelete, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const reportToDelete = reports.find(r => r.id === idToDelete);
+    const confirmMsg = lang === "hi" 
+      ? `क्या आप "${reportToDelete?.title || 'यह रिपोर्ट'}" को हटाना चाहते हैं?` 
+      : `Are you sure you want to delete "${reportToDelete?.title || 'this report'}"?`;
+    
+    if (window.confirm(confirmMsg)) {
+      const updated = reports.filter(r => r.id !== idToDelete);
+      setReports(updated);
+      try {
+        localStorage.setItem("pulseai_user_reports", JSON.stringify(updated));
+      } catch (err) {
+        console.error(err);
+      }
+      if (selectedReportId === idToDelete) {
+        if (updated.length > 0) {
+          setSelectedReportId(updated[0].id);
+        } else {
+          setSelectedReportId(null);
+        }
+      }
+    }
+  };
+
+  const handleRestoreSamples = () => {
+    setReports(sampleReports);
+    setSelectedReportId(sampleReports[0].id);
+    try {
+      localStorage.setItem("pulseai_user_reports", JSON.stringify(sampleReports));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -101,10 +190,10 @@ export default function ReportExplainer({
     if (file) processUploadedFile(file);
   };
 
-  const filteredParams = activeReport.parameters.filter(p => 
+  const filteredParams = activeReport?.parameters ? activeReport.parameters.filter(p => 
     p.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
     p.plainExplanation.toLowerCase().includes(searchFilter.toLowerCase())
-  );
+  ) : [];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
@@ -243,44 +332,220 @@ export default function ReportExplainer({
         )}
       </div>
 
-      {/* Report Selector Tabs */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-          <span style={{ fontSize: "0.84rem", fontWeight: 700, color: "var(--text-muted)" }}>
-            {lang === "hi" ? "मेडिकल रिपोर्ट चुनें:" : "Select Medical Report:"}
-          </span>
-          {reports.map((r) => (
+      {/* Report Selector Dropdown Section */}
+      <div 
+        ref={dropdownRef} 
+        style={{ 
+          display: "flex", 
+          justifyContent: "space-between", 
+          alignItems: "center", 
+          gap: "12px", 
+          flexWrap: "wrap",
+          position: "relative"
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", position: "relative" }}>
+          <label style={{ fontSize: "0.88rem", fontWeight: 700, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "6px" }}>
+            <FileText size={16} color="var(--primary)" />
+            <span>{lang === "hi" ? "मेडिकल रिपोर्ट चुनें:" : "Select Medical Report:"}</span>
+          </label>
+
+          {/* Interactive Custom Dropdown Menu Trigger */}
+          <div style={{ position: "relative" }}>
             <button
-              key={r.id}
-              onClick={() => setSelectedReportId(r.id)}
+              type="button"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="btn"
               style={{
-                padding: "8px 16px",
-                fontSize: "0.86rem",
-                background: selectedReportId === r.id ? "linear-gradient(135deg, var(--primary), var(--primary-dark))" : "var(--bg-elevated)",
-                border: selectedReportId === r.id ? "none" : "1px solid var(--border-color)",
-                color: selectedReportId === r.id ? "#ffffff" : "var(--text-muted)",
-                borderRadius: "10px",
-                fontWeight: selectedReportId === r.id ? 700 : 500
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "10px",
+                padding: "10px 16px",
+                fontSize: "0.9rem",
+                fontWeight: 600,
+                background: "var(--bg-card)",
+                border: "1.5px solid var(--border-color)",
+                borderRadius: "12px",
+                color: "var(--text-main)",
+                boxShadow: "var(--shadow-sm)",
+                cursor: "pointer",
+                minWidth: "260px",
+                maxWidth: "380px",
+                justifyContent: "space-between"
               }}
             >
-              <FileText size={15} />
-              <span>{r.title}</span>
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "left" }}>
+                {activeReport ? activeReport.title : (lang === "hi" ? "कोई रिपोर्ट नहीं" : "No Report Selected")}
+              </span>
+              <ChevronDown 
+                size={16} 
+                color="var(--text-muted)" 
+                style={{ 
+                  flexShrink: 0, 
+                  transition: "transform 0.2s ease", 
+                  transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" 
+                }} 
+              />
             </button>
-          ))}
+
+            {/* Dropdown Options Popup */}
+            {isDropdownOpen && (
+              <div 
+                style={{
+                  position: "absolute",
+                  top: "calc(100% + 6px)",
+                  left: 0,
+                  minWidth: "320px",
+                  maxWidth: "420px",
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "14px",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.18)",
+                  padding: "6px",
+                  zIndex: 999,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "4px",
+                  maxHeight: "340px",
+                  overflowY: "auto"
+                }}
+              >
+                {reports.length === 0 ? (
+                  <div style={{ padding: "16px", textAlign: "center", color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                    {lang === "hi" ? "कोई रिपोर्ट मौजूद नहीं है" : "No reports available"}
+                  </div>
+                ) : (
+                  reports.map((r) => {
+                    const isSelected = selectedReportId === r.id;
+                    return (
+                      <div
+                        key={r.id}
+                        onClick={() => {
+                          setSelectedReportId(r.id);
+                          setIsDropdownOpen(false);
+                        }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: "10px",
+                          padding: "10px 12px",
+                          borderRadius: "10px",
+                          background: isSelected ? "var(--primary-soft)" : "transparent",
+                          cursor: "pointer",
+                          transition: "background 0.15s ease"
+                        }}
+                        className={!isSelected ? "dropdown-hover-item" : ""}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0, flex: 1 }}>
+                          {isSelected ? (
+                            <Check size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
+                          ) : (
+                            <FileText size={16} color="var(--text-dim)" style={{ flexShrink: 0 }} />
+                          )}
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <div style={{ 
+                              fontSize: "0.88rem", 
+                              fontWeight: isSelected ? 700 : 500, 
+                              color: isSelected ? "var(--primary)" : "var(--text-main)",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap"
+                            }}>
+                              {r.title}
+                            </div>
+                            <div style={{ fontSize: "0.74rem", color: "var(--text-muted)", marginTop: "2px" }}>
+                              {r.date} {r.lab ? `• ${r.lab}` : ""}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Delete Single Report Button */}
+                        <button
+                          type="button"
+                          onClick={(e) => handleDeleteReport(r.id, e)}
+                          title={lang === "hi" ? "यह रिपोर्ट हटाएं" : "Delete this report"}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            padding: "6px",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "var(--text-muted)",
+                            transition: "all 0.15s ease",
+                            flexShrink: 0
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = "#ef4444";
+                            e.currentTarget.style.background = "rgba(239, 68, 68, 0.12)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = "var(--text-muted)";
+                            e.currentTarget.style.background = "transparent";
+                          }}
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        {activeReport?.previewUrl && (
-          <button
-            type="button"
-            onClick={() => setShowDocPreviewModal(true)}
-            className="btn btn-secondary"
-            style={{ fontSize: "0.84rem", display: "inline-flex", alignItems: "center", gap: "6px", height: "34px", padding: "0 12px", borderRadius: "8px" }}
-          >
-            <Eye size={14} color="var(--primary)" />
-            <span>{lang === "hi" ? "मूल दस्तावेज़ देखें" : "View Scanned Document"}</span>
-          </button>
-        )}
+        {/* Action Controls for Selected Report (Delete & View Original) */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+          {activeReport && (
+            <button
+              type="button"
+              onClick={(e) => handleDeleteReport(activeReport.id, e)}
+              className="btn btn-secondary"
+              style={{
+                height: "40px",
+                padding: "0 14px",
+                fontSize: "0.85rem",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                color: "#ef4444",
+                borderColor: "rgba(239, 68, 68, 0.35)",
+                borderRadius: "10px"
+              }}
+              title={lang === "hi" ? "सक्रिय रिपोर्ट हटाएं" : "Delete active report"}
+            >
+              <Trash2 size={15} color="#ef4444" />
+              <span>{lang === "hi" ? "रिपोर्ट हटाएं" : "Delete Report"}</span>
+            </button>
+          )}
+
+          {activeReport?.previewUrl && (
+            <button
+              type="button"
+              onClick={() => setShowDocPreviewModal(true)}
+              className="btn btn-secondary"
+              style={{ fontSize: "0.84rem", display: "inline-flex", alignItems: "center", gap: "6px", height: "40px", padding: "0 14px", borderRadius: "10px" }}
+            >
+              <Eye size={15} color="var(--primary)" />
+              <span>{lang === "hi" ? "मूल दस्तावेज़" : "View Original"}</span>
+            </button>
+          )}
+
+          {reports.length === 0 && (
+            <button
+              type="button"
+              onClick={handleRestoreSamples}
+              className="btn btn-primary"
+              style={{ height: "40px", padding: "0 14px", fontSize: "0.85rem", borderRadius: "10px" }}
+            >
+              {lang === "hi" ? "डिफ़ॉल्ट रिपोर्ट रीसेट करें" : "Restore Sample Reports"}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Filter / Search Bar */}
@@ -299,7 +564,25 @@ export default function ReportExplainer({
 
       {/* Biomarker Parameters Breakdown */}
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        {filteredParams.map((param, index) => {
+        {reports.length === 0 ? (
+          <div className="glass-panel" style={{ padding: "40px 20px", textAlign: "center", borderRadius: "14px" }}>
+            <FileText size={40} color="var(--primary)" style={{ opacity: 0.6, marginBottom: "12px" }} />
+            <h3 style={{ fontSize: "1.1rem", fontWeight: 700 }}>
+              {lang === "hi" ? "कोई रिपोर्ट मौजूद नहीं है" : "No Reports Available"}
+            </h3>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.86rem", marginTop: "4px" }}>
+              {lang === "hi" ? "कृपया ऊपर दिए गए बटन से नई रिपोर्ट अपलोड करें या डिफ़ॉल्ट रीसेट करें।" : "Upload a new report using the button above or restore default sample reports."}
+            </p>
+            <button onClick={handleRestoreSamples} className="btn btn-primary" style={{ marginTop: "14px" }}>
+              {lang === "hi" ? "डिफ़ॉल्ट रिपोर्ट रीसेट करें" : "Restore Sample Reports"}
+            </button>
+          </div>
+        ) : filteredParams.length === 0 ? (
+          <div className="glass-panel" style={{ padding: "30px 20px", textAlign: "center", borderRadius: "14px", color: "var(--text-muted)" }}>
+            {lang === "hi" ? "खोजे गए पैरामीटर से कोई टेस्ट नहीं मिला।" : "No parameters match your search filter."}
+          </div>
+        ) : (
+          filteredParams.map((param, index) => {
           const isAttention = param.status === "attention";
           const isBorderline = param.status === "borderline";
 
@@ -393,11 +676,11 @@ export default function ReportExplainer({
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
 
       {/* Doctor Consultation Questions Card */}
-      {activeReport.doctorQuestions && (
+      {activeReport?.doctorQuestions && (
         <div className="glass-panel" style={{
           padding: "22px 26px",
           background: "linear-gradient(135deg, var(--secondary-soft), var(--bg-card))",
@@ -428,7 +711,7 @@ export default function ReportExplainer({
       )}
 
       {/* Scanned Document Preview Modal */}
-      {showDocPreviewModal && activeReport.previewUrl && (
+      {showDocPreviewModal && activeReport?.previewUrl && (
         <div className="modal-overlay" onClick={() => setShowDocPreviewModal(false)}>
           <div 
             className="modal-content" 
@@ -447,7 +730,7 @@ export default function ReportExplainer({
                 <h3 style={{ fontSize: "1.1rem", fontWeight: 800 }}>
                   {lang === "hi" ? "मूल स्कैन किया गया दस्तावेज़" : "Scanned Medical Report Source"}
                 </h3>
-                <span className="badge badge-primary">{activeReport.fileName || "Document"}</span>
+                <span className="badge badge-primary">{activeReport?.fileName || "Document"}</span>
               </div>
               <button 
                 onClick={() => setShowDocPreviewModal(false)}
