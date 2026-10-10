@@ -7,6 +7,7 @@ import SymptomChecker from './components/SymptomChecker';
 import ProfileDashboard from './components/ProfileDashboard';
 import ChatCopilot from './components/ChatCopilot';
 import ReportExplainer from './components/ReportExplainer';
+import DischargeSummary from './components/DischargeSummary';
 import MedicineTracker from './components/MedicineTracker';
 import VitalsTracker from './components/VitalsTracker';
 import HealthTimeline from './components/HealthTimeline';
@@ -260,6 +261,13 @@ export default function App() {
                 onAskCopilot={(q) => handleNavigate('copilot', q)}
                 pendingUploadFile={pendingUploadFile}
                 onClearPendingFile={() => setPendingUploadFile(null)}
+              />
+            )}
+            {activeTab === 'discharge' && (
+              <DischargeSummary
+                patient={currentPatient}
+                lang={lang}
+                onAskCopilot={(q) => handleNavigate('copilot', q)}
               />
             )}
             {activeTab === 'medications' && (

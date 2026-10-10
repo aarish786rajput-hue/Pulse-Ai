@@ -3,6 +3,7 @@ import BrandLogo from "./BrandLogo";
 import { 
   Home,
   FileText, 
+  ClipboardCheck,
   Pill, 
   TrendingUp, 
   History, 
@@ -39,6 +40,7 @@ export default function Sidebar({
     { id: "doctors", label: t.navDoctors, icon: BriefcaseMedical },
     { id: "profile", label: t.navProfile, icon: UserCheck },
     { id: "reports", label: t.navReports, icon: FileText },
+    { id: "discharge", label: lang === "hi" ? "डिस्चार्ज सारांश" : (t.navDischarge || "Discharge Summary"), icon: ClipboardCheck },
     { id: "medications", label: t.navMedications, icon: Pill },
     { id: "vitals", label: t.navVitals, icon: TrendingUp },
     { id: "timeline", label: t.navTimeline, icon: History }
