@@ -16,6 +16,7 @@ import DoctorPrepModal from './components/DoctorPrepModal';
 import ApiKeyModal from './components/ApiKeyModal';
 import AuthModal from './components/AuthModal';
 import DoctorsDashboard from './components/DoctorsDashboard';
+import DeviceManager from './components/DeviceManager';
 import FloatingCopilot from './components/FloatingCopilot';
 import { mockPatients } from './data/mockPatientData';
 import { calculateAge } from './utils/dateUtils';
@@ -276,6 +277,14 @@ export default function App() {
                 lang={lang}
                 onToggleMedication={handleToggleMedication}
                 onAddMedication={handleAddMedication}
+              />
+            )}
+            {activeTab === 'devices' && (
+              <DeviceManager
+                patient={currentPatient}
+                lang={lang}
+                onAskCopilot={(q) => handleNavigate('copilot', q)}
+                onUpdateVitals={handleAddVital}
               />
             )}
             {activeTab === 'vitals' && (
