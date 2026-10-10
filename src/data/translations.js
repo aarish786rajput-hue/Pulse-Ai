@@ -18,7 +18,7 @@ const rawTranslations = {
     navCopilot: "AI Copilot",
     navCopilotDesc: "Symptom Q&A & Voice",
     navReports: "Lab Reports",
-    navReportsDesc: "Jargon Buster & Tests",
+    navReportsDesc: "Tests & Biomarkers",
     navMedications: "Medications",
     navMedicationsDesc: "Pills & Conflict Check",
     navVitals: "Vitals & Trends",

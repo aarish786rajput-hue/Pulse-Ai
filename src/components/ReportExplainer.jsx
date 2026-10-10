@@ -136,43 +136,49 @@ export default function ReportExplainer({
         onDrop={handleDrop}
         className="glass-panel" 
         style={{
-          padding: "24px 28px",
+          padding: "22px 28px",
           background: isDragOver ? "var(--primary-soft)" : "linear-gradient(135deg, var(--primary-soft), var(--bg-card))",
           border: isDragOver ? "2px dashed var(--primary)" : "1px solid var(--primary-border)",
+          borderRadius: "16px",
           transition: "all 0.2s ease"
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "18px" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-              <span className="badge badge-primary">
-                {lang === "hi" ? "सरल भाषा में मेडिकल रिपोर्ट" : "Medical Jargon Buster"}
-              </span>
-              <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>
-                {lang === "hi" ? "स्तंभ 1: समझें" : "Pillar 1: Understand"}
-              </span>
-            </div>
-            <h1 style={{ fontSize: "1.75rem", fontWeight: 800 }}>
-              {lang === "hi" ? "स्मार्ट लैब रिपोर्ट ट्रांसलेटर व एआई विज़न" : "Smart Lab Report Explainer & AI Vision"}
+            <h1 style={{ fontSize: "1.65rem", fontWeight: 800, margin: 0, color: "var(--text-main)", letterSpacing: "-0.01em" }}>
+              {lang === "hi" ? "स्मार्ट लैब रिपोर्ट्स" : "Smart Lab Reports"}
             </h1>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", maxWidth: "650px" }}>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.88rem", marginTop: "4px", marginBottom: 0 }}>
               {lang === "hi"
-                ? "अपनी लैब टेस्ट रिपोर्ट (PDF या फोटो) अपलोड करें — हमारा एआई विज़न इंजन कठिन मेडिकल मूल्यों को तुरंत स्कैन कर आसान हिंदी में समझाता है।"
-                : "Upload your lab test report (PDF or photo) — our AI Vision engine extracts biomarkers and translates clinical jargon into clear, everyday language."}
+                ? "अपनी टेस्ट रिपोर्ट अपलोड या स्कैन करें और आसान भाषा में रिज़ल्ट समझें।"
+                : "Upload or scan your medical test report to view clear, easy-to-understand insights."}
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
             <button
               type="button"
               onClick={() => cameraInputRef.current?.click()}
               disabled={isAnalyzing}
               className="btn btn-secondary"
-              style={{ padding: "12px 18px", fontSize: "0.88rem", display: "inline-flex", alignItems: "center", gap: "6px" }}
+              style={{
+                height: "44px",
+                padding: "0 18px",
+                fontSize: "0.9rem",
+                fontWeight: 600,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                borderRadius: "12px",
+                border: "1px solid var(--border-color)",
+                background: "var(--bg-elevated)",
+                cursor: isAnalyzing ? "not-allowed" : "pointer",
+                transition: "all 0.2s ease"
+              }}
               title={lang === "hi" ? "कैमरे से रिपोर्ट की फोटो खींचें" : "Capture lab report with device camera"}
             >
               <Camera size={18} color="var(--primary)" />
-              <span>{lang === "hi" ? "कैमरा स्कैन" : "Scan Photo"}</span>
+              <span>{lang === "hi" ? "फोटो स्कैन करें" : "Scan Photo"}</span>
             </button>
 
             <button
@@ -180,12 +186,25 @@ export default function ReportExplainer({
               onClick={() => fileInputRef.current?.click()}
               disabled={isAnalyzing}
               className="btn btn-primary"
-              style={{ padding: "12px 22px", fontSize: "0.92rem", display: "inline-flex", alignItems: "center", gap: "8px" }}
+              style={{
+                height: "44px",
+                padding: "0 22px",
+                fontSize: "0.9rem",
+                fontWeight: 700,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, var(--primary), var(--primary-dark))",
+                boxShadow: "0 4px 14px rgba(2, 132, 199, 0.22)",
+                cursor: isAnalyzing ? "not-allowed" : "pointer",
+                transition: "all 0.2s ease"
+              }}
             >
               <UploadCloud size={18} />
               <span>
                 {isAnalyzing 
-                  ? (lang === "hi" ? "एआई विज़न स्कैन हो रहा है..." : "Analyzing with AI Vision...") 
+                  ? (lang === "hi" ? "स्कैन हो रहा है..." : "Analyzing Report...") 
                   : (lang === "hi" ? "रिपोर्ट अपलोड करें (PDF / इमेज)" : "Upload Report (PDF / Image)")}
               </span>
             </button>
