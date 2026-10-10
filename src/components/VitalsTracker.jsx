@@ -245,18 +245,10 @@ export default function VitalsTracker({ patient, onAddVital, lang = 'en' }) {
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-              <span className="badge badge-primary">
-                {lang === "hi" ? "बायोमेट्रिक विश्लेषण" : "Biometric Analytics"}
-              </span>
-              <span style={{ fontSize: "0.82rem", color: "var(--text-muted)", fontWeight: 600 }}>
-                {lang === "hi" ? "स्तंभ 2 व 3: प्रबंधित करें" : "Pillar 2 & 3: Organize & Manage"}
-              </span>
-            </div>
-            <h1 style={{ fontSize: "1.75rem", fontWeight: 800 }}>
+            <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
               {lang === "hi" ? "वाइटल्स व शारीरिक रुझान (चार्ट्स)" : "Vitals & Physiological Trends"}
             </h1>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", maxWidth: "650px" }}>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", maxWidth: "650px", marginTop: "6px", marginBottom: 0 }}>
               {lang === "hi"
                 ? "रक्तचाप स्थिरीकरण और ब्लड ग्लूकोज का विज़ुअल चार्ट विश्लेषण। सुरक्षित लक्ष्य सीमा के साथ समय के साथ बदलाव देखें।"
                 : "Visual analytics for blood pressure stabilization and blood glucose curves. Track trends over time with safe target zones."}

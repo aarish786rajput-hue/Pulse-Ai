@@ -63,13 +63,7 @@ export default function HealthTimeline({ patient, onAddTimelineEvent, lang = 'en
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-              <span className="badge badge-primary">{lang === "hi" ? "स्तंभ 2: व्यवस्थित" : "Pillar 2: Organize"}</span>
-              <span style={{ fontSize: "0.82rem", color: "var(--text-muted)", fontWeight: 600 }}>
-                {lang === "hi" ? "दीर्घकालिक स्वास्थ्य रिकॉर्ड" : "Longitudinal Health Record"}
-              </span>
-            </div>
-            <h1 style={{ fontSize: "1.75rem", fontWeight: 800 }}>
+            <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
               {lang === "hi" ? "स्वास्थ्य इतिहास व मेडिकल टाइमलाइन" : "Chronological Health Dossier"}
             </h1>
             <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", maxWidth: "650px" }}>
