@@ -267,8 +267,8 @@ export default function DoctorsDashboard({
             </h1>
             <p style={{ fontSize: "0.88rem", color: "var(--text-muted)", margin: 0, maxWidth: "680px" }}>
               {lang === "hi"
-                ? "डेंटिस्ट, डर्मेटोलॉजिस्ट (त्वचा), नेत्र विशेषज्ञ, हृदय रोग व अन्य सभी विभागों के सत्यापित डॉक्टरों की विस्तृत प्रोफाइल, अनुभव, अस्पताल व परामर्श शुल्क देखकर तुरंत स्लॉट बुक करें।"
-                : "Explore verified Dentists, Dermatologists, Ophthalmologists, Cardiologists & more. Review doctor experience, clinic address, real patient ratings, and transparent fees."}
+                ? "सत्यापित डॉक्टर खोजें, रेटिंग्स देखें और आसानी से परामर्श बुक करें।"
+                : "Find verified specialists, check ratings, and book appointments easily."}
             </p>
           </div>
 
