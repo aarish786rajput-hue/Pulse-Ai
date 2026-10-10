@@ -16,7 +16,8 @@ import {
   Activity,
   Pill,
   User,
-  Menu
+  Menu,
+  Smartphone
 } from "lucide-react";
 import { translations } from "../data/translations";
 
@@ -54,6 +55,8 @@ export default function TopHeader({
   activeTab,
   onOpenEmergency,
   onOpenHealthPassport,
+  onOpenPwaModal,
+  isInstallable,
   _onOpenDoctorPrep,
   _isSidebarOpen,
   onToggleSidebar,
@@ -380,6 +383,36 @@ export default function TopHeader({
 
       {/* ── ZONE 3 (RIGHT): Action Cluster (Passport + SOS + Theme + Language) ── */}
       <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+        {/* PWA Mobile App Install Button */}
+        {onOpenPwaModal && (
+          <button
+            onClick={onOpenPwaModal}
+            className="header-icon-btn"
+            title={lang === "hi" ? "PulseAI ऐप इनस्टॉल करें (PWA)" : "Install PulseAI App (PWA)"}
+            aria-label="Install App"
+            style={{
+              color: isInstallable ? "#10b981" : "var(--primary)",
+              borderColor: isInstallable ? "rgba(16, 185, 129, 0.4)" : "var(--border-color)",
+              background: isInstallable ? "rgba(16, 185, 129, 0.12)" : "var(--bg-elevated)",
+              position: "relative"
+            }}
+          >
+            <Smartphone size={17} />
+            {isInstallable && (
+              <span style={{
+                position: "absolute",
+                top: "-3px",
+                right: "-3px",
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: "#10b981",
+                boxShadow: "0 0 8px #10b981"
+              }} />
+            )}
+          </button>
+        )}
+
         {/* Doctor Health Passport Quick Button */}
         {onOpenHealthPassport && (
           <button

@@ -14,6 +14,7 @@ import HealthTimeline from './components/HealthTimeline';
 import EmergencyIDModal from './components/EmergencyIDModal';
 import DoctorPrepModal from './components/DoctorPrepModal';
 import DoctorHealthPassportModal from './components/DoctorHealthPassportModal';
+import PwaInstallModal from './components/PwaInstallModal';
 import ApiKeyModal from './components/ApiKeyModal';
 import AuthModal from './components/AuthModal';
 import DoctorsDashboard from './components/DoctorsDashboard';
@@ -71,10 +72,43 @@ export default function App() {
   const [isHealthPassportOpen, setIsHealthPassportOpen] = useState(false);
   const [isApiKeyModalOpen,    setIsApiKeyModalOpen]    = useState(false);
   const [isAuthModalOpen,   setIsAuthModalOpen]   = useState(false);
+  const [isPwaModalOpen,    setIsPwaModalOpen]    = useState(false);
+  const [installPrompt,     setInstallPrompt]     = useState(null);
+  const [_isAppInstalled,   setIsAppInstalled]    = useState(false);
+  const [isOnline,          setIsOnline]          = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
   const [isLoggedIn,        setIsLoggedIn]        = useState(() => {
     const saved = localStorage.getItem('pulseai_logged_in');
     return saved !== null ? saved === 'true' : true;
   });
+
+  // ── Online/Offline & PWA Install Listener ─────────────────────────────────
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+
+    const handleAppInstalled = () => {
+      setIsAppInstalled(true);
+      setInstallPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
 
   // ── Ctrl+B / Cmd+B — toggle sidebar ───────────────────────────────────────
   useEffect(() => {
@@ -201,6 +235,8 @@ export default function App() {
             onOpenEmergency={() => setIsEmergencyOpen(true)}
             onOpenDoctorPrep={() => setIsDoctorPrepOpen(true)}
             onOpenHealthPassport={() => setIsHealthPassportOpen(true)}
+            onOpenPwaModal={() => setIsPwaModalOpen(true)}
+            isInstallable={Boolean(installPrompt)}
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
             lang={lang}
@@ -209,6 +245,51 @@ export default function App() {
             setTheme={setTheme}
             onNavigate={handleNavigate}
           />
+
+          {/* ── OFFLINE MODE ACTIVE WARNING BANNER ── */}
+          {!isOnline && (
+            <div style={{
+              background: "linear-gradient(90deg, #b91c1c, #dc2626)",
+              color: "#ffffff",
+              padding: "9px 20px",
+              fontSize: "0.82rem",
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "10px",
+              boxShadow: "0 4px 14px rgba(220, 38, 38, 0.35)",
+              animation: "fadeIn 0.25s ease",
+              flexShrink: 0
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontSize: "1.05rem" }}>📶</span>
+                <span>
+                  {lang === "hi"
+                    ? "ऑफ़लाइन मोड सक्रिय: इंटरनेट डिस्कनेक्ट है। इमरजेंसी मेडिकल ID व दवाइयां बिना इंटरनेट सुरक्षित उपलब्ध हैं।"
+                    : "Offline Mode Active: Internet disconnected. Emergency Health ID & Medications remain fully accessible offline."}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEmergencyOpen(true)}
+                style={{
+                  background: "#ffffff",
+                  color: "#b91c1c",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "4px 14px",
+                  fontSize: "0.78rem",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
+                }}
+              >
+                {lang === "hi" ? "🚨 इमरजेंसी कार्ड देखें" : "🚨 View Emergency ID"}
+              </button>
+            </div>
+          )}
 
           <main className={`main-content ${activeTab === 'copilot' ? 'copilot-main-layout' : ''}`}>
             {activeTab === 'dashboard' && (
@@ -373,6 +454,16 @@ export default function App() {
           currentPatient={currentPatient}
           onLogin={handleLogin}
           onNavigate={handleNavigate}
+          lang={lang}
+        />
+        <PwaInstallModal
+          isOpen={isPwaModalOpen}
+          onClose={() => setIsPwaModalOpen(false)}
+          installPrompt={installPrompt}
+          onInstallSuccess={() => {
+            setIsAppInstalled(true);
+            setInstallPrompt(null);
+          }}
           lang={lang}
         />
 

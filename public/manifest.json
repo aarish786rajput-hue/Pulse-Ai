@@ -1,0 +1,47 @@
+{
+  "name": "PulseAI — Clinical Health Companion",
+  "short_name": "PulseAI",
+  "description": "Smart AI Health Passport, Wearable Vitals & Clinical Health Companion with offline medical emergency access",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0284c7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "512x512 192x192 128x128 64x64",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "512x512 192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "48x46",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["medical", "health", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Emergency SOS ID",
+      "short_name": "Emergency",
+      "description": "Open Offline Emergency Health ID Card",
+      "url": "/?open=emergency",
+      "icons": [{ "src": "/pwa-icon.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Health Copilot",
+      "short_name": "Copilot",
+      "description": "Consult AI Clinical Health Copilot",
+      "url": "/?tab=copilot",
+      "icons": [{ "src": "/pwa-icon.svg", "sizes": "192x192" }]
+    }
+  ]
+}

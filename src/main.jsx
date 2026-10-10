@@ -121,5 +121,18 @@ createRoot(document.getElementById('root')).render(
       <App />
     </ErrorBoundary>
   </StrictMode>,
-)
+);
+
+// Register Service Worker for PWA & Offline Clinical Emergency Access
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((reg) => {
+        console.log('[PulseAI PWA] Service Worker registered successfully:', reg.scope);
+      })
+      .catch((err) => {
+        console.warn('[PulseAI PWA] Service Worker registration failed:', err);
+      });
+  });
+}
 

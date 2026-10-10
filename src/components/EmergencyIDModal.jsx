@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   AlertOctagon, 
   Phone, 
@@ -7,7 +7,8 @@ import {
   Printer,
   Copy,
   CheckCircle2,
-  Navigation
+  Navigation,
+  WifiOff
 } from "lucide-react";
 import { calculateAge } from "../utils/dateUtils";
 
@@ -25,6 +26,27 @@ function WhatsAppIcon({ size = 18, color = "#ffffff" }) {
 export default function EmergencyIDModal({ isOpen, onClose, patient, lang = 'en' }) {
   const [isLocating, setIsLocating] = useState(false);
   const [copiedSos, setCopiedSos] = useState(false);
+
+  // Auto-sync emergency snapshot to localStorage for 100% offline access
+  useEffect(() => {
+    if (patient) {
+      try {
+        const emergencyCache = {
+          name: patient.name,
+          bloodGroup: patient.bloodGroup,
+          allergies: patient.allergies,
+          todayMedications: patient.todayMedications,
+          emergencyContact: patient.emergencyContact,
+          primaryPhysician: patient.primaryPhysician,
+          conditions: patient.conditions,
+          cachedAt: new Date().toISOString()
+        };
+        localStorage.setItem('pulseai_offline_emergency_cache', JSON.stringify(emergencyCache));
+      } catch (e) {
+        console.warn('Failed to cache emergency data:', e);
+      }
+    }
+  }, [patient]);
 
   if (!isOpen) return null;
 
@@ -145,6 +167,28 @@ export default function EmergencyIDModal({ isOpen, onClose, patient, lang = 'en'
 
         {/* Modal body */}
         <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "18px" }}>
+          {/* Offline Ready Paramedic Badge */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "8px",
+            background: "linear-gradient(90deg, rgba(16, 185, 129, 0.12), rgba(2, 132, 199, 0.12))",
+            border: "1px solid rgba(16, 185, 129, 0.35)",
+            borderRadius: "10px",
+            padding: "8px 14px",
+            fontSize: "0.78rem"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-highlight)", fontWeight: 700 }}>
+              <WifiOff size={15} color="#10b981" />
+              <span>{lang === "hi" ? "100% ऑफ़लाइन सुरक्षित (PWA Device Cache)" : "100% Offline Ready (PWA Device Cache)"}</span>
+            </div>
+            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+              {lang === "hi" ? "बिना इंटरनेट फर्स्ट-रिस्पॉन्डर हेतु तुरंत उपलब्ध" : "Instant access for first responders without internet"}
+            </span>
+          </div>
+
           {/* Patient Quick Vitals Bar */}
           <div style={{
             display: "grid",
