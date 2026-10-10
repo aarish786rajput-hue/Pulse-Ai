@@ -255,47 +255,59 @@ export default function Sidebar({
                     }} />
                   </div>
 
-                  <div style={{ overflow: "hidden", whiteSpace: "nowrap" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                      <span style={{ fontWeight: 800, fontSize: "0.88rem", color: "var(--text-highlight)", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <div style={{ overflow: "hidden", minWidth: 0, flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", overflow: "hidden" }}>
+                      <span style={{ 
+                        fontWeight: 800, 
+                        fontSize: "0.88rem", 
+                        color: "var(--text-highlight)", 
+                        overflow: "hidden", 
+                        textOverflow: "ellipsis", 
+                        whiteSpace: "nowrap" 
+                      }}>
                         {currentPatient.name}
                       </span>
-                      <span style={{ fontSize: "0.72rem", color: "var(--primary)", fontWeight: 700 }}>
-                        ({currentPatient.bloodGroup})
+                      <span style={{ 
+                        fontSize: "0.72rem", 
+                        color: "var(--primary)", 
+                        fontWeight: 800,
+                        background: "var(--primary-soft)",
+                        padding: "1px 6px",
+                        borderRadius: "6px",
+                        flexShrink: 0
+                      }}>
+                        {currentPatient.bloodGroup}
                       </span>
                     </div>
-                    <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
+                    <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px", marginTop: "2px" }}>
                       <ShieldCheck size={11} color="var(--secondary)" />
                       <span>{lang === "hi" ? "सत्यापित आभा" : "ABHA Active"}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Action Buttons */}
-                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  {onOpenAuthModal && (
-                    <button
-                      type="button"
-                      onClick={onOpenAuthModal}
-                      className="btn btn-secondary"
-                      style={{ padding: "6px", borderRadius: "8px", color: "var(--primary)" }}
-                      title={lang === "hi" ? "मरीज बदलें / डॉक्टर पार्टनर पोर्टल" : "Switch Patient / Doctor Partner Portal"}
-                    >
-                      <User size={15} />
-                    </button>
-                  )}
-                  {onLogout && (
-                    <button
-                      type="button"
-                      onClick={onLogout}
-                      className="btn btn-secondary"
-                      style={{ padding: "6px", borderRadius: "8px", color: "var(--text-dim)" }}
-                      title={lang === "hi" ? "लॉगआउट करें" : "Log Out"}
-                    >
-                      <LogOut size={15} />
-                    </button>
-                  )}
-                </div>
+                {/* Right Action: Clean Single Logout Button */}
+                {onLogout && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onLogout();
+                    }}
+                    className="btn btn-secondary"
+                    style={{ 
+                      padding: "7px", 
+                      borderRadius: "8px", 
+                      color: "var(--text-dim)", 
+                      flexShrink: 0,
+                      border: "1px solid var(--border-color)",
+                      background: "transparent"
+                    }}
+                    title={lang === "hi" ? "लॉगआउट करें" : "Log Out"}
+                  >
+                    <LogOut size={15} />
+                  </button>
+                )}
               </div>
             ) : (
               /* Collapsed Avatar Circle */

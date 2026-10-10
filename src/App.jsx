@@ -176,6 +176,22 @@ export default function App() {
     setIsAuthModalOpen(false);
   };
 
+  const handleRegisterPatient = (newPatient) => {
+    setPatients(prev => {
+      const updated = [newPatient, ...prev];
+      try {
+        localStorage.setItem('pulseai_patients', JSON.stringify(updated));
+      } catch (e) {
+        console.warn('Failed to save pulseai_patients to localStorage:', e);
+      }
+      return updated;
+    });
+    setCurrentPatientId(newPatient.id);
+    setIsLoggedIn(true);
+    localStorage.setItem('pulseai_logged_in', 'true');
+    setIsAuthModalOpen(false);
+  };
+
   // ── Context value: shared globally, avoids prop drilling ──────────────────
   const contextValue = {
     lang, setLang,
@@ -432,6 +448,7 @@ export default function App() {
           patients={patients}
           currentPatient={currentPatient}
           onLogin={handleLogin}
+          onRegisterPatient={handleRegisterPatient}
           onNavigate={handleNavigate}
           lang={lang}
         />
