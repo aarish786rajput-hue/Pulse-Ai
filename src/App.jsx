@@ -14,7 +14,6 @@ import HealthTimeline from './components/HealthTimeline';
 import EmergencyIDModal from './components/EmergencyIDModal';
 import DoctorPrepModal from './components/DoctorPrepModal';
 import DoctorHealthPassportModal from './components/DoctorHealthPassportModal';
-import PwaInstallModal from './components/PwaInstallModal';
 import ApiKeyModal from './components/ApiKeyModal';
 import AuthModal from './components/AuthModal';
 import DoctorsDashboard from './components/DoctorsDashboard';
@@ -72,16 +71,13 @@ export default function App() {
   const [isHealthPassportOpen, setIsHealthPassportOpen] = useState(false);
   const [isApiKeyModalOpen,    setIsApiKeyModalOpen]    = useState(false);
   const [isAuthModalOpen,   setIsAuthModalOpen]   = useState(false);
-  const [isPwaModalOpen,    setIsPwaModalOpen]    = useState(false);
-  const [installPrompt,     setInstallPrompt]     = useState(null);
-  const [_isAppInstalled,   setIsAppInstalled]    = useState(false);
   const [isOnline,          setIsOnline]          = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
   const [isLoggedIn,        setIsLoggedIn]        = useState(() => {
     const saved = localStorage.getItem('pulseai_logged_in');
     return saved !== null ? saved === 'true' : true;
   });
 
-  // ── Online/Offline & PWA Install Listener ─────────────────────────────────
+  // ── Online/Offline Network Listener ───────────────────────────────────────
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
@@ -89,24 +85,9 @@ export default function App() {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    const handleBeforeInstall = (e) => {
-      e.preventDefault();
-      setInstallPrompt(e);
-    };
-
-    const handleAppInstalled = () => {
-      setIsAppInstalled(true);
-      setInstallPrompt(null);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
-    window.addEventListener('appinstalled', handleAppInstalled);
-
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
-      window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
 
@@ -235,8 +216,6 @@ export default function App() {
             onOpenEmergency={() => setIsEmergencyOpen(true)}
             onOpenDoctorPrep={() => setIsDoctorPrepOpen(true)}
             onOpenHealthPassport={() => setIsHealthPassportOpen(true)}
-            onOpenPwaModal={() => setIsPwaModalOpen(true)}
-            isInstallable={Boolean(installPrompt)}
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
             lang={lang}
@@ -454,16 +433,6 @@ export default function App() {
           currentPatient={currentPatient}
           onLogin={handleLogin}
           onNavigate={handleNavigate}
-          lang={lang}
-        />
-        <PwaInstallModal
-          isOpen={isPwaModalOpen}
-          onClose={() => setIsPwaModalOpen(false)}
-          installPrompt={installPrompt}
-          onInstallSuccess={() => {
-            setIsAppInstalled(true);
-            setInstallPrompt(null);
-          }}
           lang={lang}
         />
 
