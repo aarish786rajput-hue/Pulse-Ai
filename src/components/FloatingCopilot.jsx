@@ -15,7 +15,10 @@ import {
   ChevronLeft,
   MessageSquare,
   Sparkles,
-  Plus
+  Plus,
+  Volume2,
+  VolumeX,
+  Square
 } from "lucide-react";
 import { sendChatMessage } from "../services/geminiService";
 
@@ -32,6 +35,21 @@ const SUPPORTED_LANGUAGES = [
   { id: "kn", label: "🇮🇳 ಕನ್ನಡ (Kannada)" }
 ];
 
+const LANG_VOICE_MAP = {
+  hinglish: "hi-IN",
+  hi: "hi-IN",
+  en: "en-IN",
+  pa: "pa-IN",
+  ta: "ta-IN",
+  te: "te-IN",
+  bn: "bn-IN",
+  mr: "mr-IN",
+  gu: "gu-IN",
+  kn: "kn-IN"
+};
+
+const getFormattedTimestamp = () => new Date().toLocaleString();
+
 export default function FloatingCopilot({ 
   patient, 
   lang = "en", 
@@ -47,10 +65,76 @@ export default function FloatingCopilot({
   const [selectedImage, setSelectedImage] = useState(null);
   const [isThinking, setIsThinking] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isAutoSpeak, setIsAutoSpeak] = useState(() => {
+    return localStorage.getItem("pulseai_copilot_auto_speak") === "true";
+  });
   
   const [chatLang, setChatLang] = useState(() => {
     return localStorage.getItem("pulseai_copilot_lang") || (lang === "hi" ? "hi" : "hinglish");
   });
+
+  // ── TEXT TO SPEECH (Elderly / Senior Calm Voice Rate) ─────────────────────
+  const stopSpeaking = useCallback(() => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+  }, []);
+
+  const speakText = useCallback((text, forceStart = false) => {
+    if (!("speechSynthesis" in window)) return;
+    if (isSpeaking && !forceStart) {
+      stopSpeaking();
+      return;
+    }
+    window.speechSynthesis.cancel();
+
+    // Clean markdown, links, bullets for senior audio clarity
+    const cleanText = (text || "")
+      .replace(/```[\s\S]*?```/g, "")
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/[*#_`~>[\]]/g, "")
+      .replace(/[•▪▫-]\s+/g, "")
+      .replace(/\n+/g, " ")
+      .trim();
+
+    if (!cleanText) return;
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = LANG_VOICE_MAP[chatLang] || "en-IN";
+    utterance.rate = 0.93; // Calm elderly-friendly cadence
+    utterance.pitch = 1.0;
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    setIsSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  }, [chatLang, isSpeaking, stopSpeaking]);
+
+  const isAutoSpeakRef = useRef(isAutoSpeak);
+  useEffect(() => {
+    isAutoSpeakRef.current = isAutoSpeak;
+  }, [isAutoSpeak]);
+
+  const speakTextRef = useRef(speakText);
+  useEffect(() => {
+    speakTextRef.current = speakText;
+  }, [speakText]);
+
+  const toggleAutoSpeak = () => {
+    const nextState = !isAutoSpeak;
+    setIsAutoSpeak(nextState);
+    localStorage.setItem("pulseai_copilot_auto_speak", String(nextState));
+    if (!nextState && isSpeaking) {
+      stopSpeaking();
+    }
+    showNotification(
+      nextState
+        ? (chatLang === "hi" ? "🔊 वरिष्ठ आवाज़ मोड (ऑटो-स्पीक) चालू!" : "🔊 Senior Auto-Voice Mode Enabled!")
+        : (chatLang === "hi" ? "🔇 ऑटो-स्पीक बंद किया गया" : "🔇 Auto Voice Mode Muted")
+    );
+  };
 
   // Saved Chat Sessions from localStorage
   const [sessions, setSessions] = useState(() => {
@@ -72,6 +156,17 @@ export default function FloatingCopilot({
     setNotificationMsg(msg);
     setTimeout(() => setNotificationMsg(""), 2600);
   };
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch {}
+      }
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   // Messages start completely empty until the user sends a command/query
   const [messages, setMessages] = useState([]);
@@ -270,6 +365,11 @@ export default function FloatingCopilot({
       };
 
       setMessages(prev => [...prev, botMsg]);
+
+      // Auto Speak for Seniors / Elderly mode
+      if (isAutoSpeakRef.current && botResponse.text) {
+        speakTextRef.current(botResponse.text, true);
+      }
     } catch {
       const fallbackMsg = {
         id: `bot_err_${Date.now()}`,
@@ -300,7 +400,7 @@ export default function FloatingCopilot({
   };
 
   // ── SAVE CURRENT CHAT TO HISTORY ───────────────────────────────────────────
-  const handleSaveCurrentChat = () => {
+  const handleSaveCurrentChat = useCallback(async () => {
     if (messages.length === 0) {
       showNotification(chatLang === "hi" ? "सहेजने के लिए कोई बातचीत नहीं है" : "No conversation to save yet");
       return;
@@ -313,7 +413,7 @@ export default function FloatingCopilot({
 
       const newSession = {
         id: currentSessionId,
-        timestamp: new Date().toLocaleString(),
+        timestamp: getFormattedTimestamp(),
         preview: previewText,
         messages: [...messages],
         language: chatLang,
@@ -327,7 +427,7 @@ export default function FloatingCopilot({
     } catch {
       showNotification("Failed to save chat");
     }
-  };
+  }, [messages, currentSessionId, chatLang, patient?.name]);
 
   // Load a saved chat session
   const handleLoadSession = (session) => {
@@ -355,19 +455,20 @@ export default function FloatingCopilot({
   };
 
   // Start a fresh new chat
-  const handleStartNewChat = () => {
+  const handleStartNewChat = useCallback(() => {
     setMessages([]);
-    setCurrentSessionId(`session_${Date.now()}`);
+    setCurrentSessionId(() => `session_${Date.now()}`);
     setIsHistoryOpen(false);
     showNotification(chatLang === "hi" ? "नई बातचीत शुरू की गई" : "New chat started");
-  };
+  }, [chatLang]);
 
-  const handleOpenFullCopilot = () => {
+  const handleOpenFullCopilot = useCallback(() => {
+    stopSpeaking();
     setIsOpen(false);
     if (onNavigate) {
       onNavigate("copilot");
     }
-  };
+  }, [stopSpeaking, onNavigate]);
 
   // Suggested prompts for all 10 supported languages
   const suggestedPromptsByLang = {
@@ -472,7 +573,10 @@ export default function FloatingCopilot({
 
         {/* Main Floating Trigger Button */}
         <button
-          onClick={() => setIsOpen(prev => !prev)}
+          onClick={() => {
+            if (isOpen) stopSpeaking();
+            setIsOpen(prev => !prev);
+          }}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           className="floating-ai-agent-btn"
@@ -653,6 +757,32 @@ export default function FloatingCopilot({
                 <BookmarkPlus size={16} />
               </button>
 
+              {/* Senior Auto Voice Mode Toggle */}
+              <button
+                onClick={toggleAutoSpeak}
+                title={
+                  isAutoSpeak
+                    ? (chatLang === "hi" ? "ऑटो-स्पीक चालू है (क्लिक करके बंद करें)" : "Auto Voice ON (Click to mute)")
+                    : (chatLang === "hi" ? "बुजुर्गों के लिए ऑटो-स्पीक (बोलकर सुनाएगा)" : "Enable Senior Auto Voice Mode")
+                }
+                style={{
+                  background: isAutoSpeak ? "#ffffff" : "rgba(255, 255, 255, 0.15)",
+                  border: "none",
+                  borderRadius: "8px",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: isAutoSpeak ? "var(--primary)" : "#ffffff",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  boxShadow: isAutoSpeak ? "0 2px 6px rgba(0,0,0,0.2)" : "none"
+                }}
+              >
+                {isAutoSpeak ? <Volume2 size={16} strokeWidth={2.4} /> : <VolumeX size={16} />}
+              </button>
+
               {/* Saved History Drawer Toggle */}
               <button
                 onClick={() => setIsHistoryOpen(prev => !prev)}
@@ -737,7 +867,10 @@ export default function FloatingCopilot({
 
               {/* Minimize / Close */}
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  stopSpeaking();
+                  setIsOpen(false);
+                }}
                 title="Close"
                 style={{
                   background: "rgba(255, 255, 255, 0.15)",
@@ -805,6 +938,45 @@ export default function FloatingCopilot({
               ))}
             </select>
           </div>
+
+          {/* Active Speaking Banner for Seniors */}
+          {isSpeaking && (
+            <div style={{
+              background: "linear-gradient(90deg, rgba(2, 132, 199, 0.15), rgba(99, 102, 241, 0.15))",
+              borderBottom: "1px solid rgba(2, 132, 199, 0.3)",
+              padding: "6px 14px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              fontSize: "0.76rem",
+              flexShrink: 0,
+              animation: "fadeIn 0.2s ease"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-highlight)", fontWeight: 700 }}>
+                <Volume2 size={14} color="var(--primary)" />
+                <span>{chatLang === "hi" ? "बोलकर सुना रहा है..." : "Speaking aloud (0.93x)..."}</span>
+              </div>
+              <button
+                onClick={stopSpeaking}
+                style={{
+                  background: "rgba(239, 68, 68, 0.12)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                  color: "#ef4444",
+                  borderRadius: "6px",
+                  padding: "2px 8px",
+                  fontSize: "0.7rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px"
+                }}
+              >
+                <Square size={10} fill="#ef4444" />
+                <span>{chatLang === "hi" ? "रोकें" : "Stop"}</span>
+              </button>
+            </div>
+          )}
 
           {/* ── VIEW A: SAVED CHATS SECTION ── */}
           {isHistoryOpen ? (
@@ -1122,9 +1294,39 @@ export default function FloatingCopilot({
                         {m.content}
                       </div>
 
-                      <span style={{ fontSize: "0.66rem", color: "var(--text-muted)", marginTop: "2px", alignSelf: isUser ? "flex-end" : "flex-start" }}>
-                        {m.timestamp}
-                      </span>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        marginTop: "2px",
+                        alignSelf: isUser ? "flex-end" : "flex-start"
+                      }}>
+                        <span style={{ fontSize: "0.66rem", color: "var(--text-muted)" }}>
+                          {m.timestamp}
+                        </span>
+                        {!isUser && (
+                          <button
+                            onClick={() => speakText(m.content)}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              color: isSpeaking ? "#ef4444" : "var(--text-muted)",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "3px",
+                              fontSize: "0.68rem",
+                              fontWeight: 600,
+                              padding: "1px 4px",
+                              borderRadius: "4px"
+                            }}
+                            title="Read aloud"
+                          >
+                            {isSpeaking ? <VolumeX size={12} color="#ef4444" /> : <Volume2 size={12} />}
+                            <span>{isSpeaking ? (chatLang === "hi" ? "रोकें" : "Stop") : (chatLang === "hi" ? "सुनें" : "Listen")}</span>
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })

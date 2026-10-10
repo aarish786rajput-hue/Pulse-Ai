@@ -17,7 +17,8 @@ import {
   CheckCircle2,
   ChevronRight,
   Sparkles,
-  ShieldAlert
+  ShieldAlert,
+  Square
 } from "lucide-react";
 import { sendChatMessage } from "../services/geminiService";
 
@@ -33,6 +34,19 @@ const SUPPORTED_LANGUAGES = [
   { id: "pa", label: "🇮🇳 ਪੰਜਾਬੀ (Punjabi)" },
   { id: "kn", label: "🇮🇳 ಕನ್ನಡ (Kannada)" }
 ];
+
+const LANG_VOICE_MAP = {
+  hinglish: "hi-IN",
+  hi: "hi-IN",
+  en: "en-IN",
+  bn: "bn-IN",
+  mr: "mr-IN",
+  te: "te-IN",
+  ta: "ta-IN",
+  gu: "gu-IN",
+  pa: "pa-IN",
+  kn: "kn-IN"
+};
 
 export default function ChatCopilot({ patient, lang = 'en', initialQuery, onClearInitialQuery }) {
   // Selected communication language from dropdown
@@ -57,23 +71,13 @@ export default function ChatCopilot({ patient, lang = 'en', initialQuery, onClea
     setTimeout(() => setNotificationMsg(""), 2800);
   };
 
-const LANG_VOICE_MAP = {
-  hinglish: "hi-IN",
-  hi: "hi-IN",
-  en: "en-IN",
-  bn: "bn-IN",
-  mr: "mr-IN",
-  te: "te-IN",
-  ta: "ta-IN",
-  gu: "gu-IN",
-  pa: "pa-IN",
-  kn: "kn-IN"
-};
-
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isAutoSpeak, setIsAutoSpeak] = useState(() => {
+    return localStorage.getItem("pulseai_copilot_auto_speak") === "true";
+  });
   
   // Microphone Speech Recognition States
   const [isListening, setIsListening] = useState(false);
@@ -117,6 +121,68 @@ const LANG_VOICE_MAP = {
     }
   }, [chatLang]);
 
+  // ── TEXT TO SPEECH (Elderly / Senior Calm Voice Rate) ─────────────────────
+  const stopSpeaking = useCallback(() => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+  }, []);
+
+  const speakText = useCallback((text, forceStart = false) => {
+    if (!("speechSynthesis" in window)) return;
+    if (isSpeaking && !forceStart) {
+      stopSpeaking();
+      return;
+    }
+    window.speechSynthesis.cancel();
+
+    // Clean markdown, code, urls, bullets for comfortable listening
+    const cleanText = (text || "")
+      .replace(/```[\s\S]*?```/g, "")
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/[*#_`~>[\]]/g, "")
+      .replace(/[•▪▫-]\s+/g, "")
+      .replace(/\n+/g, " ")
+      .trim();
+
+    if (!cleanText) return;
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = LANG_VOICE_MAP[chatLang] || "en-IN";
+    utterance.rate = 0.93; // Calmer senior-friendly pace
+    utterance.pitch = 1.0;
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    setIsSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  }, [chatLang, isSpeaking, stopSpeaking]);
+
+  const isAutoSpeakRef = useRef(isAutoSpeak);
+  useEffect(() => {
+    isAutoSpeakRef.current = isAutoSpeak;
+  }, [isAutoSpeak]);
+
+  const speakTextRef = useRef(speakText);
+  useEffect(() => {
+    speakTextRef.current = speakText;
+  }, [speakText]);
+
+  const toggleAutoSpeak = () => {
+    const nextState = !isAutoSpeak;
+    setIsAutoSpeak(nextState);
+    localStorage.setItem("pulseai_copilot_auto_speak", String(nextState));
+    if (!nextState && isSpeaking) {
+      stopSpeaking();
+    }
+    showNotification(
+      nextState
+        ? (chatLang === "hi" ? "🔊 वरिष्ठ आवाज़ मोड (ऑटो-स्पीक) चालू!" : "🔊 Senior Auto-Voice Mode Enabled!")
+        : (chatLang === "hi" ? "🔇 ऑटो-स्पीक बंद किया गया" : "🔇 Auto Voice Mode Muted")
+    );
+  };
+
   const handleSend = useCallback(async (customText) => {
     const query = (customText || input).trim();
     if (!query || isLoading) return;
@@ -150,6 +216,11 @@ const LANG_VOICE_MAP = {
       const finalMsgs = [...newHistory, botMessage];
       setMessages(finalMsgs);
       persistSession(finalMsgs, currentSessionId);
+
+      // Auto Speak for Seniors / Elderly mode
+      if (isAutoSpeakRef.current && result.text) {
+        speakTextRef.current(result.text, true);
+      }
     } catch (err) {
       console.error(err);
       setMessages([...newHistory, {
@@ -180,7 +251,7 @@ const LANG_VOICE_MAP = {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // Clean up recognition on unmount
+  // Clean up recognition and speech synthesis on unmount
   useEffect(() => {
     return () => {
       if (recognitionRef.current) {
@@ -189,6 +260,9 @@ const LANG_VOICE_MAP = {
         } catch {
           // ignore cleanup error
         }
+      }
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
       }
     };
   }, []);
@@ -308,27 +382,6 @@ const LANG_VOICE_MAP = {
       );
       setIsListening(false);
     }
-  };
-
-  // ── TEXT TO SPEECH (Listen Button) ───────────────────────────────────────
-  const speakText = (text) => {
-    if (!("speechSynthesis" in window)) return;
-    if (isSpeaking) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-      return;
-    }
-
-    const cleanText = text.replace(/[*#_`]/g, "");
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = LANG_VOICE_MAP[chatLang] || "en-IN";
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    setIsSpeaking(true);
-    window.speechSynthesis.speak(utterance);
   };
 
   // ── DELETE ACTIVE CHAT / START FRESH ─────────────────────────────────────
@@ -601,7 +654,39 @@ const LANG_VOICE_MAP = {
             )}
           </button>
 
-          {/* 3. Chat Delete Button */}
+          {/* 3. Senior Auto Voice Mode Toggle */}
+          <button
+            type="button"
+            onClick={toggleAutoSpeak}
+            className={`btn ${isAutoSpeak ? "btn-primary" : "btn-secondary"}`}
+            style={{
+              padding: "6px 12px",
+              fontSize: "0.78rem",
+              borderRadius: "10px",
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              background: isAutoSpeak ? "linear-gradient(135deg, var(--primary), #2563eb)" : undefined,
+              color: isAutoSpeak ? "#ffffff" : "var(--text-main)",
+              borderColor: isAutoSpeak ? "transparent" : "var(--border-color)",
+              boxShadow: isAutoSpeak ? "0 2px 10px rgba(2, 132, 199, 0.35)" : "none"
+            }}
+            title={
+              isAutoSpeak
+                ? (chatLang === "hi" ? "ऑटो-स्पीक चालू है (क्लिक करके बंद करें)" : "Auto Voice ON (Click to mute)")
+                : (chatLang === "hi" ? "बुजुर्गों के लिए ऑटो-स्पीक चालू करें (बोलकर सुनाएगा)" : "Enable Senior Auto Voice Mode")
+            }
+          >
+            {isAutoSpeak ? <Volume2 size={14} color="#ffffff" /> : <VolumeX size={14} />}
+            <span>
+              {isAutoSpeak 
+                ? (chatLang === "hi" ? "ऑटो-बोलें ON" : "Auto Voice ON") 
+                : (chatLang === "hi" ? "बोलकर सुनें" : "Voice Mode")}
+            </span>
+          </button>
+
+          {/* 4. Chat Delete Button */}
           <button
             type="button"
             onClick={handleDeleteCurrentChat}
@@ -620,7 +705,7 @@ const LANG_VOICE_MAP = {
             <span>{chatLang === "hi" ? "डिलीट चैट" : "Delete"}</span>
           </button>
 
-          {/* 4. New Chat Button */}
+          {/* 5. New Chat Button */}
           <button
             type="button"
             onClick={handleDeleteCurrentChat}
@@ -664,6 +749,64 @@ const LANG_VOICE_MAP = {
           </button>
         ))}
       </div>
+
+      {/* Active Speech Playing Banner (Elderly / Senior Audio Indicator) */}
+      {isSpeaking && (
+        <div style={{
+          background: "linear-gradient(90deg, rgba(2, 132, 199, 0.12), rgba(99, 102, 241, 0.12))",
+          border: "1px solid rgba(2, 132, 199, 0.35)",
+          borderRadius: "14px",
+          padding: "8px 16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          animation: "fadeIn 0.25s ease",
+          flexShrink: 0
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{
+              width: "28px",
+              height: "28px",
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, var(--primary), var(--secondary))",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              boxShadow: "0 0 12px rgba(2, 132, 199, 0.5)"
+            }}>
+              <Volume2 size={15} />
+            </div>
+            <div>
+              <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-highlight)" }}>
+                {chatLang === "hi" ? "कोपायलट बोलकर सुना रहा है..." : "Copilot is speaking aloud..."}
+              </div>
+              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                {chatLang === "hi" ? "सरल उच्चारण व स्पष्ट गति (0.93x सीनियर पेस)" : "Senior-friendly cadence & clear pronunciation"}
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={stopSpeaking}
+            className="btn btn-secondary"
+            style={{
+              padding: "4px 10px",
+              fontSize: "0.74rem",
+              borderRadius: "8px",
+              fontWeight: 700,
+              color: "#ef4444",
+              borderColor: "rgba(239, 68, 68, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px"
+            }}
+          >
+            <Square size={12} fill="#ef4444" />
+            <span>{chatLang === "hi" ? "रोकें (Stop)" : "Stop"}</span>
+          </button>
+        </div>
+      )}
 
       {/* Chat Messages Stream (Answering Screen Arrangement) */}
       <div className="glass-panel" style={{
