@@ -4,9 +4,6 @@ import {
   UploadCloud, 
   ArrowRight, 
   Search, 
-  Building2, 
-  Calendar, 
-  User,
   Eye, 
   X, 
   FileCheck2, 
@@ -247,92 +244,43 @@ export default function ReportExplainer({
       </div>
 
       {/* Report Selector Tabs */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-        <span style={{ fontSize: "0.84rem", fontWeight: 700, color: "var(--text-muted)" }}>
-          {lang === "hi" ? "मेडिकल रिपोर्ट चुनें:" : "Select Medical Report:"}
-        </span>
-        {reports.map((r) => (
-          <button
-            key={r.id}
-            onClick={() => setSelectedReportId(r.id)}
-            className="btn"
-            style={{
-              padding: "8px 16px",
-              fontSize: "0.86rem",
-              background: selectedReportId === r.id ? "linear-gradient(135deg, var(--primary), var(--primary-dark))" : "var(--bg-elevated)",
-              border: selectedReportId === r.id ? "none" : "1px solid var(--border-color)",
-              color: selectedReportId === r.id ? "#ffffff" : "var(--text-muted)",
-              borderRadius: "10px",
-              fontWeight: selectedReportId === r.id ? 700 : 500
-            }}
-          >
-            <FileText size={15} />
-            <span>{r.title}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Active Report Overview Card */}
-      <div 
-        className="glass-panel" 
-        style={{ 
-          padding: "18px 24px",
-          borderRadius: "16px",
-          background: "var(--bg-card)",
-          border: "1px solid var(--border-color)",
-          boxShadow: "var(--shadow-sm)"
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "14px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-            <h2 style={{ fontSize: "1.28rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
-              {activeReport.title}
-            </h2>
-            <span className={`badge ${
-              activeReport.overallRisk === "Moderate" ? "badge-borderline" : "badge-good"
-            }`} style={{ fontSize: "0.78rem", padding: "4px 10px" }}>
-              {activeReport.overallRisk} Attention
-            </span>
-          </div>
-
-          {activeReport.previewUrl && (
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+          <span style={{ fontSize: "0.84rem", fontWeight: 700, color: "var(--text-muted)" }}>
+            {lang === "hi" ? "मेडिकल रिपोर्ट चुनें:" : "Select Medical Report:"}
+          </span>
+          {reports.map((r) => (
             <button
-              type="button"
-              onClick={() => setShowDocPreviewModal(true)}
-              className="btn btn-secondary"
-              style={{ fontSize: "0.84rem", display: "inline-flex", alignItems: "center", gap: "6px", height: "36px", padding: "0 14px", borderRadius: "10px" }}
+              key={r.id}
+              onClick={() => setSelectedReportId(r.id)}
+              className="btn"
+              style={{
+                padding: "8px 16px",
+                fontSize: "0.86rem",
+                background: selectedReportId === r.id ? "linear-gradient(135deg, var(--primary), var(--primary-dark))" : "var(--bg-elevated)",
+                border: selectedReportId === r.id ? "none" : "1px solid var(--border-color)",
+                color: selectedReportId === r.id ? "#ffffff" : "var(--text-muted)",
+                borderRadius: "10px",
+                fontWeight: selectedReportId === r.id ? 700 : 500
+              }}
             >
-              <Eye size={15} color="var(--primary)" />
-              <span>{lang === "hi" ? "मूल दस्तावेज़ देखें" : "View Scanned Document"}</span>
+              <FileText size={15} />
+              <span>{r.title}</span>
             </button>
-          )}
+          ))}
         </div>
 
-        {/* Clean Metadata Details Row */}
-        <div style={{ 
-          display: "flex", 
-          alignItems: "center", 
-          gap: "20px", 
-          fontSize: "0.85rem", 
-          color: "var(--text-muted)", 
-          flexWrap: "wrap", 
-          marginTop: "12px",
-          paddingTop: "12px",
-          borderTop: "1px solid var(--border-color)"
-        }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-            <Building2 size={15} color="var(--primary)" /> 
-            <span>{activeReport.lab}</span>
-          </span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-            <Calendar size={15} color="var(--primary)" /> 
-            <span>{activeReport.date}</span>
-          </span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-            <User size={15} color="var(--primary)" /> 
-            <span>{lang === "hi" ? "मरीज़:" : "Patient:"} <strong style={{ color: "var(--text-main)" }}>{activeReport.patientName} ({activeReport.ageGender})</strong></span>
-          </span>
-        </div>
+        {activeReport?.previewUrl && (
+          <button
+            type="button"
+            onClick={() => setShowDocPreviewModal(true)}
+            className="btn btn-secondary"
+            style={{ fontSize: "0.84rem", display: "inline-flex", alignItems: "center", gap: "6px", height: "34px", padding: "0 12px", borderRadius: "8px" }}
+          >
+            <Eye size={14} color="var(--primary)" />
+            <span>{lang === "hi" ? "मूल दस्तावेज़ देखें" : "View Scanned Document"}</span>
+          </button>
+        )}
       </div>
 
       {/* Filter / Search Bar */}
