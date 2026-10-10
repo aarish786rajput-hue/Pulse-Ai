@@ -3,6 +3,7 @@ import {
   X, 
   LogIn,
   UserPlus,
+  Users,
   MapPin,
   Navigation,
   ShieldCheck,
@@ -18,14 +19,14 @@ import { getLiveGpsAddress } from "../utils/geolocation";
 export default function AuthModal({
   isOpen,
   onClose,
-  _patients = [],
-  _currentPatient,
+  patients = [],
+  currentPatient,
   onLogin,
   onRegisterPatient,
   onNavigate,
   lang = "en"
 }) {
-  const [activeTab, setActiveTab] = useState("login"); // 'login' | 'register' | 'doctor'
+  const [activeTab, setActiveTab] = useState("demo"); // 'demo' | 'login' | 'register' | 'doctor'
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -187,6 +188,15 @@ export default function AuthModal({
     }, 700);
   };
 
+  const handleSelectDemoProfile = (patientId) => {
+    setSuccessMsg(lang === "hi" ? "प्रोफ़ाइल सफलतापूर्वक स्विच की गई!" : "Profile Switched Successfully!");
+    setTimeout(() => {
+      setSuccessMsg("");
+      if (onLogin) onLogin(patientId);
+      onClose();
+    }, 350);
+  };
+
   const handleQuickDoctorSubmit = (e) => {
     e.preventDefault();
     if (!docName || !docClinic) return;
@@ -250,12 +260,14 @@ export default function AuthModal({
               justifyContent: "center",
               color: "#ffffff"
             }}>
+              {activeTab === "demo" && <Users size={20} />}
               {activeTab === "login" && <LogIn size={20} />}
               {activeTab === "register" && <UserPlus size={20} />}
               {activeTab === "doctor" && <Stethoscope size={20} />}
             </div>
             <div>
               <h2 style={{ fontSize: "1.15rem", fontWeight: 800, margin: 0, color: "var(--text-highlight)" }}>
+                {activeTab === "demo" && (lang === "hi" ? "1-क्लिक जज / डेमो प्रोफाइल एक्सेस" : "1-Click Demo & Evaluator Access")}
                 {activeTab === "login" && (lang === "hi" ? "आयुष्मान भारत (आभा) लॉगिन" : "ABHA & Mobile Sign In")}
                 {activeTab === "register" && (lang === "hi" ? "नया मरीज पंजीकरण (आभा आईडी बनाएं)" : "Create New Patient & ABHA ID")}
                 {activeTab === "doctor" && (lang === "hi" ? "डॉक्टर पार्टनर लिस्टिंग" : "List Doctor Clinic on Network")}
@@ -273,8 +285,31 @@ export default function AuthModal({
           </button>
         </div>
 
-        {/* 3 Clean Tabs */}
+        {/* 4 Clean Tabs */}
         <div style={{ display: "flex", borderBottom: "1px solid var(--border-color)", background: "var(--bg-elevated)" }}>
+          <button
+            type="button"
+            onClick={() => { setActiveTab("demo"); setErrorMsg(""); }}
+            style={{
+              flex: 1,
+              padding: "11px 6px",
+              background: activeTab === "demo" ? "var(--bg-card)" : "transparent",
+              border: "none",
+              borderBottom: activeTab === "demo" ? "2.5px solid var(--primary)" : "none",
+              color: activeTab === "demo" ? "var(--primary)" : "var(--text-muted)",
+              fontWeight: 800,
+              fontSize: "0.82rem",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "5px"
+            }}
+          >
+            <Users size={15} />
+            <span>{lang === "hi" ? "डेमो एक्सेस" : "1-Click Demo"}</span>
+          </button>
+
           <button
             type="button"
             onClick={() => { setActiveTab("login"); setErrorMsg(""); }}
@@ -383,7 +418,93 @@ export default function AuthModal({
         {/* Modal Body */}
         <div style={{ padding: "20px 24px", maxHeight: "68vh", overflowY: "auto" }}>
 
-          {/* ════ TAB 1: ABHA / MOBILE SIGN IN ════ */}
+          {/* ════ TAB 1: 1-CLICK DEMO (HACKATHON JUDGES) ════ */}
+          {activeTab === "demo" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div style={{
+                padding: "12px 14px",
+                background: "var(--primary-soft)",
+                borderRadius: "10px",
+                border: "1px solid var(--primary-border)",
+                fontSize: "0.8rem",
+                color: "var(--text-main)",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px"
+              }}>
+                <Sparkles size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
+                <span>
+                  {lang === "hi"
+                    ? "हैकाथॉन मूल्यांकनकर्ता: नीचे किसी भी प्रोफाइल पर 1-क्लिक करके सीधे पूरी मेडिकल हिस्ट्री व एआई एनालिसिस देखें।"
+                    : "Hackathon Evaluator: Click any profile below to instantly load full health passport, vitals history & AI reports."}
+                </span>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {patients.map((p) => {
+                  const isCurrent = currentPatient?.id === p.id;
+                  return (
+                    <div
+                      key={p.id}
+                      onClick={() => handleSelectDemoProfile(p.id)}
+                      className="interactive-card"
+                      style={{
+                        padding: "12px 16px",
+                        borderRadius: "12px",
+                        background: isCurrent ? "var(--primary-soft)" : "var(--bg-elevated)",
+                        border: isCurrent ? "1.5px solid var(--primary)" : "1px solid var(--border-color)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        cursor: "pointer"
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <div style={{
+                          width: "38px",
+                          height: "38px",
+                          borderRadius: "10px",
+                          background: "linear-gradient(135deg, var(--primary), var(--secondary))",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#ffffff",
+                          fontWeight: 800,
+                          fontSize: "0.9rem",
+                          overflow: "hidden"
+                        }}>
+                          {p.avatar ? (
+                            <img src={p.avatar} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          ) : (
+                            p.name.split(" ").map(n => n[0]).join("")
+                          )}
+                        </div>
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            <span style={{ fontWeight: 800, fontSize: "0.92rem", color: "var(--text-highlight)" }}>{p.name}</span>
+                            <span className="badge badge-primary" style={{ fontSize: "0.72rem", padding: "1px 6px" }}>{p.bloodGroup}</span>
+                          </div>
+                          <div style={{ fontSize: "0.74rem", color: "var(--text-muted)", marginTop: "2px" }}>
+                            {p.age} {lang === "hi" ? "वर्ष" : "Yrs"} • {p.gender} • ABHA: {p.abhaId?.slice(0, 10)}...
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        className={`btn ${isCurrent ? "btn-secondary" : "btn-primary"}`}
+                        style={{ padding: "6px 14px", fontSize: "0.8rem", pointerEvents: "none" }}
+                      >
+                        {isCurrent ? (lang === "hi" ? "सक्रिय" : "Active") : (lang === "hi" ? "चुनें →" : "Select →")}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ════ TAB 2: ABHA / MOBILE SIGN IN ════ */}
           {activeTab === "login" && (
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div style={{
@@ -425,7 +546,7 @@ export default function AuthModal({
                       }}
                     />
                     <div style={{ marginTop: "6px", fontSize: "0.74rem", color: "var(--text-dim)" }}>
-                      💡 {lang === "hi" ? "त्वरित लॉगिन: " : "Quick login: "}
+                      💡 {lang === "hi" ? "डेमो परीक्षण के लिए: " : "For evaluator demo: "}
                       <span 
                         onClick={() => setLoginIdentifier("9876543210")} 
                         style={{ color: "var(--primary)", fontWeight: 800, cursor: "pointer", textDecoration: "underline" }}
@@ -495,7 +616,7 @@ export default function AuthModal({
                     />
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
                       <span style={{ fontSize: "0.74rem", color: "var(--text-dim)" }}>
-                        {lang === "hi" ? "ओटीपी कोड:" : "Demo OTP:"} <strong>123456</strong>
+                        {lang === "hi" ? "डेमो ओटीपी कोड:" : "Evaluator Demo OTP:"} <strong>123456</strong>
                       </span>
                       <button
                         type="button"
