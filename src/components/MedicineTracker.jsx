@@ -83,15 +83,13 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-              <span className="badge badge-good">Pillar 3: Manage</span>
-              <span style={{ fontSize: "0.82rem", color: "var(--text-muted)", fontWeight: 600 }}>Medication Safety & Interaction Scanner</span>
-            </div>
-            <h1 style={{ fontSize: "1.75rem", fontWeight: 800 }}>
-              Smart Medicine Center
+            <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
+              {lang === "hi" ? "दवा प्रबंधन व ट्रैकर" : "Smart Medicine Center"}
             </h1>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", maxWidth: "650px" }}>
-              Track daily doses with timely food reminders, and protect yourself against dangerous drug-drug interactions before consuming over-the-counter painkillers.
+            <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", maxWidth: "650px", marginTop: "6px", marginBottom: 0 }}>
+              {lang === "hi"
+                ? "अपनी दैनिक दवाइयों का सही समय पर सेवन ट्रैक करें और नए विकल्पों के साथ ड्रग इंटरैक्शन चेक करें।"
+                : "Track daily doses with timely food reminders, and protect yourself against dangerous drug-drug interactions before consuming over-the-counter painkillers."}
             </p>
           </div>
 
