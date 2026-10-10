@@ -12,10 +12,14 @@ import {
   Stethoscope,
   QrCode,
   ShieldCheck,
-  Droplet
+  Droplet,
+  Heart,
+  FileText,
+  ExternalLink,
+  Maximize2
 } from "lucide-react";
 import { calculateAge } from "../utils/dateUtils";
-import { sampleReports } from "../data/sampleReports";
+import { generatePatientReports } from "../data/sampleReports";
 
 export default function DoctorHealthPassportModal({
   isOpen,
@@ -45,21 +49,15 @@ export default function DoctorHealthPassportModal({
     return `PHP-2026-${rawId}-8842`;
   });
 
-  // Retrieve user uploaded reports or fallback to sample reports
-  const activeReports = useMemo(() => {
-    try {
-      const saved = localStorage.getItem("pulseai_user_reports");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch {
-      // Fallback
-    }
-    return sampleReports;
-  }, []);
+  // 3 Targeted body-pathway & blood reports dynamically bound to current patient's essential data
+  const pathwayReports = useMemo(() => {
+    return generatePatientReports(patient);
+  }, [patient]);
 
-  const featuredReport = activeReports[0] || sampleReports[0];
+  const [selectedReportIndex, setSelectedReportIndex] = useState(0);
+  const [fullDetailReport, setFullDetailReport] = useState(null);
+
+  const selectedReport = pathwayReports[selectedReportIndex] || pathwayReports[0];
 
   // Latest vitals calculation
   const vitalsHistory = patient?.vitalsHistory || [];
@@ -109,8 +107,8 @@ LATEST PHYSIOLOGICAL VITALS (Smartwatch / Clinical):
 • Blood Oxygen (SpO2): ${latestVital.spo2 || 98}%
 • Fasting Blood Glucose: ${latestVital.bloodSugarFasting || 115} mg/dL
 
-LATEST LAB BIOMARKERS (${featuredReport?.title || "Comprehensive Metabolic Profile"}):
-${featuredReport?.parameters?.slice(0, 5).map(p => `• ${p.name}: ${p.value} ${p.unit} (Ref: ${p.reference})`).join("\n") || "Normal parameters observed"}
+LATEST LAB BIOMARKERS (3 Body-Pathway Medical Reports):
+${pathwayReports.map(r => `• [${r.title}]: ${r.parameters.slice(0, 3).map(p => `${p.name} ${p.value}${p.unit}`).join(', ')}`).join('\n')}
 
 PHYSICIAN CONSULTATION NOTE:
 ${doctorNote}
@@ -487,12 +485,12 @@ Generated via PulseAI ABDM Health Platform`;
                 >
                   <div>
                     <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Patient Full Name</span>
-                    <strong style={{ fontSize: "15px", color: "#0f172a" }}>{patient?.name || "Rahul Sharma"}</strong>
+                    <strong style={{ fontSize: "15px", color: "#0f172a" }}>{patient?.name || "Aarish Rajput"}</strong>
                   </div>
 
                   <div>
                     <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Age / Gender</span>
-                    <strong style={{ color: "#0f172a" }}>{calculatedAge} Years / {patient?.gender || "Male"}</strong>
+                    <strong style={{ color: "#0f172a" }}>{calculatedAge || patient?.age || 22} Years / {patient?.gender || "Male"}</strong>
                   </div>
 
                   <div>
@@ -509,6 +507,20 @@ Generated via PulseAI ABDM Health Platform`;
                       }}
                     >
                       {patient?.bloodGroup || "B+"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Mobile Number</span>
+                    <strong style={{ color: "#0f172a", fontSize: "13px" }}>
+                      {patient?.phone || patient?.emergencyContact?.phone || "+91 98765 43210"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Residential Address</span>
+                    <span style={{ color: "#0f172a", fontSize: "12px" }}>
+                      {patient?.address || "Sector 62, Noida, Uttar Pradesh, India"}
                     </span>
                   </div>
 
@@ -532,7 +544,7 @@ Generated via PulseAI ABDM Health Platform`;
                   <div>
                     <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Emergency Contact</span>
                     <span style={{ color: "#0f172a" }}>
-                      {patient?.emergencyContact?.name || "Sunita Sharma"} ({patient?.emergencyContact?.relation || "Spouse"}): {patient?.emergencyContact?.phone || "+91 98765 43210"}
+                      {patient?.emergencyContact?.name || "Emergency Contact"} ({patient?.emergencyContact?.relation || "Family"}): {patient?.emergencyContact?.phone || patient?.phone || "+91 98765 43210"}
                     </span>
                   </div>
 
@@ -723,66 +735,258 @@ Generated via PulseAI ABDM Health Platform`;
               </div>
             )}
 
-            {/* ── Section 5: Laboratory Biomarkers & Test Profile ── */}
-            {includeLabResults && featuredReport && (
+            {/* ── Section 5: 3 Body-Pathway Medical Lab Reports ── */}
+            {includeLabResults && (
               <div style={{ marginTop: "16px", paddingBottom: "16px", borderBottom: "1px solid #e2e8f0" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", flexWrap: "wrap", gap: "6px" }}>
                   <div style={{ fontWeight: 800, fontSize: "13px", color: "#0f172a", display: "flex", alignItems: "center", gap: "6px" }}>
-                    <Droplet size={16} color="#0284c7" />
-                    <span>RECENT LAB BIOMARKERS ({featuredReport.title || "Diagnostic Panel"})</span>
+                    <FileText size={16} color="#0284c7" />
+                    <span>SECTION 5: 3 TARGETED BODY-PATHWAY & BLOOD MEDICAL REPORTS</span>
                   </div>
-                  <span style={{ fontSize: "11px", color: "#64748b" }}>
-                    Lab: {featuredReport.lab || "Accredited Pathology Lab"} • {featuredReport.date || "Recent"}
+                  <span style={{ fontSize: "11px", color: "#0284c7", fontWeight: 700, background: "#e0f2fe", padding: "2px 8px", borderRadius: "6px" }}>
+                    💡 Single-click to select • Double-click (2x) to open full official report modal
                   </span>
                 </div>
 
-                <table
+                {/* 3 Pathway Report Cards Grid */}
+                <div
                   style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    fontSize: "12px",
-                    textAlign: "left"
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
+                    gap: "12px",
+                    marginBottom: "14px"
                   }}
                 >
-                  <thead>
-                    <tr style={{ background: "#f8fafc", borderBottom: "1.5px solid #cbd5e1", color: "#475569" }}>
-                      <th style={{ padding: "6px 8px", fontWeight: 700 }}>Biomarker / Investigation</th>
-                      <th style={{ padding: "6px 8px", fontWeight: 700 }}>Observed Value</th>
-                      <th style={{ padding: "6px 8px", fontWeight: 700 }}>Clinical Reference Range</th>
-                      <th style={{ padding: "6px 8px", fontWeight: 700, textAlign: "right" }}>Status Assessment</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(featuredReport.parameters || []).slice(0, 6).map((p, idx) => (
-                      <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                        <td style={{ padding: "6px 8px", fontWeight: 700, color: "#0f172a" }}>
-                          {p.name}
-                        </td>
-                        <td style={{ padding: "6px 8px", fontWeight: 800, color: p.status === "attention" ? "#dc2626" : p.status === "borderline" ? "#d97706" : "#0f172a" }}>
-                          {p.value} {p.unit}
-                        </td>
-                        <td style={{ padding: "6px 8px", color: "#64748b" }}>
-                          {p.reference}
-                        </td>
-                        <td style={{ padding: "6px 8px", textAlign: "right" }}>
+                  {pathwayReports.map((rep, idx) => {
+                    const isSelected = selectedReportIndex === idx;
+                    const pathwayIcon = idx === 0 
+                      ? <Droplet size={18} color="#0284c7" /> 
+                      : idx === 1 
+                      ? <Heart size={18} color="#ef4444" /> 
+                      : <ShieldCheck size={18} color="#10b981" />;
+
+                    return (
+                      <div
+                        key={rep.id || idx}
+                        onClick={() => setSelectedReportIndex(idx)}
+                        onDoubleClick={() => setFullDetailReport(rep)}
+                        title="Double-click to open full clinical dossier modal"
+                        style={{
+                          border: isSelected ? "2px solid #0284c7" : "1.5px solid #cbd5e1",
+                          borderRadius: "10px",
+                          padding: "12px",
+                          background: isSelected ? "#f0f9ff" : "#ffffff",
+                          cursor: "pointer",
+                          transition: "all 0.18s ease",
+                          boxShadow: isSelected ? "0 4px 14px rgba(2, 132, 199, 0.18)" : "0 1px 3px rgba(0,0,0,0.04)",
+                          position: "relative"
+                        }}
+                      >
+                        {/* Header of Report Card */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            {pathwayIcon}
+                            <span style={{ fontSize: "11px", fontWeight: 800, color: "#0f172a" }}>
+                              {rep.bodySystem.split(" ")[0]} Pathway
+                            </span>
+                          </div>
+                          <span style={{ fontSize: "10px", color: "#64748b", fontWeight: 600 }}>
+                            {rep.date}
+                          </span>
+                        </div>
+
+                        {/* Title & Lab */}
+                        <div style={{ fontWeight: 800, fontSize: "12.5px", color: "#0f172a", lineHeight: 1.3, marginBottom: "4px" }}>
+                          {rep.title}
+                        </div>
+                        <div style={{ fontSize: "10.5px", color: "#64748b", marginBottom: "8px" }}>
+                          {rep.lab.split("/")[0]}
+                        </div>
+
+                        {/* Essential User Info Snapshot */}
+                        <div
+                          style={{
+                            background: isSelected ? "#e0f2fe" : "#f8fafc",
+                            padding: "6px 8px",
+                            borderRadius: "6px",
+                            fontSize: "11px",
+                            color: "#334155",
+                            marginBottom: "8px",
+                            lineHeight: 1.4,
+                            border: "1px solid #e2e8f0"
+                          }}
+                        >
+                          <div><strong>Patient:</strong> {rep.patientName} ({rep.age}y/{rep.gender})</div>
+                          <div><strong>Phone:</strong> {rep.phone} • <strong>Blood:</strong> <span style={{ color: "#dc2626", fontWeight: 800 }}>{rep.bloodGroup}</span></div>
+                        </div>
+
+                        {/* Status & Double Click Button */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                           <span
                             style={{
-                              display: "inline-block",
-                              fontSize: "10.5px",
-                              fontWeight: 700,
-                              padding: "1px 6px",
+                              fontSize: "10px",
+                              fontWeight: 800,
+                              padding: "2px 6px",
                               borderRadius: "4px",
-                              background: p.status === "attention" ? "#fee2e2" : p.status === "borderline" ? "#fef3c7" : "#dcfce7",
-                              color: p.status === "attention" ? "#dc2626" : p.status === "borderline" ? "#d97706" : "#15803d"
+                              background: rep.overallRisk === "Moderate" ? "#fef3c7" : "#dcfce7",
+                              color: rep.overallRisk === "Moderate" ? "#b45309" : "#15803d"
                             }}
                           >
-                            {p.status === "attention" ? "Elevated" : p.status === "borderline" ? "Borderline" : "Optimal"}
+                            {rep.overallRisk === "Moderate" ? "Moderate Risk" : "Optimal"}
                           </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setFullDetailReport(rep);
+                            }}
+                            className="no-print"
+                            style={{
+                              background: "#0284c7",
+                              color: "#ffffff",
+                              border: "none",
+                              borderRadius: "6px",
+                              padding: "3px 8px",
+                              fontSize: "10.5px",
+                              fontWeight: 700,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              cursor: "pointer"
+                            }}
+                            title="Double-click card or click this button to open full report"
+                          >
+                            <ExternalLink size={12} />
+                            <span>Open (2x)</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Selected Report Detailed Investigations Table Preview */}
+                {selectedReport && (
+                  <div
+                    style={{
+                      border: "1px solid #bae6fd",
+                      background: "#f8fafc",
+                      borderRadius: "10px",
+                      padding: "12px",
+                      marginTop: "10px"
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: "13px", color: "#0369a1" }}>
+                          {selectedReport.title}
+                        </div>
+                        <div style={{ fontSize: "11px", color: "#64748b" }}>
+                          {selectedReport.lab} • Ref: {selectedReport.referringDoctor}
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setFullDetailReport(selectedReport)}
+                        className="no-print"
+                        style={{
+                          background: "#0284c7",
+                          color: "#ffffff",
+                          border: "none",
+                          padding: "5px 12px",
+                          borderRadius: "6px",
+                          fontSize: "11.5px",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "6px"
+                        }}
+                      >
+                        <Maximize2 size={13} />
+                        <span>Open Full Report Dossier Modal</span>
+                      </button>
+                    </div>
+
+                    {/* Patient Essential Info Header for this report */}
+                    <div
+                      style={{
+                        background: "#f0f9ff",
+                        border: "1px solid #e0f2fe",
+                        padding: "8px 12px",
+                        borderRadius: "8px",
+                        fontSize: "11.5px",
+                        color: "#0f172a",
+                        marginBottom: "10px",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "8px 16px"
+                      }}
+                    >
+                      <div><span style={{ color: "#64748b" }}>Patient:</span> <strong>{selectedReport.patientName}</strong></div>
+                      <div><span style={{ color: "#64748b" }}>Age/Gender:</span> <strong>{selectedReport.age} Yrs / {selectedReport.gender}</strong></div>
+                      <div><span style={{ color: "#64748b" }}>Mobile:</span> <strong>{selectedReport.phone}</strong></div>
+                      <div><span style={{ color: "#64748b" }}>Blood Group:</span> <strong style={{ color: "#dc2626" }}>{selectedReport.bloodGroup}</strong></div>
+                      <div><span style={{ color: "#64748b" }}>Address:</span> <span>{selectedReport.address}</span></div>
+                      <div><span style={{ color: "#64748b" }}>ABHA ID:</span> <span style={{ fontFamily: "monospace", color: "#0284c7" }}>{selectedReport.abhaId}</span></div>
+                    </div>
+
+                    {/* Investigations Table */}
+                    <table
+                      style={{
+                        width: "100%",
+                        borderCollapse: "collapse",
+                        fontSize: "12px",
+                        textAlign: "left"
+                      }}
+                    >
+                      <thead>
+                        <tr style={{ background: "#f1f5f9", borderBottom: "1.5px solid #cbd5e1", color: "#475569" }}>
+                          <th style={{ padding: "6px 8px", fontWeight: 700 }}>Biomarker / Investigation</th>
+                          <th style={{ padding: "6px 8px", fontWeight: 700 }}>Observed Value</th>
+                          <th style={{ padding: "6px 8px", fontWeight: 700 }}>Clinical Reference Range</th>
+                          <th style={{ padding: "6px 8px", fontWeight: 700, textAlign: "right" }}>Status Assessment</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(selectedReport.parameters || []).map((p, pIdx) => (
+                          <tr key={pIdx} style={{ borderBottom: "1px solid #e2e8f0" }}>
+                            <td style={{ padding: "6px 8px", fontWeight: 700, color: "#0f172a" }}>
+                              {p.name}
+                            </td>
+                            <td style={{ padding: "6px 8px", fontWeight: 800, color: p.status === "attention" ? "#dc2626" : p.status === "borderline" ? "#d97706" : "#0f172a" }}>
+                              {p.value} {p.unit}
+                            </td>
+                            <td style={{ padding: "6px 8px", color: "#64748b", fontSize: "11.5px" }}>
+                              {p.reference}
+                            </td>
+                            <td style={{ padding: "6px 8px", textAlign: "right" }}>
+                              <span
+                                style={{
+                                  display: "inline-block",
+                                  fontSize: "10.5px",
+                                  fontWeight: 700,
+                                  padding: "1px 6px",
+                                  borderRadius: "4px",
+                                  background: p.status === "attention" ? "#fee2e2" : p.status === "borderline" ? "#fef3c7" : "#dcfce7",
+                                  color: p.status === "attention" ? "#dc2626" : p.status === "borderline" ? "#d97706" : "#15803d"
+                                }}
+                              >
+                                {p.status === "attention" ? "Elevated" : p.status === "borderline" ? "Borderline" : "Optimal"}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    <div style={{ marginTop: "10px", fontSize: "11.5px", color: "#475569", background: "#f1f5f9", padding: "8px 10px", borderRadius: "6px" }}>
+                      <strong>Summary:</strong> {selectedReport.headlineSummary}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -882,6 +1086,270 @@ Generated via PulseAI ABDM Health Platform`;
           </div>
         </div>
       </div>
+
+      {/* ── Official Full Medical Report Dossier Modal (Opened on Double-Click) ── */}
+      {fullDetailReport && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15, 23, 42, 0.75)",
+            backdropFilter: "blur(6px)",
+            zIndex: 100030,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "18px"
+          }}
+          onClick={() => setFullDetailReport(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#ffffff",
+              color: "#0f172a",
+              width: "100%",
+              maxWidth: "880px",
+              maxHeight: "90vh",
+              overflowY: "auto",
+              borderRadius: "16px",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+              border: "2px solid #0284c7",
+              padding: "24px",
+              position: "relative"
+            }}
+          >
+            {/* Top Close Button */}
+            <button
+              type="button"
+              onClick={() => setFullDetailReport(null)}
+              style={{
+                position: "absolute",
+                top: "16px",
+                right: "16px",
+                background: "#f1f5f9",
+                border: "1px solid #cbd5e1",
+                borderRadius: "50%",
+                width: "36px",
+                height: "36px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "#475569"
+              }}
+              title="Close Report (Esc)"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Lab Letterhead Header */}
+            <div style={{ borderBottom: "2px solid #0284c7", paddingBottom: "14px", marginBottom: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", paddingRight: "44px" }}>
+                <div>
+                  <div style={{ fontSize: "18px", fontWeight: 900, color: "#0369a1", letterSpacing: "0.3px" }}>
+                    {fullDetailReport.lab}
+                  </div>
+                  <div style={{ fontSize: "11px", color: "#64748b" }}>
+                    {fullDetailReport.labAddress}
+                  </div>
+                  <div style={{ fontSize: "10.5px", color: "#16a34a", fontWeight: 700, marginTop: "2px" }}>
+                    NABL Accredited • ISO 15189 Certified Reference Pathology Laboratory
+                  </div>
+                </div>
+
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: "11px", color: "#64748b" }}>Report Date</div>
+                  <div style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>{fullDetailReport.date}</div>
+                  <div style={{ fontSize: "11px", color: "#64748b", marginTop: "2px" }}>Ref. Doctor: {fullDetailReport.referringDoctor}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Title & Body Pathway System */}
+            <div style={{ background: "#f0f9ff", border: "1px solid #bae6fd", padding: "10px 14px", borderRadius: "10px", marginBottom: "16px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "#0284c7", textTransform: "uppercase" }}>
+                ORGAN SYSTEM / BODY PATHWAY: {fullDetailReport.bodySystem}
+              </div>
+              <div style={{ fontSize: "16px", fontWeight: 900, color: "#0f172a", marginTop: "2px" }}>
+                {fullDetailReport.title}
+              </div>
+            </div>
+
+            {/* ── PATIENT ESSENTIAL INFORMATION (User Data Only) ── */}
+            <div
+              style={{
+                background: "#f8fafc",
+                border: "1.5px solid #cbd5e1",
+                borderRadius: "10px",
+                padding: "14px",
+                marginBottom: "18px"
+              }}
+            >
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "#475569", textTransform: "uppercase", marginBottom: "8px", letterSpacing: "0.5px" }}>
+                PATIENT DEMOGRAPHICS & ESSENTIAL IDENTIFIERS
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                  gap: "10px 18px",
+                  fontSize: "12.5px"
+                }}
+              >
+                <div>
+                  <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Patient Name</span>
+                  <strong style={{ fontSize: "14px", color: "#0f172a" }}>{fullDetailReport.patientName}</strong>
+                </div>
+
+                <div>
+                  <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Age & Gender</span>
+                  <strong style={{ color: "#0f172a" }}>{fullDetailReport.age} Years / {fullDetailReport.gender}</strong>
+                </div>
+
+                <div>
+                  <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Blood Group</span>
+                  <span style={{ display: "inline-block", background: "#fee2e2", color: "#dc2626", fontWeight: 900, padding: "1px 8px", borderRadius: "6px" }}>
+                    {fullDetailReport.bloodGroup}
+                  </span>
+                </div>
+
+                <div>
+                  <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Mobile Number</span>
+                  <strong style={{ color: "#0f172a" }}>{fullDetailReport.phone}</strong>
+                </div>
+
+                <div style={{ gridColumn: "span 2" }}>
+                  <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>Residential Address</span>
+                  <span style={{ color: "#0f172a" }}>{fullDetailReport.address}</span>
+                </div>
+
+                <div>
+                  <span style={{ color: "#64748b", fontSize: "11px", display: "block" }}>ABHA Digital Health ID</span>
+                  <strong style={{ color: "#0284c7", fontFamily: "monospace" }}>{fullDetailReport.abhaId}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Clinical Headline Summary */}
+            <div style={{ background: fullDetailReport.overallRisk === "Moderate" ? "#fef3c7" : "#dcfce7", border: "1px solid #cbd5e1", padding: "10px 14px", borderRadius: "8px", marginBottom: "18px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: fullDetailReport.overallRisk === "Moderate" ? "#b45309" : "#15803d" }}>
+                OVERALL CLINICAL INTERPRETATION: {fullDetailReport.overallRisk} Risk
+              </div>
+              <div style={{ fontSize: "12.5px", color: "#334155", marginTop: "3px", lineHeight: 1.4 }}>
+                {fullDetailReport.headlineSummary}
+              </div>
+            </div>
+
+            {/* Complete Tests Table */}
+            <div style={{ marginBottom: "20px" }}>
+              <div style={{ fontSize: "12px", fontWeight: 800, color: "#0f172a", marginBottom: "8px" }}>
+                COMPLETE INVESTIGATION PARAMETERS & BIOMARKERS:
+              </div>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+                <thead>
+                  <tr style={{ background: "#f1f5f9", borderBottom: "2px solid #cbd5e1", color: "#334155" }}>
+                    <th style={{ padding: "8px 10px", textAlign: "left" }}>Investigation Name</th>
+                    <th style={{ padding: "8px 10px", textAlign: "left" }}>Observed Value</th>
+                    <th style={{ padding: "8px 10px", textAlign: "left" }}>Biological Reference</th>
+                    <th style={{ padding: "8px 10px", textAlign: "center" }}>Status</th>
+                    <th style={{ padding: "8px 10px", textAlign: "left" }}>Plain Language Clinical Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(fullDetailReport.parameters || []).map((param, pIdx) => (
+                    <tr key={pIdx} style={{ borderBottom: "1px solid #e2e8f0" }}>
+                      <td style={{ padding: "8px 10px", fontWeight: 700, color: "#0f172a" }}>
+                        {param.name}
+                      </td>
+                      <td style={{ padding: "8px 10px", fontWeight: 800, color: param.status === "attention" ? "#dc2626" : param.status === "borderline" ? "#d97706" : "#0f172a" }}>
+                        {param.value} {param.unit}
+                      </td>
+                      <td style={{ padding: "8px 10px", color: "#64748b", fontSize: "11px" }}>
+                        {param.reference}
+                      </td>
+                      <td style={{ padding: "8px 10px", textAlign: "center" }}>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            fontSize: "10px",
+                            fontWeight: 800,
+                            padding: "2px 8px",
+                            borderRadius: "4px",
+                            background: param.status === "attention" ? "#fee2e2" : param.status === "borderline" ? "#fef3c7" : "#dcfce7",
+                            color: param.status === "attention" ? "#dc2626" : param.status === "borderline" ? "#d97706" : "#15803d"
+                          }}
+                        >
+                          {param.status === "attention" ? "Elevated" : param.status === "borderline" ? "Borderline" : "Optimal"}
+                        </span>
+                      </td>
+                      <td style={{ padding: "8px 10px", color: "#334155", fontSize: "11px", lineHeight: 1.35 }}>
+                        {param.plainExplanation}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Doctor Consultation Questions */}
+            {fullDetailReport.doctorQuestions && fullDetailReport.doctorQuestions.length > 0 && (
+              <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "12px 14px", borderRadius: "10px", marginBottom: "20px" }}>
+                <div style={{ fontWeight: 800, fontSize: "11.5px", color: "#0284c7", marginBottom: "6px" }}>
+                  RECOMMENDED QUESTIONS FOR YOUR DOCTOR:
+                </div>
+                <ul style={{ margin: 0, paddingLeft: "18px", fontSize: "12px", color: "#334155" }}>
+                  {fullDetailReport.doctorQuestions.map((q, qIdx) => (
+                    <li key={qIdx} style={{ marginBottom: "4px" }}>{q}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Bottom Actions */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #e2e8f0", paddingTop: "14px" }}>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                style={{
+                  background: "#f1f5f9",
+                  border: "1px solid #cbd5e1",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  fontSize: "12.5px",
+                  fontWeight: 700,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  cursor: "pointer"
+                }}
+              >
+                <Printer size={15} />
+                <span>Print This Lab Dossier</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFullDetailReport(null)}
+                style={{
+                  background: "#0284c7",
+                  color: "#ffffff",
+                  border: "none",
+                  padding: "8px 22px",
+                  borderRadius: "8px",
+                  fontSize: "12.5px",
+                  fontWeight: 800,
+                  cursor: "pointer"
+                }}
+              >
+                Close Report Dossier
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

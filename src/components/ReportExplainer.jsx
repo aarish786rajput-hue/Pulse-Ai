@@ -18,7 +18,7 @@ import {
   CheckCircle2,
   RotateCcw
 } from "lucide-react";
-import { sampleReports } from "../data/sampleReports";
+import { generatePatientReports, sampleReports } from "../data/sampleReports";
 import { analyzeReportFile } from "../services/geminiService";
 
 export default function ReportExplainer({ 
@@ -30,34 +30,33 @@ export default function ReportExplainer({
   onUpdateVitals,
   onAddTimelineEvent
 }) {
-  // Load reports from storage and ensure all sample reports are accessible
-  const [reports, setReports] = useState(() => {
+  // User uploaded reports from storage
+  const [userUploadedReports, setUserUploadedReports] = useState(() => {
     try {
       const saved = localStorage.getItem("pulseai_user_reports");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const userReportIds = new Set(parsed.map((r) => r.id));
-          const missingSamples = sampleReports.filter((s) => !userReportIds.has(s.id));
-          return [...parsed, ...missingSamples];
+          return parsed.filter((r) => r.isUserUploaded);
         }
       }
     } catch (e) {
       console.error("Failed to load reports from storage", e);
     }
-    return sampleReports;
+    return [];
   });
 
+  // Dynamically generated 3 body-pathway & blood reports based on active patient profile
+  const samplePatientReports = useMemo(() => {
+    return generatePatientReports(patient);
+  }, [patient]);
+
+  // Combined reports (User uploads first, followed by active patient's 3 body pathway reports)
+  const reports = useMemo(() => {
+    return [...userUploadedReports, ...samplePatientReports];
+  }, [userUploadedReports, samplePatientReports]);
+
   const [selectedReportId, setSelectedReportId] = useState(() => {
-    try {
-      const saved = localStorage.getItem("pulseai_user_reports");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed[0].id;
-      }
-    } catch (e) {
-      console.error(e);
-    }
     return sampleReports[0]?.id || "";
   });
 
@@ -108,9 +107,9 @@ export default function ReportExplainer({
         clearTimeout(phaseTimer1);
         clearTimeout(phaseTimer2);
 
-        setReports((prev) => {
+        setUserUploadedReports((prev) => {
           // Prepend new report to top of list
-          const updated = [analyzed, ...prev.filter((r) => r.id !== analyzed.id)];
+          const updated = [{ ...analyzed, isUserUploaded: true }, ...prev.filter((r) => r.id !== analyzed.id)];
           try {
             localStorage.setItem("pulseai_user_reports", JSON.stringify(updated));
           } catch (e) {
@@ -161,33 +160,31 @@ export default function ReportExplainer({
         : `Are you sure you want to delete "${reportToDelete?.title || "this report"}"?`;
 
     if (window.confirm(confirmMsg)) {
-      const updated = reports.filter((r) => r.id !== idToDelete);
-      setReports(updated);
-      try {
-        localStorage.setItem("pulseai_user_reports", JSON.stringify(updated));
-      } catch (err) {
-        console.error(err);
-      }
-      if (selectedReportId === idToDelete) {
-        if (updated.length > 0) {
-          setSelectedReportId(updated[0].id);
-        } else {
-          setSelectedReportId(null);
+      setUserUploadedReports((prev) => {
+        const updated = prev.filter((r) => r.id !== idToDelete);
+        try {
+          localStorage.setItem("pulseai_user_reports", JSON.stringify(updated));
+        } catch (err) {
+          console.error(err);
         }
+        return updated;
+      });
+      if (selectedReportId === idToDelete) {
+        setSelectedReportId(samplePatientReports[0]?.id || "");
       }
       showToast(lang === "hi" ? "रिपोर्ट हटा दी गई।" : "Report removed.");
     }
   };
 
   const handleRestoreSamples = () => {
-    setReports(sampleReports);
-    setSelectedReportId(sampleReports[0].id);
+    setUserUploadedReports([]);
     try {
-      localStorage.setItem("pulseai_user_reports", JSON.stringify(sampleReports));
+      localStorage.removeItem("pulseai_user_reports");
     } catch (err) {
       console.error(err);
     }
-    showToast(lang === "hi" ? "डिफ़ॉल्ट रिपोर्ट्स रीसेट हो गईं।" : "Default sample reports restored.");
+    setSelectedReportId(samplePatientReports[0]?.id || "");
+    showToast(lang === "hi" ? "डिफ़ॉल्ट 3 मेडिकल रिपोर्ट्स रीसेट हो गईं।" : "Default 3 medical reports restored.");
   };
 
   const handleSyncToVitals = () => {
@@ -496,6 +493,11 @@ export default function ReportExplainer({
                   setSelectedReportId(r.id);
                   setSearchFilter("");
                 }}
+                onDoubleClick={() => {
+                  setSelectedReportId(r.id);
+                  setShowDocPreviewModal(true);
+                }}
+                title={lang === "hi" ? "क्लिक से चुनें • डबल-क्लिक (2x) से पूरी मेडिकल रिपोर्ट खोलें" : "Click to select • Double-click (2x) to open full official medical report"}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -931,13 +933,13 @@ export default function ReportExplainer({
         </div>
       )}
 
-      {/* Scanned Document Preview Modal */}
-      {showDocPreviewModal && activeReport?.previewUrl && (
+      {/* Scanned Document Preview Modal / Full Clinical Dossier */}
+      {showDocPreviewModal && activeReport && (
         <div className="modal-overlay" onClick={() => setShowDocPreviewModal(false)}>
           <div 
             className="modal-content" 
             onClick={(e) => e.stopPropagation()} 
-            style={{ maxWidth: "800px", maxHeight: "90vh", display: "flex", flexDirection: "column" }}
+            style={{ maxWidth: "850px", maxHeight: "90vh", display: "flex", flexDirection: "column" }}
           >
             <div style={{
               padding: "18px 24px",
@@ -949,9 +951,11 @@ export default function ReportExplainer({
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <FileCheck2 size={20} color="var(--primary)" />
                 <h3 style={{ fontSize: "1.1rem", fontWeight: 800 }}>
-                  {lang === "hi" ? "मूल स्कैन किया गया दस्तावेज़" : "Scanned Medical Report Source"}
+                  {activeReport.previewUrl 
+                    ? (lang === "hi" ? "मूल स्कैन किया गया दस्तावेज़" : "Scanned Medical Report Source")
+                    : (lang === "hi" ? "आधिकारिक मेडिकल लैब रिपोर्ट" : "Official Medical Diagnostic Report")}
                 </h3>
-                <span className="badge badge-primary">{activeReport?.fileName || activeReport?.title}</span>
+                <span className="badge badge-primary">{activeReport.fileName || activeReport.title}</span>
               </div>
               <button 
                 onClick={() => setShowDocPreviewModal(false)}
@@ -962,19 +966,73 @@ export default function ReportExplainer({
               </button>
             </div>
 
-            <div style={{ padding: "20px", overflowY: "auto", textAlign: "center", background: "var(--bg-elevated)", minHeight: "350px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {activeReport.fileType?.includes("pdf") ? (
-                <iframe
-                  src={activeReport.previewUrl}
-                  title="PDF Preview"
-                  style={{ width: "100%", height: "560px", border: "none", borderRadius: "8px" }}
-                />
+            <div style={{ padding: "20px", overflowY: "auto", background: "var(--bg-elevated)", minHeight: "350px" }}>
+              {activeReport.previewUrl ? (
+                <div style={{ textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {activeReport.fileType?.includes("pdf") ? (
+                    <iframe
+                      src={activeReport.previewUrl}
+                      title="PDF Preview"
+                      style={{ width: "100%", height: "560px", border: "none", borderRadius: "8px" }}
+                    />
+                  ) : (
+                    <img
+                      src={activeReport.previewUrl}
+                      alt="Scanned Report"
+                      style={{ maxWidth: "100%", maxHeight: "560px", objectFit: "contain", borderRadius: "8px", boxShadow: "var(--shadow-md)" }}
+                    />
+                  )}
+                </div>
               ) : (
-                <img
-                  src={activeReport.previewUrl}
-                  alt="Scanned Report"
-                  style={{ maxWidth: "100%", maxHeight: "560px", objectFit: "contain", borderRadius: "8px", boxShadow: "var(--shadow-md)" }}
-                />
+                <div style={{ background: "#ffffff", color: "#0f172a", borderRadius: "12px", padding: "24px", border: "1.5px solid #cbd5e1" }}>
+                  {/* Lab Header */}
+                  <div style={{ borderBottom: "2px solid #0284c7", paddingBottom: "12px", marginBottom: "16px", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "10px" }}>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: "18px", color: "#0369a1", fontWeight: 900 }}>{activeReport.lab || "Diagnostic Pathology Laboratory"}</h4>
+                      <p style={{ margin: "3px 0 0", fontSize: "11px", color: "#64748b" }}>{activeReport.labAddress || "NABL & CAP Accredited Clinical Laboratory"}</p>
+                    </div>
+                    <div style={{ textAlign: "right", fontSize: "11px", color: "#64748b" }}>
+                      <div>Date: <strong style={{ color: "#0f172a" }}>{activeReport.date}</strong></div>
+                      <div>Doctor: <strong style={{ color: "#0f172a" }}>{activeReport.referringDoctor || "Primary Physician"}</strong></div>
+                    </div>
+                  </div>
+
+                  {/* Patient Essential Demographics */}
+                  <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "12px 16px", borderRadius: "8px", marginBottom: "16px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", fontSize: "12px" }}>
+                    <div><span style={{ color: "#64748b" }}>Patient:</span> <strong style={{ color: "#0f172a", fontSize: "13px" }}>{activeReport.patientName || patient?.name}</strong></div>
+                    <div><span style={{ color: "#64748b" }}>Age / Gender:</span> <strong style={{ color: "#0f172a" }}>{activeReport.age || patient?.age} Yrs / {activeReport.gender || patient?.gender}</strong></div>
+                    <div><span style={{ color: "#64748b" }}>Blood Group:</span> <strong style={{ color: "#dc2626" }}>{activeReport.bloodGroup || patient?.bloodGroup}</strong></div>
+                    <div><span style={{ color: "#64748b" }}>Mobile:</span> <strong style={{ color: "#0f172a" }}>{activeReport.phone || patient?.emergencyContact?.phone || patient?.phone}</strong></div>
+                    <div style={{ gridColumn: "span 2" }}><span style={{ color: "#64748b" }}>Address:</span> <strong style={{ color: "#0f172a" }}>{activeReport.address || patient?.address}</strong></div>
+                    <div><span style={{ color: "#64748b" }}>ABHA ID:</span> <strong style={{ color: "#0284c7", fontFamily: "monospace" }}>{activeReport.abhaId || patient?.abhaId}</strong></div>
+                  </div>
+
+                  {/* Test Table */}
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+                    <thead>
+                      <tr style={{ background: "#f1f5f9", borderBottom: "1.5px solid #cbd5e1", color: "#334155" }}>
+                        <th style={{ padding: "8px", textAlign: "left" }}>Investigation</th>
+                        <th style={{ padding: "8px", textAlign: "left" }}>Observed Value</th>
+                        <th style={{ padding: "8px", textAlign: "left" }}>Reference Range</th>
+                        <th style={{ padding: "8px", textAlign: "center" }}>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(activeReport.parameters || []).map((p, i) => (
+                        <tr key={i} style={{ borderBottom: "1px solid #e2e8f0" }}>
+                          <td style={{ padding: "8px", fontWeight: 700 }}>{p.name}</td>
+                          <td style={{ padding: "8px", fontWeight: 800, color: p.status === "attention" ? "#dc2626" : p.status === "borderline" ? "#d97706" : "#0f172a" }}>{p.value} {p.unit}</td>
+                          <td style={{ padding: "8px", color: "#64748b" }}>{p.reference}</td>
+                          <td style={{ padding: "8px", textAlign: "center" }}>
+                            <span style={{ padding: "2px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: 700, background: p.status === "attention" ? "#fee2e2" : p.status === "borderline" ? "#fef3c7" : "#dcfce7", color: p.status === "attention" ? "#dc2626" : p.status === "borderline" ? "#d97706" : "#15803d" }}>
+                              {p.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>
