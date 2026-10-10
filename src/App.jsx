@@ -405,8 +405,8 @@ export default function App() {
                 <strong style={{ color: 'var(--primary)' }}>PulseAI</strong>
                 {' — '}
                 {lang === 'hi'
-                  ? 'AI-संचालित व्यक्तिगत स्वास्थ्य सहायक (हैकथॉन एडिशन)'
-                  : 'AI-Powered Personal Health Copilot (Hackathon Edition)'}
+                  ? 'AI-संचालित व्यक्तिगत स्वास्थ्य कमांड सेंटर'
+                  : 'AI-Powered Personal Health Command Center'}
               </span>
               <span className="hide-on-mobile">
                 {lang === 'hi'

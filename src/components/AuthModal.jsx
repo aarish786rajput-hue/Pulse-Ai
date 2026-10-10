@@ -425,7 +425,7 @@ export default function AuthModal({
                       }}
                     />
                     <div style={{ marginTop: "6px", fontSize: "0.74rem", color: "var(--text-dim)" }}>
-                      💡 {lang === "hi" ? "डेमो परीक्षण के लिए: " : "For evaluator demo: "}
+                      💡 {lang === "hi" ? "त्वरित लॉगिन: " : "Quick login: "}
                       <span 
                         onClick={() => setLoginIdentifier("9876543210")} 
                         style={{ color: "var(--primary)", fontWeight: 800, cursor: "pointer", textDecoration: "underline" }}
@@ -495,7 +495,7 @@ export default function AuthModal({
                     />
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
                       <span style={{ fontSize: "0.74rem", color: "var(--text-dim)" }}>
-                        {lang === "hi" ? "डेमो ओटीपी कोड:" : "Evaluator Demo OTP:"} <strong>123456</strong>
+                        {lang === "hi" ? "ओटीपी कोड:" : "Demo OTP:"} <strong>123456</strong>
                       </span>
                       <button
                         type="button"
