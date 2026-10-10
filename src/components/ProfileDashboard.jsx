@@ -339,22 +339,20 @@ export default function ProfileDashboard({
               )}
             </div>
 
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-                <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "var(--text-highlight)" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {/* Row 1: Patient Name & Blood Group */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                <h1 style={{ fontSize: "1.85rem", fontWeight: 800, margin: 0, color: "var(--text-highlight)", letterSpacing: "-0.01em" }}>
                   {patient.name}
                 </h1>
-                <span className="badge badge-good">
-                  <ShieldCheck size={13} /> {lang === "hi" ? "सत्यापित रिकॉर्ड" : "Verified Record"}
-                </span>
-                <span className="badge badge-primary">
+                <span className="badge badge-primary" style={{ fontSize: "0.82rem", padding: "4px 12px" }}>
                   {lang === "hi" ? "रक्त समूह:" : "Blood:"} {patient.bloodGroup}
                 </span>
               </div>
 
-              {/* Exact Synchronized Age & DOB Row (DOB ONLY shown here in Health Dashboard) */}
-              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "8px", flexWrap: "wrap" }}>
-                {/* Dynamically Computed AGE Badge */}
+              {/* Row 2: Age, Gender & ABHA ID Badges */}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                {/* Age Badge */}
                 <div style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -362,16 +360,16 @@ export default function ProfileDashboard({
                   background: "var(--bg-elevated)",
                   border: "1.5px solid var(--primary-border)",
                   borderRadius: "10px",
-                  padding: "4px 12px",
+                  padding: "5px 12px",
                   fontSize: "0.88rem",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   color: "var(--text-highlight)"
                 }}>
                   <Calendar size={14} color="var(--primary)" />
-                  <span>{lang === "hi" ? "आयु (Age):" : "Age:"} <strong style={{ color: "var(--primary)", fontSize: "1rem" }}>{displayedAge} {lang === "hi" ? "वर्ष" : "Yrs"}</strong></span>
+                  <span>{lang === "hi" ? "आयु:" : "Age:"} <strong style={{ color: "var(--primary)" }}>{displayedAge} {lang === "hi" ? "वर्ष" : "Yrs"}</strong></span>
                 </div>
 
-                {/* GENDER Badge */}
+                {/* Gender Badge */}
                 <div style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -379,118 +377,136 @@ export default function ProfileDashboard({
                   background: "var(--bg-elevated)",
                   border: "1px solid var(--border-color)",
                   borderRadius: "10px",
-                  padding: "4px 10px",
-                  fontSize: "0.84rem",
+                  padding: "5px 12px",
+                  fontSize: "0.86rem",
                   color: "var(--text-main)"
                 }}>
-                  <User size={13} color="var(--secondary)" />
+                  <User size={14} color="var(--secondary)" />
                   <span>{lang === "hi" ? "लिंग:" : "Gender:"} <strong>{patient.gender}</strong></span>
                 </div>
 
-                {/* DOB (Exclusively shown in Health Profile) */}
-                <span style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  fontSize: "0.84rem",
-                  color: "var(--text-muted)",
-                  background: "var(--bg-elevated)",
-                  padding: "4px 10px",
-                  borderRadius: "8px",
-                  border: "1px solid var(--border-color)"
-                }}>
-                  <span>DOB: <strong>{currentDob}</strong></span>
-                </span>
-
-                <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>
-                  ID: <strong style={{ color: "var(--primary)" }}>{patient.id.toUpperCase()}</strong>
-                </span>
-              </div>
-
-              {/* Digital ABHA Card Pill */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "10px" }}>
+                {/* Digital ABHA Card Pill */}
                 <div style={{
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "6px",
                   background: "var(--bg-elevated)",
                   border: "1px solid var(--border-color)",
-                  borderRadius: "8px",
-                  padding: "4px 10px",
-                  fontSize: "0.82rem",
+                  borderRadius: "10px",
+                  padding: "5px 12px",
+                  fontSize: "0.86rem",
                   color: "var(--text-main)"
                 }}>
                   <CreditCard size={14} color="var(--primary)" />
                   <span>ABHA ID: <strong>{patient.abhaId || "91-4521-8842-1982"}</strong></span>
                   <button
+                    type="button"
                     onClick={handleCopyAbha}
-                    style={{ background: "none", border: "none", cursor: "pointer", padding: "0 2px", color: "var(--primary)" }}
+                    style={{ background: "none", border: "none", cursor: "pointer", padding: "0 2px", color: "var(--primary)", display: "flex", alignItems: "center" }}
                     title="Copy ABHA ID"
                   >
                     {copiedAbha ? <CheckCircle2 size={13} color="var(--secondary)" /> : <Copy size={13} />}
                   </button>
                 </div>
               </div>
+
+              {/* Row 3: Switch Account Selector */}
+              {patients && patients.length > 0 && (
+                <div style={{ marginTop: "2px" }}>
+                  <div style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    background: "var(--bg-elevated)",
+                    border: "1.5px solid var(--primary-border)",
+                    borderRadius: "10px",
+                    padding: "6px 14px"
+                  }}>
+                    <User size={15} color="var(--primary)" />
+                    <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 700 }}>
+                      {lang === "hi" ? "खाता बदलें:" : "Switch Account:"}
+                    </span>
+                    <select
+                      value={patient.id}
+                      onChange={(e) => {
+                        const found = patients.find(p => p.id === e.target.value);
+                        if (found && onSelectPatient) onSelectPatient(found);
+                      }}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        boxShadow: "none",
+                        padding: "2px 4px",
+                        fontSize: "0.88rem",
+                        fontWeight: 800,
+                        color: "var(--text-highlight)",
+                        cursor: "pointer",
+                        outline: "none"
+                      }}
+                    >
+                      {patients.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} ({p.bloodGroup})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Action Buttons & Patient Switcher */}
-          <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
-            {patients && patients.length > 1 && (
-              <div style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                background: "var(--bg-elevated)",
-                border: "1.5px solid var(--primary-border)",
-                borderRadius: "10px",
-                padding: "6px 12px"
-              }}>
-                <User size={15} color="var(--primary)" />
-                <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", fontWeight: 700 }}>
-                  {lang === "hi" ? "मरीज़:" : "Patient:"}
-                </span>
-                <select
-                  value={patient.id}
-                  onChange={(e) => {
-                    const found = patients.find(p => p.id === e.target.value);
-                    if (found && onSelectPatient) onSelectPatient(found);
-                  }}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    boxShadow: "none",
-                    padding: "2px 4px",
-                    fontSize: "0.86rem",
-                    fontWeight: 800,
-                    color: "var(--text-highlight)",
-                    cursor: "pointer",
-                    outline: "none"
-                  }}
-                >
-                  {patients.map(p => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ({p.bloodGroup})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+          {/* Right Action Column: Top Edit Details & Bottom Print Health Report */}
+          <div style={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            justifyContent: "space-between", 
+            alignItems: "flex-end", 
+            gap: "18px",
+            minHeight: "115px",
+            alignSelf: "stretch"
+          }}>
+            {/* Top Right: Edit Details */}
             <button
               onClick={startEditing}
               className="btn btn-secondary"
-              style={{ fontSize: "0.86rem" }}
+              style={{
+                height: "40px",
+                padding: "0 16px",
+                fontSize: "0.88rem",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                borderRadius: "10px",
+                background: "var(--bg-card)",
+                border: "1.5px solid var(--border-color)",
+                fontWeight: 600,
+                boxShadow: "var(--shadow-sm)"
+              }}
             >
-              <Edit3 size={16} color="var(--primary)" />
+              <Edit3 size={15} color="var(--primary)" />
               <span>{lang === "hi" ? "विवरण संपादित करें" : "Edit Details"}</span>
             </button>
+
+            {/* Bottom Right: Print Health Report */}
             <button
               onClick={() => window.print()}
               className="btn btn-primary"
-              style={{ fontSize: "0.86rem" }}
+              style={{
+                height: "42px",
+                padding: "0 18px",
+                fontSize: "0.88rem",
+                fontWeight: 700,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, var(--primary), var(--primary-dark))",
+                boxShadow: "0 4px 14px rgba(2, 132, 199, 0.22)"
+              }}
             >
               <Printer size={16} />
-              <span>{lang === "hi" ? "पासपोर्ट प्रिंट करें" : "Print Health Passport"}</span>
+              <span>{lang === "hi" ? "हेल्थ रिपोर्ट प्रिंट करें" : "Print Health Report"}</span>
             </button>
           </div>
         </div>
