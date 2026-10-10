@@ -82,29 +82,33 @@ export default function Sidebar({
           justifyContent: isOpen ? "space-between" : "center",
           padding: isOpen ? "10px 13px" : "10px 0",
           borderRadius: "12px",
-          border: "none",
-          background: isActive ? "linear-gradient(135deg, var(--primary), var(--primary-dark))" : "transparent",
+          background: isActive 
+            ? "linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(37, 99, 235, 0.25))" 
+            : "transparent",
+          border: isActive 
+            ? "1px solid rgba(59, 130, 246, 0.32)" 
+            : "1px solid transparent",
           color: isActive ? "#ffffff" : "var(--text-muted)",
           fontWeight: isActive ? 700 : 500,
           cursor: "pointer",
-          transition: "all 0.18s ease",
+          transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
           textAlign: "left",
           width: "100%",
           position: "relative",
-          boxShadow: isActive ? "0 3px 10px rgba(2, 132, 199, 0.22)" : "none"
+          boxShadow: isActive ? "0 2px 12px rgba(59, 130, 246, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12)" : "none"
         }}
         className={!isActive ? "sidebar-item-hover" : ""}
         title={!isOpen ? item.label : undefined}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: isOpen ? "flex-start" : "center" }}>
-          <Icon size={19} color={isActive ? "#ffffff" : "var(--primary)"} style={{ flexShrink: 0 }} />
+          <Icon size={19} color={isActive ? "var(--primary-light)" : "var(--text-muted)"} style={{ flexShrink: 0 }} />
           {isOpen && (
-            <span style={{ fontSize: "0.88rem", fontWeight: isActive ? 700 : 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <span style={{ fontSize: "0.88rem", fontWeight: isActive ? 700 : 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {item.label}
             </span>
           )}
         </div>
-        {isOpen && isActive && <ChevronRight size={14} color="#ffffff" />}
+        {isOpen && isActive && <ChevronRight size={14} color="var(--primary-light)" />}
       </button>
     );
   };
