@@ -396,8 +396,14 @@ async function callGeminiWithFallback(apiKey, requestBody) {
 function generateFallbackReportAnalysis(fileName = "Report.pdf", fileDataUrl, mimeType, patientContext, lang = "en") {
   const lowerName = (fileName || "").toLowerCase();
   const dateStr = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  const patientName = patientContext?.name || "Rahul Sharma";
-  const ageGender = `${patientContext?.age || 45} / ${patientContext?.gender?.[0] || "M"}`;
+  const patientName = patientContext?.name || "Aarish Rajput";
+  const age = patientContext?.age || 22;
+  const gender = patientContext?.gender || "Male";
+  const bloodGroup = patientContext?.bloodGroup || "B+";
+  const phone = patientContext?.phone || patientContext?.emergencyContact?.phone || "+91 98765 43210";
+  const address = patientContext?.address || "Sector 62, Noida, Uttar Pradesh, India";
+  const abhaId = patientContext?.abhaId || "91-4521-8842-1982";
+  const ageGender = `${age} / ${gender[0]}`;
 
   let title = "Comprehensive Metabolic & Vitals Panel";
   let overallRisk = "Moderate";
@@ -752,6 +758,12 @@ function generateFallbackReportAnalysis(fileName = "Report.pdf", fileDataUrl, mi
     date: dateStr,
     lab,
     patientName,
+    age,
+    gender,
+    bloodGroup,
+    phone,
+    address,
+    abhaId,
     ageGender,
     overallRisk,
     headlineSummary,
@@ -863,8 +875,14 @@ CRITICAL: Output ONLY a strictly valid JSON object matching this schema. Do not 
             title: parsed.title || `Lab Report: ${fileName.replace(/\.[^/.]+$/, "")}`,
             date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
             lab: parsed.lab || "Clinical Diagnostics Lab",
-            patientName: patientContext?.name || "Rahul Sharma",
-            ageGender: `${patientContext?.age || 45} / ${patientContext?.gender?.[0] || "M"}`,
+            patientName: patientContext?.name || "Aarish Rajput",
+            age: patientContext?.age || 22,
+            gender: patientContext?.gender || "Male",
+            bloodGroup: patientContext?.bloodGroup || "B+",
+            phone: patientContext?.phone || patientContext?.emergencyContact?.phone || "+91 98765 43210",
+            address: patientContext?.address || "Sector 62, Noida, Uttar Pradesh, India",
+            abhaId: patientContext?.abhaId || "91-4521-8842-1982",
+            ageGender: `${patientContext?.age || 22} / ${patientContext?.gender?.[0] || "M"}`,
             overallRisk: parsed.overallRisk || "Moderate",
             headlineSummary: parsed.headlineSummary || (lang === "hi" ? "दस्तावेज़ का एआई विज़न विश्लेषण सफलतापूर्वक पूरा हुआ।" : "AI processed your uploaded document successfully."),
             previewUrl: fileDataUrl,

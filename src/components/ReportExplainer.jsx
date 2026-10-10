@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { 
   FileText, 
   UploadCloud, 
@@ -217,9 +217,20 @@ export default function ReportExplainer({
     }
 
     if (onAddTimelineEvent) {
+      let eventDate = new Date().toISOString().split("T")[0];
+      if (activeReport.date) {
+        try {
+          const parsedD = new Date(activeReport.date);
+          if (!isNaN(parsedD.getTime())) {
+            eventDate = parsedD.toISOString().split("T")[0];
+          }
+        } catch {
+          // fallback to today
+        }
+      }
       onAddTimelineEvent({
         id: `evt_rep_${Date.now()}`,
-        date: activeReport.date ? new Date(activeReport.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+        date: eventDate,
         category: "Lab Test",
         title: activeReport.title,
         doctor: activeReport.lab || "Diagnostic Pathology",
@@ -612,7 +623,7 @@ export default function ReportExplainer({
                 )}
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
                   <User size={16} color="var(--text-dim)" />
-                  <span>{lang === "hi" ? "मरीज़:" : "Patient:"} {activeReport.patientName || patient?.name || "Rahul Sharma"}</span>
+                  <span>{lang === "hi" ? "मरीज़:" : "Patient:"} {activeReport.patientName || patient?.name || "Aarish Rajput"}</span>
                 </span>
               </div>
             </div>
@@ -642,17 +653,16 @@ export default function ReportExplainer({
                 <span>{lang === "hi" ? "वाइटल्स में सिंक करें" : "Sync to Vitals"}</span>
               </button>
 
-              {activeReport.previewUrl && (
-                <button
-                  type="button"
-                  onClick={() => setShowDocPreviewModal(true)}
-                  className="btn btn-secondary"
-                  style={{ height: "40px", padding: "0 14px", fontSize: "0.85rem", display: "inline-flex", alignItems: "center", gap: "6px", borderRadius: "10px" }}
-                >
-                  <Eye size={16} color="var(--primary)" />
-                  <span>{lang === "hi" ? "मूल दस्तावेज़" : "View Original"}</span>
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => setShowDocPreviewModal(true)}
+                className="btn btn-secondary"
+                style={{ height: "40px", padding: "0 14px", fontSize: "0.85rem", display: "inline-flex", alignItems: "center", gap: "6px", borderRadius: "10px" }}
+                title={lang === "hi" ? "पूरी आधिकारिक मेडिकल रिपोर्ट खोलें (डबल-क्लिक भी कर सकते हैं)" : "Open full official diagnostic report (or double click tab)"}
+              >
+                <Eye size={16} color="var(--primary)" />
+                <span>{lang === "hi" ? "पूरी रिपोर्ट देखें (2x)" : "View Full Report (2x)"}</span>
+              </button>
 
               <button
                 type="button"
