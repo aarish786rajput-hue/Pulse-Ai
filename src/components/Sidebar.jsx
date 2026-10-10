@@ -35,17 +35,35 @@ export default function Sidebar({
 }) {
   const t = translations[lang] || translations.en;
 
-  const navItems = [
-    { id: "dashboard", label: lang === "hi" ? "होम" : "Home", icon: Home },
-    { id: "symptom-checker", label: t.navSymptomChecker, icon: Stethoscope },
-    { id: "doctors", label: t.navDoctors, icon: BriefcaseMedical },
-    { id: "profile", label: t.navProfile, icon: UserCheck },
-    { id: "reports", label: t.navReports, icon: FileText },
-    { id: "discharge", label: lang === "hi" ? "डिस्चार्ज सारांश" : (t.navDischarge || "Discharge Summary"), icon: ClipboardCheck },
-    { id: "medications", label: t.navMedications, icon: Pill },
-    { id: "devices", label: lang === "hi" ? "स्मार्ट वॉच व डिवाइसेज" : (t.navDevices || "Smart Watch & Devices"), icon: Watch },
-    { id: "vitals", label: t.navVitals, icon: TrendingUp },
-    { id: "timeline", label: t.navTimeline, icon: History }
+  const navSections = [
+    {
+      id: "overview",
+      title: lang === "hi" ? "मुख्य सेवाएँ" : "Overview",
+      items: [
+        { id: "dashboard", label: lang === "hi" ? "होम" : "Home", icon: Home },
+        { id: "symptom-checker", label: t.navSymptomChecker, icon: Stethoscope },
+        { id: "doctors", label: t.navDoctors, icon: BriefcaseMedical }
+      ]
+    },
+    {
+      id: "records",
+      title: lang === "hi" ? "मेडिकल रिकॉर्ड्स" : "Medical Records",
+      items: [
+        { id: "reports", label: t.navReports, icon: FileText },
+        { id: "discharge", label: lang === "hi" ? "डिस्चार्ज सारांश" : (t.navDischarge || "Discharge Summary"), icon: ClipboardCheck },
+        { id: "profile", label: t.navProfile, icon: UserCheck }
+      ]
+    },
+    {
+      id: "monitoring",
+      title: lang === "hi" ? "दैनिक देखभाल व वाइटल्स" : "Daily Monitoring",
+      items: [
+        { id: "medications", label: t.navMedications, icon: Pill },
+        { id: "devices", label: lang === "hi" ? "स्मार्ट वॉच व डिवाइसेज" : (t.navDevices || "Smart Watch & Devices"), icon: Watch },
+        { id: "vitals", label: t.navVitals, icon: TrendingUp },
+        { id: "timeline", label: t.navTimeline, icon: History }
+      ]
+    }
   ];
 
   const renderNavButton = (item) => {
@@ -62,7 +80,7 @@ export default function Sidebar({
           display: "flex",
           alignItems: "center",
           justifyContent: isOpen ? "space-between" : "center",
-          padding: isOpen ? "11px 14px" : "11px 0",
+          padding: isOpen ? "10px 13px" : "10px 0",
           borderRadius: "12px",
           border: "none",
           background: isActive ? "linear-gradient(135deg, var(--primary), var(--primary-dark))" : "transparent",
@@ -81,7 +99,7 @@ export default function Sidebar({
         <div style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: isOpen ? "flex-start" : "center" }}>
           <Icon size={19} color={isActive ? "#ffffff" : "var(--primary)"} style={{ flexShrink: 0 }} />
           {isOpen && (
-            <span style={{ fontSize: "0.89rem", fontWeight: isActive ? 700 : 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <span style={{ fontSize: "0.88rem", fontWeight: isActive ? 700 : 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {item.label}
             </span>
           )}
@@ -121,7 +139,7 @@ export default function Sidebar({
           style={{ 
             display: "flex", 
             flexDirection: "column", 
-            gap: "14px", 
+            gap: "12px", 
             flex: 1, 
             minHeight: 0, 
             overflowY: "auto", 
@@ -140,14 +158,33 @@ export default function Sidebar({
             />
           </div>
 
-          {/* Main Navigation Menu with Single Top Title */}
-          <nav style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-            {isOpen && (
-              <div style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.06em", padding: "2px 8px 6px" }}>
-                {lang === "hi" ? "मेनू" : "Menu"}
+          {/* Categorized Navigation Menu with Clear Sections */}
+          <nav style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {navSections.map((sec, idx) => (
+              <div key={sec.id} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                {idx > 0 && !isOpen && (
+                  <div style={{ height: "1px", background: "var(--border-color)", margin: "4px 8px" }} />
+                )}
+                {isOpen && (
+                  <div style={{ 
+                    fontSize: "0.68rem", 
+                    fontWeight: 800, 
+                    color: "var(--text-dim)", 
+                    textTransform: "uppercase", 
+                    letterSpacing: "0.06em", 
+                    padding: idx === 0 ? "2px 8px 4px" : "6px 8px 4px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px"
+                  }}>
+                    <span>{sec.title}</span>
+                  </div>
+                )}
+                <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                  {sec.items.map(renderNavButton)}
+                </div>
               </div>
-            )}
-            {navItems.map(renderNavButton)}
+            ))}
           </nav>
         </div>
 

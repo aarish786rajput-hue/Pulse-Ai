@@ -241,11 +241,22 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* Tactile Quick Action Cards — Large, Prominent Size Matching Second Reference Picture */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px" }}>
-        {/* Symptom Checker Shortcut */}
-        <div
-          onClick={() => onNavigate("symptom-checker")}
+      {/* Section: Quick Care Action Center */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+          <h2 style={{ fontSize: "1.15rem", fontWeight: 800, color: "var(--text-highlight)", display: "flex", alignItems: "center", gap: "8px" }}>
+            <Sparkles size={18} color="var(--primary)" />
+            {lang === "hi" ? "त्वरित स्वास्थ्य सेवाएँ" : "Quick Health Actions"}
+          </h2>
+          <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", fontWeight: 600 }}>
+            {lang === "hi" ? "1-क्लिक सीधी सुविधा" : "1-Click Direct Access"}
+          </span>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px" }}>
+          {/* Symptom Checker Shortcut */}
+          <div
+            onClick={() => onNavigate("symptom-checker")}
           className="glass-panel interactive-card"
           style={{ 
             padding: "24px 22px", 
@@ -391,6 +402,7 @@ export default function Dashboard({
           </div>
         </div>
       </div>
+    </div>
 
       {/* Vitals Summary Cards */}
       <div>
