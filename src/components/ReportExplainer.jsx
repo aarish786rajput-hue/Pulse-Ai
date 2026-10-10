@@ -518,18 +518,18 @@ export default function ReportExplainer({
                   fontSize: "0.88rem",
                   fontWeight: isSelected ? 800 : 600,
                   background: isSelected 
-                    ? "linear-gradient(135deg, #f59e0b, #d97706)" 
+                    ? "linear-gradient(135deg, #4f46e5, #6366f1)" 
                     : "var(--bg-card)",
                   color: isSelected ? "#ffffff" : "var(--text-main)",
-                  border: isSelected ? "1.5px solid #f59e0b" : "1.5px solid var(--border-color)",
-                  boxShadow: isSelected ? "0 4px 14px rgba(245, 158, 11, 0.35)" : "var(--shadow-sm)",
+                  border: isSelected ? "1.5px solid #6366f1" : "1.5px solid var(--border-color)",
+                  boxShadow: isSelected ? "0 4px 16px rgba(79, 70, 229, 0.35)" : "var(--shadow-sm)",
                   cursor: "pointer",
                   whiteSpace: "nowrap",
                   transition: "all 0.18s ease",
                   flexShrink: 0
                 }}
               >
-                <FileText size={16} color={isSelected ? "#ffffff" : "#f59e0b"} />
+                <FileText size={16} color={isSelected ? "#ffffff" : "#6366f1"} />
                 <span>{r.title}</span>
                 <span style={{
                   fontSize: "0.74rem",

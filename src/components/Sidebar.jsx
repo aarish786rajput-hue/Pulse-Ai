@@ -77,10 +77,10 @@ export default function Sidebar({
           id: "reports", 
           label: t.navReports, 
           icon: FileText,
-          color: "#f59e0b",
-          bg: "rgba(245, 158, 11, 0.16)",
-          activeGradient: "linear-gradient(135deg, rgba(245, 158, 11, 0.24), rgba(217, 119, 6, 0.32))",
-          borderColor: "rgba(245, 158, 11, 0.45)"
+          color: "#6366f1",
+          bg: "rgba(99, 102, 241, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(79, 70, 229, 0.24), rgba(99, 102, 241, 0.32))",
+          borderColor: "rgba(99, 102, 241, 0.45)"
         },
         { 
           id: "discharge", 
@@ -137,10 +137,10 @@ export default function Sidebar({
           id: "timeline", 
           label: t.navTimeline, 
           icon: History,
-          color: "#6366f1",
-          bg: "rgba(99, 102, 241, 0.16)",
-          activeGradient: "linear-gradient(135deg, rgba(99, 102, 241, 0.24), rgba(79, 70, 229, 0.32))",
-          borderColor: "rgba(99, 102, 241, 0.45)"
+          color: "#0284c7",
+          bg: "rgba(2, 132, 199, 0.16)",
+          activeGradient: "linear-gradient(135deg, rgba(2, 132, 199, 0.24), rgba(3, 105, 161, 0.32))",
+          borderColor: "rgba(2, 132, 199, 0.45)"
         }
       ]
     }

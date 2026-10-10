@@ -49,10 +49,10 @@ const NAV_LINKS = [
     label: "Lab Reports", 
     labelHi: "लैब रिपोर्ट्स", 
     icon: FileText,
-    color: "#f59e0b",
-    bg: "rgba(245, 158, 11, 0.16)",
-    activeBg: "linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.28))",
-    borderColor: "rgba(245, 158, 11, 0.45)"
+    color: "#6366f1",
+    bg: "rgba(99, 102, 241, 0.16)",
+    activeBg: "linear-gradient(135deg, rgba(79, 70, 229, 0.22), rgba(99, 102, 241, 0.28))",
+    borderColor: "rgba(99, 102, 241, 0.45)"
   },
   { 
     id: "doctors", 
@@ -72,7 +72,7 @@ const SEARCH_CATEGORIES = [
   { id: "copilot", label: "AI Health Copilot", labelHi: "एआई स्वास्थ्य कोपायलट", tab: "copilot", icon: Sparkles, color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.16)", keywords: ["ai", "copilot", "ask", "chat", "voice", "सवाल", "मदद", "कोपायलट"] },
   { id: "symptom-checker", label: "Symptom Checker", labelHi: "लक्षण जांच विज़ार्ड", tab: "symptom-checker", icon: Activity, color: "#f43f5e", bg: "rgba(244, 63, 94, 0.16)", keywords: ["symptom", "fever", "pain", "headache", "dizzy", "cough", "दर्द", "बुखार", "चक्कर"] },
   { id: "medications", label: "Medications & Safety", labelHi: "दवाइयां और सुरक्षा", tab: "medications", icon: Pill, color: "#ec4899", bg: "rgba(236, 72, 153, 0.16)", keywords: ["medicine", "pill", "tablet", "statin", "telmisartan", "metformin", "dawa", "दवाई", "गोली"] },
-  { id: "reports", label: "Lab Test Reports", labelHi: "लैब टेस्ट रिपोर्ट", tab: "reports", icon: FileText, color: "#f59e0b", bg: "rgba(245, 158, 11, 0.16)", keywords: ["report", "lab", "test", "hba1c", "blood", "sugar", "रिपोर्ट", "जांच"] },
+  { id: "reports", label: "Lab Test Reports", labelHi: "लैब टेस्ट रिपोर्ट", tab: "reports", icon: FileText, color: "#6366f1", bg: "rgba(99, 102, 241, 0.16)", keywords: ["report", "lab", "test", "hba1c", "blood", "sugar", "रिपोर्ट", "जांच"] },
   { id: "vitals", label: "Vitals & Physiological Trends", labelHi: "वाइटल्स व रुझान", tab: "vitals", icon: Activity, color: "#10b981", bg: "rgba(16, 185, 129, 0.16)", keywords: ["vitals", "bp", "blood pressure", "glucose", "pulse", "बीपी", "शुगर", "पल्स"] },
   { id: "profile", label: "Health Profile & ABHA", labelHi: "स्वास्थ्य प्रोफ़ाइल व आभा", tab: "profile", icon: User, color: "#3b82f6", bg: "rgba(59, 130, 246, 0.16)", keywords: ["profile", "abha", "id", "allergy", "आभा", "प्रोफाइल"] }
 ];
