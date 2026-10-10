@@ -9,6 +9,7 @@ import {
   X, 
   Stethoscope, 
   FileText, 
+  FileCheck2,
   Sparkles, 
   Home, 
   Check,
@@ -39,6 +40,7 @@ const NAV_LINKS = [
 ];
 
 const SEARCH_CATEGORIES = [
+  { id: "passport", label: "Doctor Health Passport (PDF)", labelHi: "डॉक्टर हेल्थ पासपोर्ट (PDF)", tab: "passport", icon: FileCheck2, keywords: ["passport", "pdf", "print", "summary", "पासपोर्ट", "प्रिंट", "डॉक्टर"] },
   { id: "doctors", label: "Specialist Doctors", labelHi: "विशेषज्ञ डॉक्टर", tab: "doctors", icon: Stethoscope, keywords: ["doctor", "dentist", "dermatologist", "eye", "skin", "डॉक्टर", "दंत", "क्लिनिक"] },
   { id: "copilot", label: "AI Health Copilot", labelHi: "एआई स्वास्थ्य कोपायलट", tab: "copilot", icon: Sparkles, keywords: ["ai", "copilot", "ask", "chat", "voice", "सवाल", "मदद", "कोपायलट"] },
   { id: "symptom-checker", label: "Symptom Checker", labelHi: "लक्षण जांच विज़ार्ड", tab: "symptom-checker", icon: Activity, keywords: ["symptom", "fever", "pain", "headache", "dizzy", "cough", "दर्द", "बुखार", "चक्कर"] },
@@ -51,6 +53,7 @@ const SEARCH_CATEGORIES = [
 export default function TopHeader({
   activeTab,
   onOpenEmergency,
+  onOpenHealthPassport,
   _onOpenDoctorPrep,
   _isSidebarOpen,
   onToggleSidebar,
@@ -106,7 +109,9 @@ export default function TopHeader({
   }) : SEARCH_CATEGORIES;
 
   const handleSelectResult = (item) => {
-    if (onNavigate) {
+    if (item.tab === "passport" || item.id === "passport") {
+      if (onOpenHealthPassport) onOpenHealthPassport();
+    } else if (onNavigate) {
       onNavigate(item.tab);
     }
     setSearchQuery("");
@@ -373,8 +378,25 @@ export default function TopHeader({
         )}
       </div>
 
-      {/* ── ZONE 3 (RIGHT): Action Cluster (SOS + Theme + Language) ── */}
+      {/* ── ZONE 3 (RIGHT): Action Cluster (Passport + SOS + Theme + Language) ── */}
       <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+        {/* Doctor Health Passport Quick Button */}
+        {onOpenHealthPassport && (
+          <button
+            onClick={onOpenHealthPassport}
+            className="header-icon-btn"
+            title={lang === "hi" ? "डॉक्टर हेल्थ पासपोर्ट (PDF)" : "Doctor Health Passport (PDF)"}
+            aria-label="Doctor Health Passport"
+            style={{
+              color: "var(--primary)",
+              borderColor: "var(--primary-border)",
+              background: "var(--primary-soft)"
+            }}
+          >
+            <FileCheck2 size={17} />
+          </button>
+        )}
+
         {/* SOS Emergency Button (Icon Only, Prominent Red Alert Pulse) */}
         <button
           onClick={onOpenEmergency}

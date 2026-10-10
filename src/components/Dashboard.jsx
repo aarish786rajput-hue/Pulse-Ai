@@ -13,7 +13,8 @@ import {
   BellRing,
   UploadCloud,
   Pill,
-  Activity
+  Activity,
+  FileCheck2
 } from "lucide-react";
 import { translations } from "../data/translations";
 
@@ -22,6 +23,7 @@ export default function Dashboard({
   onNavigate,
   onToggleMedication,
   onOpenDoctorPrep,
+  onOpenHealthPassport,
   onOpenAddVital,
   onUploadReport,
   lang = "en"
@@ -82,6 +84,29 @@ export default function Dashboard({
                   </span>
                 );
               })}
+
+              {onOpenHealthPassport && (
+                <button
+                  type="button"
+                  onClick={onOpenHealthPassport}
+                  className="badge"
+                  style={{
+                    background: "var(--bg-card)",
+                    border: "1px solid var(--primary-border)",
+                    color: "var(--primary)",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    fontWeight: 700,
+                    padding: "4px 10px"
+                  }}
+                  title={lang === "hi" ? "डॉक्टर हेल्थ पासपोर्ट देखें व प्रिंट करें" : "View & print Doctor Health Passport"}
+                >
+                  <FileCheck2 size={13} />
+                  <span>{lang === "hi" ? "हेल्थ पासपोर्ट (PDF)" : "Health Passport (PDF)"}</span>
+                </button>
+              )}
             </div>
           </div>
 

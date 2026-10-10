@@ -916,4 +916,61 @@ select option {
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* ── DOCTOR HEALTH PASSPORT & CLINICAL SUMMARY PRINT STYLES ────────────── */
+/* ══════════════════════════════════════════════════════════════════════════ */
+@media print {
+  /* Hide all generic app navigation, sidebars, headers, and modals */
+  body * {
+    visibility: hidden;
+  }
 
+  /* Make only the official Health Passport visible */
+  #doctor-health-passport-doc,
+  #doctor-health-passport-doc * {
+    visibility: visible;
+  }
+
+  #doctor-health-passport-doc {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 20px 24px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+  }
+
+  .no-print,
+  .modal-overlay,
+  .floating-copilot-window,
+  .floating-copilot-btn,
+  .sidebar,
+  .top-header,
+  .dashboard-banner,
+  button {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  /* Color accuracy on physical paper / PDF export */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+}

@@ -13,6 +13,7 @@ import VitalsTracker from './components/VitalsTracker';
 import HealthTimeline from './components/HealthTimeline';
 import EmergencyIDModal from './components/EmergencyIDModal';
 import DoctorPrepModal from './components/DoctorPrepModal';
+import DoctorHealthPassportModal from './components/DoctorHealthPassportModal';
 import ApiKeyModal from './components/ApiKeyModal';
 import AuthModal from './components/AuthModal';
 import DoctorsDashboard from './components/DoctorsDashboard';
@@ -65,9 +66,10 @@ export default function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('pulseai_theme') || 'dark');
 
   // ── Modal visibility ──────────────────────────────────────────────────────
-  const [isEmergencyOpen,   setIsEmergencyOpen]   = useState(false);
-  const [isDoctorPrepOpen,  setIsDoctorPrepOpen]  = useState(false);
-  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
+  const [isEmergencyOpen,      setIsEmergencyOpen]      = useState(false);
+  const [isDoctorPrepOpen,     setIsDoctorPrepOpen]     = useState(false);
+  const [isHealthPassportOpen, setIsHealthPassportOpen] = useState(false);
+  const [isApiKeyModalOpen,    setIsApiKeyModalOpen]    = useState(false);
   const [isAuthModalOpen,   setIsAuthModalOpen]   = useState(false);
   const [isLoggedIn,        setIsLoggedIn]        = useState(() => {
     const saved = localStorage.getItem('pulseai_logged_in');
@@ -198,6 +200,7 @@ export default function App() {
             activeTab={activeTab}
             onOpenEmergency={() => setIsEmergencyOpen(true)}
             onOpenDoctorPrep={() => setIsDoctorPrepOpen(true)}
+            onOpenHealthPassport={() => setIsHealthPassportOpen(true)}
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
             lang={lang}
@@ -214,6 +217,7 @@ export default function App() {
                 onNavigate={handleNavigate}
                 onToggleMedication={handleToggleMedication}
                 onOpenDoctorPrep={() => setIsDoctorPrepOpen(true)}
+                onOpenHealthPassport={() => setIsHealthPassportOpen(true)}
                 onOpenAddVital={() => setActiveTab('vitals')}
                 onUploadReport={(file) => {
                   setPendingUploadFile(file);
@@ -245,6 +249,7 @@ export default function App() {
                 patients={patients}
                 onSelectPatient={(p) => setCurrentPatientId(p.id)}
                 onUpdatePatient={updateCurrentPatient}
+                onOpenHealthPassport={() => setIsHealthPassportOpen(true)}
                 lang={lang}
               />
             )}
@@ -347,6 +352,12 @@ export default function App() {
         <DoctorPrepModal
           isOpen={isDoctorPrepOpen}
           onClose={() => setIsDoctorPrepOpen(false)}
+          patient={currentPatient}
+          lang={lang}
+        />
+        <DoctorHealthPassportModal
+          isOpen={isHealthPassportOpen}
+          onClose={() => setIsHealthPassportOpen(false)}
           patient={currentPatient}
           lang={lang}
         />

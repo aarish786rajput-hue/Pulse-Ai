@@ -7,7 +7,7 @@ import {
   Phone, 
   Edit3, 
   CheckCircle2, 
-  Printer, 
+  FileCheck2,
   Copy, 
   History, 
   X, 
@@ -27,6 +27,7 @@ export default function ProfileDashboard({
   patients = [],
   onSelectPatient,
   onUpdatePatient, 
+  onOpenHealthPassport,
   lang = "en" 
 }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -487,9 +488,9 @@ export default function ProfileDashboard({
               <span>{lang === "hi" ? "विवरण संपादित करें" : "Edit Details"}</span>
             </button>
 
-            {/* Bottom Right: Print Health Report */}
+            {/* Bottom Right: Doctor Health Passport (PDF) */}
             <button
-              onClick={() => window.print()}
+              onClick={() => onOpenHealthPassport ? onOpenHealthPassport() : window.print()}
               className="btn btn-primary"
               style={{
                 height: "42px",
@@ -504,8 +505,8 @@ export default function ProfileDashboard({
                 boxShadow: "0 4px 14px rgba(2, 132, 199, 0.22)"
               }}
             >
-              <Printer size={16} />
-              <span>{lang === "hi" ? "हेल्थ रिपोर्ट प्रिंट करें" : "Print Health Report"}</span>
+              <FileCheck2 size={16} />
+              <span>{lang === "hi" ? "हेल्थ पासपोर्ट (PDF)" : "Health Passport (PDF)"}</span>
             </button>
           </div>
         </div>
