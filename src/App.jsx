@@ -277,7 +277,6 @@ export default function App() {
                 onNavigate={handleNavigate}
                 onToggleMedication={handleToggleMedication}
                 onOpenDoctorPrep={() => setIsDoctorPrepOpen(true)}
-                onOpenHealthPassport={() => setIsHealthPassportOpen(true)}
                 onOpenAddVital={() => setActiveTab('vitals')}
                 onUploadReport={(file) => {
                   setPendingUploadFile(file);

@@ -144,14 +144,54 @@ Generated via PulseAI ABDM Health Platform`;
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          boxShadow: "0 25px 60px rgba(0, 0, 0, 0.45)"
+          boxShadow: "0 25px 60px rgba(0, 0, 0, 0.45)",
+          position: "relative"
         }}
       >
+        {/* Top-Right Corner Close Button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="no-print"
+          style={{
+            position: "absolute",
+            top: "16px",
+            right: "18px",
+            zIndex: 40,
+            width: "36px",
+            height: "36px",
+            borderRadius: "10px",
+            border: "1px solid var(--border-color)",
+            background: "var(--bg-card)",
+            color: "var(--text-muted)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            boxShadow: "var(--shadow-sm)",
+            transition: "all 0.18s ease"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--text-highlight)";
+            e.currentTarget.style.borderColor = "var(--border-hover)";
+            e.currentTarget.style.background = "var(--bg-card-hover)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--text-muted)";
+            e.currentTarget.style.borderColor = "var(--border-color)";
+            e.currentTarget.style.background = "var(--bg-card)";
+          }}
+          aria-label="Close modal"
+          title={lang === "hi" ? "बंद करें" : "Close"}
+        >
+          <X size={18} />
+        </button>
+
         {/* ── 1. NON-PRINTING TOOLBAR & CONTROL STRIP ── */}
         <div
           className="no-print"
           style={{
-            padding: "16px 22px",
+            padding: "16px 64px 16px 22px",
             borderBottom: "1px solid var(--border-color)",
             background: "var(--bg-elevated)",
             display: "flex",
@@ -252,23 +292,6 @@ Generated via PulseAI ABDM Health Platform`;
             >
               {copied ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
               <span className="hide-on-mobile">{copied ? (lang === "hi" ? "कॉपी हुआ!" : "Copied!") : (lang === "hi" ? "कॉपी" : "Copy")}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-secondary"
-              style={{
-                width: "36px",
-                height: "38px",
-                padding: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-              }}
-              aria-label="Close modal"
-            >
-              <X size={18} />
             </button>
           </div>
         </div>
