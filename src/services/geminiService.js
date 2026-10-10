@@ -269,10 +269,10 @@ export async function sendChatMessage(messages, patientContext, lang = 'en', cha
   const apiKey = getStoredApiKey();
   const latestMessage = messages[messages.length - 1]?.content || "";
 
-  // Auto-resolve language preference
+  // Auto-resolve language preference: Always prioritize chatLang if set
   let resolvedLang = chatLang || (lang === 'hi' ? 'hi' : 'hinglish');
-  // If user typed in Devanagari script, auto-treat as Hindi
-  if (/[\u0900-\u097F]/.test(latestMessage)) {
+  // Only auto-detect script if no chatLang was explicitly chosen
+  if (!chatLang && /[\u0900-\u097F]/.test(latestMessage)) {
     resolvedLang = 'hi';
   }
 
@@ -291,25 +291,41 @@ export async function sendChatMessage(messages, patientContext, lang = 'en', cha
     const allergiesStr = patientContext?.allergies?.map(a => typeof a === "string" ? a : a.allergen).join(", ") || "None";
     const medsStr = patientContext?.todayMedications?.map(m => `${m.name} (${m.dosage})`).join(", ") || "None";
 
-    const LANGUAGE_DESCRIPTIONS = {
-      hinglish: 'Reply STRICTLY in friendly, natural, conversational Hinglish (Hindi written in Roman English alphabet, e.g. "Aapki HbA1c 7.2% thodi badhi hui hai, ghabrayein nahi. Yeh 3 aasan steps follow karein..."). Write like an affectionate Indian doctor on WhatsApp. Avoid complex medical jargon.',
-      hi: 'Reply STRICTLY in simple, clear, conversational Hindi (सरल एवं सहज हिन्दी). Avoid difficult Sanskritized or heavy words. Use everyday words.',
-      en: 'Reply in very simple, friendly, easy-to-understand plain English (6th-grade level). Avoid heavy clinical terminology.',
-      bn: 'Reply STRICTLY in simple, conversational Bengali (সহজ ও সাবলীল বাংলা). Use warm, caring and plain everyday language.',
-      mr: 'Reply STRICTLY in simple, conversational Marathi (सोपी आणि सुलभ मराठी). Use warm, caring and plain everyday language.',
-      te: 'Reply STRICTLY in simple, conversational Telugu (సరళమైన మరియు సులభమైన తెలుగు). Use warm, caring and plain everyday language.',
-      ta: 'Reply STRICTLY in simple, conversational Tamil (எளிய மற்றும் இயல்பான தமிழ்). Use warm, caring and plain everyday language.',
-      gu: 'Reply STRICTLY in simple, conversational Gujarati (સરળ અને સમજાય તેવી ગુજરાતી). Use warm, caring and plain everyday language.',
-      pa: 'Reply STRICTLY in simple, conversational Punjabi (ਸੌਖੀ ਅਤੇ ਆਸਾਨ ਪੰਜਾਬੀ). Use warm, caring and plain everyday language.',
-      kn: 'Reply STRICTLY in simple, conversational Kannada (ಸರಳ ಮತ್ತು ಸುಲಭವಾದ ಕನ್ನಡ). Use warm, caring and plain everyday language.'
+    const LANGUAGE_NAMES = {
+      hinglish: "conversational Hinglish (Hindi written in English alphabet, e.g. 'Aapki tabiyat ab theek hai, regular medicines lein')",
+      hi: "simple Hindi (सरल हिन्दी)",
+      en: "clear plain English",
+      bn: "Bengali (বাংলা)",
+      mr: "Marathi (मराठी)",
+      te: "Telugu (తెలుగు)",
+      ta: "Tamil (தமிழ்)",
+      gu: "Gujarati (ગુજરાતી)",
+      pa: "Punjabi (ਪੰਜਾਬੀ)",
+      kn: "Kannada (ಕನ್ನಡ)"
     };
 
-    const languageGuidance = `
-IMPORTANT LANGUAGE REQUIREMENT:
-- ${LANGUAGE_DESCRIPTIONS[resolvedLang] || `Reply in simple, clear, conversational ${resolvedLang}. Avoid heavy clinical jargon.`}`;
+    const targetLangName = LANGUAGE_NAMES[resolvedLang] || resolvedLang;
+
+    const LANGUAGE_DESCRIPTIONS = {
+      hinglish: 'Reply 100% in natural conversational Hinglish (Hindi in English/Latin letters, e.g. "Aapki HbA1c 7.2% thodi badhi hui hai, ghabrayein nahi. Yeh 2 aasan steps follow karein..."). Write like a caring Indian doctor on WhatsApp. Do NOT use Devanagari script.',
+      hi: 'Reply 100% in simple, clear, conversational Hindi (सरल एवं सहज हिन्दी भाषा में). Avoid tough Sanskrit words.',
+      en: 'Reply 100% in simple, friendly, easy-to-understand plain English (6th-grade level). Avoid heavy clinical terminology.',
+      bn: 'Reply 100% in simple, conversational Bengali (সহজ ও সাবলীল বাংলা ভাষায়). Use warm, caring and plain everyday Bengali words.',
+      mr: 'Reply 100% in simple, conversational Marathi (सोपी आणि सुलभ मराठी भाषेत). Use warm, caring and plain everyday Marathi words.',
+      te: 'Reply 100% in simple, conversational Telugu (సరళమైన మరియు సులభమైన తెలుగు భాషలో). Use warm, caring everyday Telugu.',
+      ta: 'Reply 100% in simple, conversational Tamil (எளிய மற்றும் இயல்பான தமிழ் மொழியில்). Use warm, caring everyday Tamil.',
+      gu: 'Reply 100% in simple, conversational Gujarati (સરળ અને સમજાય તેવી ગુજરાતી ભાષામાં). Use warm, caring everyday Gujarati.',
+      pa: 'Reply 100% in simple, conversational Punjabi (ਸੌਖੀ ਅਤੇ ਆਸਾਨ ਪੰਜਾਬੀ ਭਾਸ਼ਾ ਵਿੱਚ). Use warm, caring everyday Punjabi.',
+      kn: 'Reply 100% in simple, conversational Kannada (ಸರಳ ಮತ್ತು ಸುಲಭವಾದ ಕನ್ನಡ ಭಾಷೆಯಲ್ಲಿ). Use warm, caring everyday Kannada.'
+    };
 
     const prompt = `You are a friendly, caring personal AI Health Copilot.
-${languageGuidance}
+
+MANDATORY LANGUAGE REQUIREMENT:
+The user has chosen: ${targetLangName}.
+YOU MUST WRITE YOUR ENTIRE RESPONSE 100% IN ${targetLangName}.
+${LANGUAGE_DESCRIPTIONS[resolvedLang] || `Reply strictly in ${targetLangName}.`}
+DO NOT answer in English unless the selected language is English! Even if the user message is written in English or another language, YOUR RESPONSE MUST BE IN ${targetLangName}.
 
 Patient Profile:
 - Name: ${patientContext?.name || "Patient"}
@@ -320,11 +336,11 @@ Patient Profile:
 User message: "${latestMessage}"
 
 STRICT SIMPLICITY INSTRUCTIONS (MANDATORY):
-1. KEEP YOUR ANSWER VERY SIMPLE, NATURAL, AND EASY TO UNDERSTAND (Bilkul aasan bhasha).
+1. KEEP YOUR ANSWER VERY SIMPLE, NATURAL, AND EASY TO UNDERSTAND in ${targetLangName}.
 2. Write only 2 to 3 concise, clear sentences. MAXIMUM 50 words.
 3. DO NOT use bullet points, numbered lists, asterisks lists, or complex clinical jargon.
-4. If the user gives a greeting (e.g. "hi", "hello", "namaste"), reply with a warm, friendly 1-sentence greeting.
-5. In severe emergencies (chest pain, stroke signs, difficulty breathing), immediately advise urgent hospital emergency care.`;
+4. If the user gives a greeting (e.g. "hi", "hello", "namaste"), reply with a warm, friendly 1-sentence greeting in ${targetLangName}.
+5. In severe emergencies (chest pain, stroke signs, difficulty breathing), immediately advise urgent hospital emergency care in ${targetLangName}.`;
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
       method: "POST",

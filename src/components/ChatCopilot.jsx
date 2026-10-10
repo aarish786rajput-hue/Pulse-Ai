@@ -57,16 +57,30 @@ export default function ChatCopilot({ patient, lang = 'en', initialQuery, onClea
     setTimeout(() => setNotificationMsg(""), 2800);
   };
 
+const LANG_VOICE_MAP = {
+  hinglish: "hi-IN",
+  hi: "hi-IN",
+  en: "en-IN",
+  bn: "bn-IN",
+  mr: "mr-IN",
+  te: "te-IN",
+  ta: "ta-IN",
+  gu: "gu-IN",
+  pa: "pa-IN",
+  kn: "kn-IN"
+};
+
   const getWelcomeMessage = useCallback((patientData, currentLang) => {
     const conditions = patientData?.conditions?.map(c => typeof c === "string" ? c : c.name).join(", ") || "None";
     const allergies = patientData?.allergies?.map(a => typeof a === "string" ? a : a.allergen).join(", ") || "None reported";
     const meds = patientData?.todayMedications?.map(m => m.name).join(", ") || "None";
+    const pName = patientData?.name || "Patient";
 
     if (currentLang === "hi") {
       return {
         id: "m_welcome",
         sender: "bot",
-        content: `नमस्ते ${patientData?.name || "साथी"} जी 👋! मैं आपका **सरल एआई स्वास्थ्य सहायक (AI Copilot)** हूँ।
+        content: `नमस्ते ${pName} जी 👋! मैं आपका **सरल एआई स्वास्थ्य सहायक (AI Copilot)** हूँ।
 
 आपकी प्रोफ़ाइल की वर्तमान स्थिति:
 • **स्वास्थ्य स्थिति:** ${conditions}
@@ -81,7 +95,7 @@ export default function ChatCopilot({ patient, lang = 'en', initialQuery, onClea
       return {
         id: "m_welcome",
         sender: "bot",
-        content: `Namaste ${patientData?.name || "ji"} 👋! Main aapka **AI Health Copilot** hoon.
+        content: `Namaste ${pName} ji 👋! Main aapka **AI Health Copilot** hoon.
 
 Aapki medical profile mere paas ready hai:
 • **Health Condition:** ${conditions}
@@ -92,11 +106,116 @@ Aap mujhse apni **sugar, BP, lab reports, dawai ya khane-peene** ke bare me bilk
         triageLevel: "routine",
         timestamp: "Just now"
       };
+    } else if (currentLang === "bn") {
+      return {
+        id: "m_welcome",
+        sender: "bot",
+        content: `নমস্কার ${pName} বাবু 👋! আমি আপনার **AI Health Copilot**।
+
+আপনার বর্তমান শারীরিক তথ্য:
+• **শারীরিক অবস্থা:** ${conditions}
+• **ওষুধ:** ${meds}
+• **অ্যালার্জি:** ${allergies}
+
+আপনি আমাকে **প্রেসক্রিপশন, রক্তের রিপোর্ট, ওষুধের সময় বা খাওয়া-দাওয়া** নিয়ে সহজ বাংলায় প্রশ্ন করতে পারেন। নিচে **মাইক্রোফোন 🎙️ চেপে কথাও বলতে পারেন!**`,
+        triageLevel: "routine",
+        timestamp: "এখনই"
+      };
+    } else if (currentLang === "mr") {
+      return {
+        id: "m_welcome",
+        sender: "bot",
+        content: `नमस्कार ${pName} जी 👋! मी तुमचा **AI Health Copilot** आहे.
+
+तुमची आरोग्य माहिती:
+• **आरोग्य स्थिती:** ${conditions}
+• **चालू औषधे:** ${meds}
+• **अ‍ॅलर्जी:** ${allergies}
+
+तुम्ही मला तुमच्या **लॅब टेस्ट रिपोर्ट्स, औषधांच्या वेळा किंवा आहाराबद्दल** सोप्या मराठीत विचारू शकता. खाली **माईक 🎙️ दाबून बोलू शकता!**`,
+        triageLevel: "routine",
+        timestamp: "आत्ता"
+      };
+    } else if (currentLang === "pa") {
+      return {
+        id: "m_welcome",
+        sender: "bot",
+        content: `ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ${pName} ਜੀ 👋! ਮੈਂ ਤੁਹਾਡਾ **AI Health Copilot** ਹਾਂ।
+
+ਤੁਹਾਡੀ ਸਿਹਤ ਜਾਣਕਾਰੀ:
+• **ਸਿਹਤ ਸਥਿਤੀ:** ${conditions}
+• **ਦਵਾਈਆਂ:** ${meds}
+• **ਐਲਰਜੀ:** ${allergies}
+
+ਤੁਸੀਂ ਮੇਰੇ ਤੋਂ ਆਪਣੀਆਂ **ਰਿਪੋਰਟਾਂ, ਦਵਾਈਆਂ ਦੇ ਸਮੇਂ ਜਾਂ ਖਾਣ-ਪੀਣ** ਬਾਰੇ ਆਸਾਨ ਪੰਜਾਬੀ ਵਿੱਚ ਪੁੱਛ ਸਕਦੇ ਹੋ। ਹੇਠਾਂ **ਮਾਈਕ 🎙️ ਦਬਾ ਕੇ ਬੋਲ ਵੀ ਸਕਦੇ ਹੋ!**`,
+        triageLevel: "routine",
+        timestamp: "ਹੁਣੇ"
+      };
+    } else if (currentLang === "ta") {
+      return {
+        id: "m_welcome",
+        sender: "bot",
+        content: `வணக்கம் ${pName} 👋! நான் உங்கள் **AI Health Copilot**.
+
+உங்கள் உடல்நல விவரங்கள்:
+• **உடல்நிலை:** ${conditions}
+• **மருந்துகள்:** ${meds}
+• **ஒவ்வாமை (Allergies):** ${allergies}
+
+உங்கள் **பரிசோதனை முடிவுகள், மருந்து எடுத்துக்கொள்ளும் நேரம் அல்லது உணவுமுறை** பற்றி எளிய தமிழில் கேட்கலாம். கீழே உள்ள **மைக் 🎙️ அழுத்தி பேசலாம்!**`,
+        triageLevel: "routine",
+        timestamp: "இப்போது"
+      };
+    } else if (currentLang === "te") {
+      return {
+        id: "m_welcome",
+        sender: "bot",
+        content: `నమస్కారం ${pName} గారు 👋! నేను మీ **AI Health Copilot**.
+
+మీ ఆరోగ్య వివరాలు:
+• **ఆరోగ్య పరిస్థితి:** ${conditions}
+• **మందులు:** ${meds}
+• **అలెర్జీలు:** ${allergies}
+
+మీ **ల్యాబ్ రిపోర్టులు, మందుల సమయం లేదా ఆహారం** గురించి సరళమైన తెలుగులో అడగవచ్చు. క్రింద ఉన్న **మైక్ 🎙️ నొక్కి మాట్లాడవచ్చు!**`,
+        triageLevel: "routine",
+        timestamp: "ఇప్పుడు"
+      };
+    } else if (currentLang === "gu") {
+      return {
+        id: "m_welcome",
+        sender: "bot",
+        content: `નમસ્તે ${pName} જી 👋! હું તમારો **AI Health Copilot** છું.
+
+તમારી આરોગ્ય વિગતો:
+• **આરોગ્ય સ્થિતિ:** ${conditions}
+• **દવાઓ:** ${meds}
+• **એલર્જી:** ${allergies}
+
+તમે તમારા **લેબ રિપોર્ટ, દવાનો સમય કે આહાર** વિશે સરળ ગુજરાતીમાં પૂછી શકો છો. નીચે **માઇક 🎙️ દબાવીને બોલી શકો છો!**`,
+        triageLevel: "routine",
+        timestamp: "હમણાં"
+      };
+    } else if (currentLang === "kn") {
+      return {
+        id: "m_welcome",
+        sender: "bot",
+        content: `ನಮಸ್ಕಾರ ${pName} ಅವರೇ 👋! ನಾನು ನಿಮ್ಮ **AI Health Copilot**.
+
+ನಿಮ್ಮ ಆರೋಗ್ಯ ವಿವರಗಳು:
+• **ಆರೋಗ್ಯ ಸ್ಥಿತಿ:** ${conditions}
+• **ಔಷಧಿಗಳು:** ${meds}
+• **ಅಲರ್ಜಿಗಳು:** ${allergies}
+
+ನಿಮ್ಮ **ಲ್ಯಾಬ್ ವರದಿಗಳು, ಔಷಧಿಗಳ ಸಮಯ ಅಥವಾ ಆಹಾರ** ಕುರಿತು ಸರಳ ಕನ್ನಡದಲ್ಲಿ ಕೇಳಬಹುದು. ಕೆಳಗಿನ **ಮೈಕ್ 🎙️ ಒತ್ತಿ ಮಾತನಾಡಬಹುದು!**`,
+        triageLevel: "routine",
+        timestamp: "ಈಗ"
+      };
     } else {
       return {
         id: "m_welcome",
         sender: "bot",
-        content: `Hello ${patientData?.name || "there"} 👋! I am your **AI Health Copilot**.
+        content: `Hello ${pName} 👋! I am your **AI Health Copilot**.
 
 I have your active health records ready:
 • **Conditions:** ${conditions}
@@ -127,16 +246,8 @@ You can ask me about **lab test results, sugar/BP readings, drug safety, or simp
   const handleLanguageChange = (newLang) => {
     setChatLang(newLang);
     localStorage.setItem("pulseai_copilot_lang", newLang);
-    showNotification(newLang === "hi" ? "भाषा बदल दी गई" : "Language Updated");
+    showNotification(`Language: ${SUPPORTED_LANGUAGES.find(l => l.id === newLang)?.label || newLang}`);
   };
-
-  // Sync when top navbar changes language
-  useEffect(() => {
-    if (lang && lang !== chatLang) {
-      setChatLang(lang);
-      localStorage.setItem("pulseai_copilot_lang", lang);
-    }
-  }, [lang, patient]);
 
   // Helper to persist current conversation into localStorage session list
   const persistSession = useCallback((updatedMessages, sessionId) => {
@@ -297,7 +408,7 @@ You can ask me about **lab test results, sugar/BP readings, drug safety, or simp
       recognitionRef.current = recognition;
       recognition.continuous = false;
       recognition.interimResults = true;
-      recognition.lang = chatLang === "en" ? "en-IN" : "hi-IN";
+      recognition.lang = LANG_VOICE_MAP[chatLang] || "en-IN";
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -376,7 +487,7 @@ You can ask me about **lab test results, sugar/BP readings, drug safety, or simp
 
     const cleanText = text.replace(/[*#_`]/g, "");
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = chatLang === "en" ? "en-IN" : "hi-IN";
+    utterance.lang = LANG_VOICE_MAP[chatLang] || "en-IN";
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
     utterance.onend = () => setIsSpeaking(false);
@@ -445,26 +556,81 @@ You can ask me about **lab test results, sugar/BP readings, drug safety, or simp
     showNotification(chatLang === "hi" ? "पूरा इतिहास साफ़ किया गया!" : "All Chat History Cleared!");
   };
 
-  // Dynamic quick prompts adapted to simple language
-  const quickPrompts = chatLang === "hi" ? [
-    "HbA1c 7.2% का क्या आसान मतलब है?",
-    "चक्कर और हाथ कांप रहे हैं, क्या शुगर कम है?",
-    "टेल्मिसार्टन के साथ कौन सा पेनकिलर सुरक्षित है?",
-    "डॉक्टर से पूछने के लिए 3 जरूरी सवाल",
-    "कोलेस्ट्रॉल कम करने के आसान उपाय"
-  ] : chatLang === "hinglish" ? [
-    "HbA1c 7.2% ka kya aasan matlab hai?",
-    "Chakkar aur kamkampi aa rahi hai, kya sugar low hai?",
-    "BP ki dawa ke saath headache ki konsi goli safe hai?",
-    "Doctor se milne se pehle kya 3 sawal poochein?",
-    "Rosuvastatin raat ko kyu lete hain?"
-  ] : [
-    "What does an HbA1c of 7.2% mean in simple words?",
-    "Feeling dizzy and shaky - is my sugar low?",
-    "What painkiller is safe with my BP medicine?",
-    "3 simple questions for my doctor visit",
-    "Why take Rosuvastatin at night?"
-  ];
+  // Dynamic quick prompts adapted to simple language for all 10 languages
+  const quickPromptsByLang = {
+    hi: [
+      "HbA1c 7.2% का क्या आसान मतलब है?",
+      "चक्कर और हाथ कांप रहे हैं, क्या शुगर कम है?",
+      "टेल्मिसार्टन के साथ कौन सा पेनकिलर सुरक्षित है?",
+      "डॉक्टर से पूछने के लिए 3 जरूरी सवाल",
+      "कोलेस्ट्रॉल कम करने के आसान उपाय"
+    ],
+    hinglish: [
+      "HbA1c 7.2% ka kya aasan matlab hai?",
+      "Chakkar aur kamkampi aa rahi hai, kya sugar low hai?",
+      "BP ki dawa ke saath headache ki konsi goli safe hai?",
+      "Doctor se milne se pehle kya 3 sawal poochein?",
+      "Rosuvastatin raat ko kyu lete hain?"
+    ],
+    bn: [
+      "HbA1c 7.2% এর সহজ অর্থ কী?",
+      "মাথা ঘুরছে এবং হাত কাঁপছে, সুগার কি কম?",
+      "রক্তচাপের ওষুধের সাথে কোন ব্যথানাশক নিরাপদ?",
+      "ডাক্তারকে জিজ্ঞাসা করার ৩টি গুরুত্বপূর্ণ প্রশ্ন",
+      "কোলেস্টেরল নিয়ন্ত্রণের সহজ নিয়ম"
+    ],
+    mr: [
+      "HbA1c 7.2% चा सोपा अर्थ काय आहे?",
+      "चक्कर येत आहे, शुगर कमी झाली आहे का?",
+      "बीपीच्या औषधासोबत कोणती पेनकिलर सुरक्षित आहे?",
+      "डॉक्टरांना विचारण्यासाठी ३ महत्त्वाचे प्रश्न",
+      "कोलेस्टेरॉल कमी करण्याचे सोपे उपाय"
+    ],
+    pa: [
+      "HbA1c 7.2% ਦਾ ਸੌਖਾ ਮਤਲਬ ਕੀ ਹੈ?",
+      "ਚੱਕਰ ਆ ਰਹੇ ਹਨ, ਕੀ ਸ਼ੂਗਰ ਘੱਟ ਗਈ ਹੈ?",
+      "ਬੀਪੀ ਦੀ ਦਵਾਈ ਨਾਲ ਕਿਹੜੀ ਪੇਨਕਿਲਰ ਸੁਰੱਖਿਅਤ ਹੈ?",
+      "ਡਾਕਟਰ ਨੂੰ ਪੁੱਛਣ ਲਈ 3 ਜ਼ਰੂਰੀ ਸਵਾਲ",
+      "ਕੋਲੈਸਟ੍ਰੋਲ ਕੰਟਰੋਲ ਕਰਨ ਦੇ ਆਸਾਨ ਨੁਸਖੇ"
+    ],
+    ta: [
+      "HbA1c 7.2% என்பதன் எளிய விளக்கம் என்ன?",
+      "தலைச்சுற்றல் உள்ளது, சர்க்கரை அளவு குறைந்துள்ளதா?",
+      "ரத்த அழுத்த மாத்திரையுடன் எந்த வலி நிவாரணி பாதுகாப்பானது?",
+      "மருத்துவரிடம் கேட்க வேண்டிய 3 முக்கிய கேள்விகள்",
+      "கொலஸ்ட்ராலை குறைக்கும் எளிய வழிகள்"
+    ],
+    te: [
+      "HbA1c 7.2% అంటే సరళమైన అర్థం ఏమిటి?",
+      "తలతిరుగుతోంది, షుగర్ లెవెల్ తగ్గిపోయిందా?",
+      "బీపీ మందుతో పాటు ఏ పెయిన్‌కిల్లర్ సురక్షితం?",
+      "వైద్యుడిని అడగవలసిన 3 ముఖ్యమైన ప్రశ్నలు",
+      "కొలెస్ట్రాల్ తగ్గించే సులభమైన చిట్కాలు"
+    ],
+    gu: [
+      "HbA1c 7.2% નો સરળ અર્થ શું થાય?",
+      "ચક્કર આવે છે, શું સુગર ઘટી ગઈ છે?",
+      "બીપીની દવા સાથે કઈ પેઇનકિલર સુરક્ષિત છે?",
+      "ડોક્ટરને પૂછવા માટેના 3 જરૂરી પ્રશ્નો",
+      "કોલેસ્ટ્રોલ કંટ્રોલ કરવાના સરળ ઉપાય"
+    ],
+    kn: [
+      "HbA1c 7.2% ನ ಸರಳ ಅರ್ಥವೇನು?",
+      "ತಲೆಸುತ್ತು ಬರುತ್ತಿದೆ, ಶುಗರ್ ಕಡಿಮೆಯಾಗಿದೆಯೇ?",
+      "ಬಿಪಿ ಮಾತ್ರೆ ಜೊತೆಗೆ ಯಾವ ನೋವು ನಿವಾರಕ ಸುರಕ್ಷಿತ?",
+      "ವೈದ್ಯರನ್ನು ಕೇಳಬೇಕಾದ 3 ಮುಖ್ಯ ಪ್ರಶ್ನೆಗಳು",
+      "ಕೊಲೆಸ್ಟ್ರಾಲ್ ನಿಯಂತ್ರಿಸುವ ಸರಳ ವಿಧಾನಗಳು"
+    ],
+    en: [
+      "What does an HbA1c of 7.2% mean in simple words?",
+      "Feeling dizzy and shaky - is my sugar low?",
+      "What painkiller is safe with my BP medicine?",
+      "3 simple questions for my doctor visit",
+      "Why take Rosuvastatin at night?"
+    ]
+  };
+
+  const quickPrompts = quickPromptsByLang[chatLang] || quickPromptsByLang.en;
 
   return (
     <div style={{
@@ -687,9 +853,23 @@ You can ask me about **lab test results, sugar/BP readings, drug safety, or simp
             <div style={{ maxWidth: "420px", fontSize: "0.85rem", lineHeight: 1.5 }}>
               {chatLang === "hi"
                 ? "नमस्ते! अपनी दवाओं, जांच रिपोर्ट या स्वास्थ्य के बारे में कोई भी सवाल पूछें। नीचे टाइप करें या माइक दबाकर बोलें।"
-                : (chatLang === "hinglish"
-                  ? "Namaste! Mujhse apni medicines, lab reports ya health ke baare me koi bhi sawal poochein. Neeche type karein ya mic dabayein."
-                  : "Ask me anything about your medications, lab test reports, or health queries. Type or tap the mic below to begin.")}
+                : chatLang === "hinglish"
+                ? "Namaste! Mujhse apni medicines, lab reports ya health ke baare me koi bhi sawal poochein. Neeche type karein ya mic dabayein."
+                : chatLang === "bn"
+                ? "নমস্কার! ওষুধ, ল্যাব রিপোর্ট বা স্বাস্থ্য নিয়ে যে কোনো প্রশ্ন করুন। নিচে লিখুন বা মাইকে কথা বলুন।"
+                : chatLang === "mr"
+                ? "नमस्कार! औषधे, लॅब रिपोर्ट्स किंवा आरोग्याविषयी कोणताही प्रश्न विचारा. खाली टाईप करा किंवा माईक दाबून बोला."
+                : chatLang === "pa"
+                ? "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਦਵਾਈਆਂ, ਲੈਬ ਰਿਪੋਰਟਾਂ ਜਾਂ ਸਿਹਤ ਬਾਰੇ ਕੋਈ ਵੀ ਸਵਾਲ ਪੁੱਛੋ। ਹੇਠਾਂ ਲਿਖੋ ਜਾਂ ਮਾਈਕ ਦਬਾ ਕੇ ਬੋਲੋ।"
+                : chatLang === "ta"
+                ? "வணக்கம்! உங்கள் மருந்துகள், பரிசோதனை முடிவுகள் பற்றி ஏதேனும் கேள்விகள் கேட்கலாம். கீழே தட்டச்சு செய்யவும் அல்லது பேசவும்."
+                : chatLang === "te"
+                ? "నమస్కారం! మీ మందులు, ల్యాబ్ రిపోర్టుల గురించి ఏవైనా ప్రశ్నలు అడగండి. క్రింద టైప్ చేయండి లేదా మాట్లాడండి."
+                : chatLang === "gu"
+                ? "નમસ્તે! દવાઓ, લેબ રિપોર્ટ અથવા આરોગ્ય વિશે કોઈ પણ સવાલ પૂછો. નીચે ટાઈપ કરો અથવા માઇક દબાવીને બોલો."
+                : chatLang === "kn"
+                ? "ನಮಸ್ಕಾರ! ಔಷಧಿಗಳು, ಲ್ಯಾಬ್ ವರದಿಗಳು ಅಥವಾ ಆರೋಗ್ಯದ ಕುರಿತು ಯಾವುದೇ ಪ್ರಶ್ನೆ ಕೇಳಿ. ಕೆಳಗೆ ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮಾತನಾಡಿ."
+                : "Ask me anything about your medications, lab test reports, or health queries. Type or tap the mic below to begin."}
             </div>
           </div>
         ) : (

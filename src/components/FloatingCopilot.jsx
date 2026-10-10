@@ -87,6 +87,22 @@ export default function FloatingCopilot({
         timestamp: "अभी",
         triageLevel: "routine"
       };
+    } else if (chatLang === "bn") {
+      return {
+        id: "msg_init",
+        sender: "bot",
+        content: `নমস্কার ${pName} বাবু! 🙏 আমি আপনার **AI Copilot**।\n\nআপনার স্বাস্থ্য প্রোফাইল (*${conditions}*) অনুযায়ী ওষুধ, ল্যাব রিপোর্ট বা যে কোনো শারীরিক সমস্যায় সাহায্যের জন্য প্রস্তুত।\n\nটাইপ করুন, ছবি 📷 পাঠান বা মাইক 🎙️ চেপে কথা বলুন!`,
+        timestamp: "এখনই",
+        triageLevel: "routine"
+      };
+    } else if (chatLang === "mr") {
+      return {
+        id: "msg_init",
+        sender: "bot",
+        content: `नमस्कार ${pName} जी! 🙏 मी तुमचा **AI Copilot** आहे.\n\nतुमची प्रोफाइल (*${conditions}*) पाहून मी औषधे, लॅब रिपोर्ट्स आणि आरोग्याबाबत मदत करण्यास तयार आहे.\n\nटाईप करा, फोटो 📷 पाठवा किंवा माईक 🎙️ दाबून बोला!`,
+        timestamp: "आत्ता",
+        triageLevel: "routine"
+      };
     } else if (chatLang === "pa") {
       return {
         id: "msg_init",
@@ -109,6 +125,22 @@ export default function FloatingCopilot({
         sender: "bot",
         content: `నమస్కారం ${pName}! 🙏 నేను మీ **AI Copilot**.\n\nమీ మందులు, ల్యాబ్ రిపోర్టులు మరియు ఆరోగ్య ప్రశ్నలకు సహాయం చేయడానికి నేను సిద్ధంగా ఉన్నాను. టైప్ చేయండి లేదా ఫోటో 📷 పంపండి!`,
         timestamp: "ఇప్పుడు",
+        triageLevel: "routine"
+      };
+    } else if (chatLang === "gu") {
+      return {
+        id: "msg_init",
+        sender: "bot",
+        content: `નમસ્તે ${pName} જી! 🙏 હું તમારો **AI Copilot** છું.\n\nતમારી પ્રોફાઇલ (*${conditions}*) મુજબ દવાઓ, લેબ રિપોર્ટ કે આરોગ્ય અંગે મદદ માટે તૈયાર છું.\n\nટાઈપ કરો, ફોટો 📷 મોકલો અથવા માઇક 🎙️ દબાવીને બોલો!`,
+        timestamp: "હમણાં",
+        triageLevel: "routine"
+      };
+    } else if (chatLang === "kn") {
+      return {
+        id: "msg_init",
+        sender: "bot",
+        content: `ನಮಸ್ಕಾರ ${pName} ಅವರೇ! 🙏 ನಾನು ನಿಮ್ಮ **AI Copilot**.\n\nನಿಮ್ಮ ಪ್ರೊಫೈಲ್ (*${conditions}*) ಆಧಾರದ ಮೇಲೆ ಔಷಧಿಗಳು, ಲ್ಯಾಬ್ ವರದಿಗಳು ಅಥವಾ ಆರೋಗ್ಯದ ಕುರಿತು ಸಹಾಯ ಮಾಡಲು ಸಿದ್ಧನಾಗಿದ್ದೇನೆ.\n\nಟೈಪ್ ಮಾಡಿ, ಫೋಟೋ 📷 ಕಳುಹಿಸಿ ಅಥವಾ ಮೈಕ್ 🎙️ ಒತ್ತಿ ಮಾತನಾಡಿ!`,
+        timestamp: "ಈಗ",
         triageLevel: "routine"
       };
     } else if (chatLang === "hinglish") {
@@ -422,28 +454,71 @@ export default function FloatingCopilot({
     }
   };
 
-  // Suggested prompts
-  const suggestedPrompts = chatLang === "hi" ? [
-    "💊 मेरी आज की दवाओं का समय क्या है?",
-    "🧪 क्या मेरा ब्लड शुगर 130 सामान्य है?",
-    "🤒 हल्का बुखार और सिरदर्द है, क्या करूँ?",
-    "📋 डॉक्टर से क्या सवाल पूछने चाहिए?"
-  ] : chatLang === "pa" ? [
-    "💊 ਅੱਜ ਮੇਰੀਆਂ ਕਿਹੜੀਆਂ ਦਵਾਈਆਂ ਹਨ?",
-    "🧪 ਬਲੱਡ ਸ਼ੂਗਰ 130 ਨਾਰਮਲ ਹੈ?",
-    "🤒 ਸਿਰ ਦਰਦ ਲਈ ਸੁਰੱਖਿਅਤ ਦਵਾਈ?",
-    "📋 ਡਾਕਟਰ ਨੂੰ ਕੀ ਪੁੱਛਣਾ ਚਾਹੀਦਾ ਹੈ?"
-  ] : chatLang === "hinglish" ? [
-    "💊 Meri aaj ki medicines ka timing kya hai?",
-    "🧪 Blood sugar 130 mg/dL normal hai ya high?",
-    "🤒 Halka bukhar aur sar dard hai, kya karun?",
-    "📋 Doctor visit ke liye kya sawaal taiyar karun?"
-  ] : [
-    "💊 What are my scheduled medications today?",
-    "🧪 Is blood sugar 130 mg/dL in normal range?",
-    "🤒 Mild fever and headache, safe steps to take?",
-    "📋 Best questions to ask my doctor?"
-  ];
+  // Suggested prompts for all 10 supported languages
+  const suggestedPromptsByLang = {
+    hi: [
+      "💊 मेरी आज की दवाओं का समय क्या है?",
+      "🧪 क्या मेरा ब्लड शुगर 130 सामान्य है?",
+      "🤒 हल्का बुखार और सिरदर्द है, क्या करूँ?",
+      "📋 डॉक्टर से क्या सवाल पूछने चाहिए?"
+    ],
+    hinglish: [
+      "💊 Meri aaj ki medicines ka timing kya hai?",
+      "🧪 Blood sugar 130 mg/dL normal hai ya high?",
+      "🤒 Halka bukhar aur sar dard hai, kya karun?",
+      "📋 Doctor visit ke liye kya sawaal taiyar karun?"
+    ],
+    bn: [
+      "💊 আজকে আমার ওষুধ খাওয়ার সময় কখন?",
+      "🧪 ব্লাড সুগার ১৩০ কি স্বাভাবিক?",
+      "🤒 হালকা জ্বর ও মাথা ব্যথায় কী করব?",
+      "📋 ডাক্তারের কাছে কী প্রশ্ন করা উচিত?"
+    ],
+    mr: [
+      "💊 आजच्या माझ्या औषधांची वेळ काय आहे?",
+      "🧪 ब्लड शुगर १३० सामान्य आहे का?",
+      "🤒 ताप आणि डोकेदुखीसाठी काय करावे?",
+      "📋 डॉक्टरांना कोणते प्रश्न विचारावेत?"
+    ],
+    pa: [
+      "💊 ਅੱਜ ਮੇਰੀਆਂ ਕਿਹੜੀਆਂ ਦਵਾਈਆਂ ਹਨ?",
+      "🧪 ਬਲੱਡ ਸ਼ੂਗਰ 130 ਨਾਰਮਲ ਹੈ?",
+      "🤒 ਸਿਰ ਦਰਦ ਲਈ ਸੁਰੱਖਿਅਤ ਦਵਾਈ?",
+      "📋 ਡਾਕਟਰ ਨੂੰ ਕੀ ਪੁੱਛਣਾ ਚਾਹੀਦਾ ਹੈ?"
+    ],
+    ta: [
+      "💊 இன்று நான் சாப்பிட வேண்டிய மருந்துகள்?",
+      "🧪 ரத்த சர்க்கரை 130 இயல்பானதா?",
+      "🤒 லேசான காய்ச்சல் மற்றும் தலைவலிக்கு என்ன செய்வது?",
+      "📋 மருத்துவரிடம் என்ன கேள்விகள் கேட்க வேண்டும்?"
+    ],
+    te: [
+      "💊 ఈరోజు నా మందుల సమయం ఏమిటి?",
+      "🧪 బ్లడ్ షుగర్ 130 సాధారణమేనా?",
+      "🤒 తలనొప్పి మరియు జ్వరానికి ఏం చేయాలి?",
+      "📋 వైద్యుడిని ఏ ప్రశ్నలు అడగాలి?"
+    ],
+    gu: [
+      "💊 મારી આજની દવાઓનો સમય શું છે?",
+      "🧪 બ્લડ સુગર 130 નોર્મલ છે?",
+      "🤒 તાવ અને માથાના દુખાવા માટે શું કરવું?",
+      "📋 ડોક્ટરને કયા પ્રશ્નો પૂછવા જોઈએ?"
+    ],
+    kn: [
+      "💊 ಇಂದು ನನ್ನ ಔಷಧಿಗಳ ಸಮಯ ಯಾವಾಗ?",
+      "🧪 ರಕ್ತದ ಸಕ್ಕರೆ 130 ಸಹಜವೇ?",
+      "🤒 ಜ್ವರ ಮತ್ತು ತಲೆನೋವಿಗೆ ಏನು ಮಾಡಬೇಕು?",
+      "📋 ವೈದ್ಯರನ್ನು ಯಾವ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಬೇಕು?"
+    ],
+    en: [
+      "💊 What are my scheduled medications today?",
+      "🧪 Is blood sugar 130 mg/dL in normal range?",
+      "🤒 Mild fever and headache, safe steps to take?",
+      "📋 Best questions to ask my doctor?"
+    ]
+  };
+
+  const suggestedPrompts = suggestedPromptsByLang[chatLang] || suggestedPromptsByLang.en;
 
   return (
     <>
