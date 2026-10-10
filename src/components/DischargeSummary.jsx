@@ -648,7 +648,7 @@ export default function DischargeSummary({ patient, lang = "en", onAskCopilot })
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
               <HeartHandshake size={22} color="var(--primary)" />
               <h3 style={{ fontSize: "1.15rem", fontWeight: 800, margin: 0 }}>
-                {lang === "hi" ? "बीमारी का सरल सारांश (आसान भाषा में)" : "Why You Were Admitted (Simple Explanation)"}
+                {lang === "hi" ? "बीमारी का सरल सारांश" : "Why You Were Admitted"}
               </h3>
             </div>
 
@@ -781,7 +781,7 @@ export default function DischargeSummary({ patient, lang = "en", onAskCopilot })
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <Pill size={20} color="var(--primary)" />
                 <h3 style={{ fontSize: "1.15rem", fontWeight: 800, margin: 0 }}>
-                  {lang === "hi" ? "घर ले जाने वाली दवाइयां (Medicine Schedule)" : "Discharge Medications (Home Routine)"}
+                  {lang === "hi" ? "घर ले जाने वाली दवाइयां" : "Discharge Medications"}
                 </h3>
               </div>
               <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
@@ -849,7 +849,7 @@ export default function DischargeSummary({ patient, lang = "en", onAskCopilot })
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <AlertTriangle size={22} color="#ef4444" />
                 <h3 style={{ fontSize: "1.15rem", fontWeight: 800, margin: 0, color: "#dc2626" }}>
-                  {lang === "hi" ? "जरूरी सावधानियां (तुरंत डॉक्टर से कब संपर्क करें)" : "Emergency Warning Signs (When to Call Hospital)"}
+                  {lang === "hi" ? "जरूरी सावधानियां" : "Emergency Warning Signs"}
                 </h3>
               </div>
 
@@ -916,7 +916,7 @@ export default function DischargeSummary({ patient, lang = "en", onAskCopilot })
                 {lang === "hi" ? "अगला फॉलो-अप चेकअप" : "Next Scheduled Follow-Up"}
               </div>
               <h3 style={{ fontSize: "1.25rem", fontWeight: 800, margin: "4px 0", color: "var(--text-highlight)" }}>
-                {activeSummary.followUp.doctorName} ({activeSummary.followUp.department})
+                {activeSummary.followUp.doctorName}
               </h3>
               <div style={{ fontSize: "0.88rem", color: "var(--text-main)", display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap", marginTop: "4px" }}>
                 <span style={{ fontWeight: 700, color: "var(--primary)" }}>📅 {activeSummary.followUp.date}</span>
