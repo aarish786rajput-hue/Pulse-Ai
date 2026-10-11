@@ -16,6 +16,7 @@ import {
   Activity
 } from "lucide-react";
 import { translations } from "../data/translations";
+import { translateMedicalTerm } from "../utils/translator";
 
 export default function Dashboard({
   patient,
@@ -83,7 +84,7 @@ export default function Dashboard({
                 const condName = typeof cond === "string" ? cond : cond.name;
                 return (
                   <span key={i} className="badge badge-primary">
-                    ● {condName}
+                    ● {translateMedicalTerm(condName, lang)}
                   </span>
                 );
               })}
@@ -91,7 +92,7 @@ export default function Dashboard({
                 const allName = typeof all === "string" ? all : all.allergen;
                 return (
                   <span key={i} className="badge badge-critical">
-                    ⚠️ {lang === "hi" ? "एलर्जी:" : "Allergy:"} {allName}
+                    ⚠️ {t.allergyLabel || "Allergy:"} {translateMedicalTerm(allName, lang)}
                   </span>
                 );
               })}
@@ -140,7 +141,7 @@ export default function Dashboard({
                   {adherencePercent >= 75 ? t.optimalRoutine : `${totalMeds - medsTakenCount} ${t.dosesPending}`}
                 </div>
                 <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "2px" }}>
-                  {lang === "hi" ? "अगली: रोसुवास्टेटिन (रात)" : "Next: Rosuvastatin (Night)"}
+                  {t.nextDoseStatin || "Next: Rosuvastatin (Night)"}
                 </div>
               </div>
             </div>
@@ -170,7 +171,7 @@ export default function Dashboard({
                 cursor: "pointer",
                 transition: "all 0.2s ease"
               }}
-              title={lang === "hi" ? "अपनी लैब रिपोर्ट (PDF या फोटो) अपलोड करें" : "Upload your lab report (PDF or photo)"}
+              title={t.uploadReportsTitle || "Upload Reports"}
             >
               <input
                 ref={fileInputRef}
@@ -200,10 +201,10 @@ export default function Dashboard({
                 </div>
                 <div>
                   <div style={{ fontSize: "0.88rem", fontWeight: 800, color: "var(--text-highlight)", lineHeight: 1.2 }}>
-                    {lang === "hi" ? "रिपोर्ट अपलोड करें" : "Upload Reports"}
+                    {t.uploadReportsTitle || "Upload Reports"}
                   </div>
                   <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "2px" }}>
-                    {lang === "hi" ? "PDF या फ़ोटो • तुरंत AI स्कैन" : "PDF or Photo • Instant AI Scan"}
+                    {t.uploadReportsSub || "PDF or Photo • Instant AI Scan"}
                   </div>
                 </div>
               </div>
@@ -222,7 +223,7 @@ export default function Dashboard({
                 flexShrink: 0
               }}>
                 <UploadCloud size={13} strokeWidth={2.5} />
-                <span>{lang === "hi" ? "अपलोड" : "Upload"}</span>
+                <span>{t.upload || "Upload"}</span>
               </div>
             </div>
           </div>
@@ -234,10 +235,10 @@ export default function Dashboard({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
           <h2 style={{ fontSize: "1.15rem", fontWeight: 800, color: "var(--text-highlight)", display: "flex", alignItems: "center", gap: "8px" }}>
             <Sparkles size={18} color="var(--primary)" />
-            {lang === "hi" ? "त्वरित स्वास्थ्य सेवाएँ" : "Quick Health Actions"}
+            {t.quickActions || "Quick Health Actions"}
           </h2>
           <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", fontWeight: 600 }}>
-            {lang === "hi" ? "1-क्लिक सीधी सुविधा" : "1-Click Direct Access"}
+            {t.quickActionsSub || "1-Click Direct Access"}
           </span>
         </div>
 
@@ -272,10 +273,10 @@ export default function Dashboard({
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
-                {lang === "hi" ? "लक्षण जांच विज़ार्ड" : "Symptom Checker"}
+                {t.navSymptomChecker || "Symptom Checker"}
               </div>
               <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
-                {lang === "hi" ? "कदम-दर-कदम लक्षण परीक्षण" : "Step-by-step triage guide"}
+                {t.symptomGuideSub || "Step-by-step triage guide"}
               </div>
             </div>
           </div>
@@ -310,10 +311,10 @@ export default function Dashboard({
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
-                {lang === "hi" ? "दवाइयां और खुराक" : "Medications"}
+                {t.navMedications || "Medications"}
               </div>
               <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
-                {lang === "hi" ? "दवाइयों का समय व सुरक्षा" : "Pills, schedule & safety check"}
+                {t.medsSub || "Pills, schedule & safety check"}
               </div>
             </div>
           </div>
@@ -348,10 +349,10 @@ export default function Dashboard({
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
-                {lang === "hi" ? "वाइटल्स व रुझान" : "Vitals & Trends"}
+                {t.navVitals || "Vitals & Trends"}
               </div>
               <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
-                {lang === "hi" ? "बीपी, शुगर व स्वास्थ्य रुझान" : "BP, glucose & pulse analytics"}
+                {t.vitalsSub || "BP, glucose & pulse analytics"}
               </div>
             </div>
           </div>
@@ -386,10 +387,10 @@ export default function Dashboard({
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: "1.12rem", color: "var(--text-highlight)", lineHeight: 1.25, marginBottom: "4px" }}>
-                {t.doctorPrep}
+                {t.doctorPrep || "Doctor Visit Prep"}
               </div>
               <div style={{ fontSize: "0.84rem", color: "var(--text-muted)", lineHeight: 1.35 }}>
-                {lang === "hi" ? "30 दिन का सारांश व 5 प्रश्न" : "Vitals summary & top 5 Qs"}
+                {t.doctorPrepSub || "Vitals summary & top 5 Qs"}
               </div>
             </div>
           </div>
@@ -411,7 +412,7 @@ export default function Dashboard({
                 style={{ padding: "6px 12px", fontSize: "0.82rem", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
               >
                 <PlusCircle size={15} />
-                {lang === "hi" ? "वाइटल दर्ज करें" : "Log Vitals"}
+                {t.logVital || "Log Vitals"}
               </button>
             )}
             <button
@@ -428,7 +429,7 @@ export default function Dashboard({
                 gap: "4px"
               }}
             >
-              {t.detailedTrends} <ArrowRight size={14} />
+              {t.detailedTrends || "Detailed Trendlines"} <ArrowRight size={14} />
             </button>
           </div>
         </div>
@@ -448,7 +449,7 @@ export default function Dashboard({
               <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: 700 }}>
                 {t.bloodPressure}
               </div>
-              <span className="badge badge-good vital-pulse-badge">{lang === "hi" ? "सामान्य" : "Optimal"}</span>
+              <span className="badge badge-good vital-pulse-badge">{t.optimal || "Optimal"}</span>
             </div>
             <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
               <span style={{ fontSize: "1.85rem", fontWeight: 800, fontFamily: "var(--font-heading)", color: "var(--text-highlight)" }}>
@@ -457,7 +458,7 @@ export default function Dashboard({
               <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>mmHg</span>
             </div>
             <div style={{ fontSize: "0.78rem", color: "#f43f5e", marginTop: "6px", fontWeight: 600 }}>
-              ↓ {previousVital.bpSystolic}/{previousVital.bpDiastolic} {lang === "hi" ? "से बेहतर हुआ" : "improved"}
+              ↓ {previousVital.bpSystolic}/{previousVital.bpDiastolic} {t.improved || "improved"}
             </div>
           </div>
 
@@ -476,7 +477,7 @@ export default function Dashboard({
                 {t.fastingSugar}
               </div>
               <span className={`badge ${latestVital.bloodSugarFasting > 125 ? "badge-borderline" : "badge-good"}`}>
-                {latestVital.bloodSugarFasting > 125 ? (lang === "hi" ? "सीमा पर" : "Borderline") : (lang === "hi" ? "लक्ष्य में" : "In Target")}
+                {latestVital.bloodSugarFasting > 125 ? (t.borderline || "Borderline") : (t.inTarget || "In Target")}
               </span>
             </div>
             <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
@@ -486,7 +487,7 @@ export default function Dashboard({
               <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>mg/dL</span>
             </div>
             <div style={{ fontSize: "0.78rem", color: "#f59e0b", marginTop: "6px", fontWeight: 600 }}>
-              {lang === "hi" ? "भोजन उपरांत:" : "Post-meal:"} <strong>{latestVital.bloodSugarPost} mg/dL</strong>
+              {t.postMeal || "Post-meal:"} <strong>{latestVital.bloodSugarPost} mg/dL</strong>
             </div>
           </div>
 
@@ -504,7 +505,7 @@ export default function Dashboard({
               <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: 700 }}>
                 {t.restingPulse}
               </div>
-              <span className="badge badge-good vital-pulse-badge">{lang === "hi" ? "स्वस्थ" : "Healthy"}</span>
+              <span className="badge badge-good vital-pulse-badge">{t.healthy || "Healthy"}</span>
             </div>
             <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
               <span style={{ fontSize: "1.85rem", fontWeight: 800, fontFamily: "var(--font-heading)", color: "var(--text-highlight)" }}>
@@ -513,7 +514,7 @@ export default function Dashboard({
               <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>BPM</span>
             </div>
             <div style={{ fontSize: "0.78rem", color: "#10b981", marginTop: "6px", fontWeight: 600 }}>
-              SpO2 {lang === "hi" ? "ऑक्सीजन:" : "Oxygen:"} <strong>{latestVital.spo2}%</strong>
+              SpO2 {t.oxygen || "Oxygen:"} <strong>{latestVital.spo2}%</strong>
             </div>
           </div>
 
@@ -540,7 +541,7 @@ export default function Dashboard({
               <span style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>kg</span>
             </div>
             <div style={{ fontSize: "0.78rem", color: "#06b6d4", marginTop: "6px", fontWeight: 600 }}>
-              {lang === "hi" ? "वजन में कमी (-0.6 kg)" : "Steady reduction (-0.6 kg)"}
+              {t.steadyReduction || "Steady reduction (-0.6 kg)"}
             </div>
           </div>
         </div>
@@ -557,7 +558,7 @@ export default function Dashboard({
                 {t.medSchedule}
               </h3>
               <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-                {lang === "hi" ? "दवा लेने के बाद चेकबॉक्स पर क्लिक करें" : "Tap checkbox to record when taken"}
+                {t.tapCheckboxTaken || "Tap checkbox to record when taken"}
               </p>
             </div>
             <button
@@ -629,9 +630,9 @@ export default function Dashboard({
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
               <h3 style={{ fontSize: "1.1rem", fontWeight: 800, display: "flex", alignItems: "center", gap: "8px" }}>
                 <ShieldCheck size={18} color="var(--secondary)" />
-                {lang === "hi" ? "एआई हेल्थ गार्डियन व सुरक्षा अलर्ट" : "AI Health Guardian & Safety Alerts"}
+                {t.aiGuardianTitle || "AI Health Guardian & Safety Alerts"}
               </h3>
-              <span className="badge badge-good">{lang === "hi" ? "सक्रिय सुरक्षा" : "Monitored"}</span>
+              <span className="badge badge-good">{t.monitored || "Monitored"}</span>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -644,12 +645,12 @@ export default function Dashboard({
               }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 700, fontSize: "0.9rem", color: "var(--primary)", marginBottom: "4px" }}>
                   <Sparkles size={16} />
-                  {lang === "hi" ? "लैब टेस्ट तैयार: थायरोकेयर मेटाबॉलिक पैनल" : "Lab Report Ready: Thyrocare Metabolic Panel"}
+                  {t.labReadyAlert || "Lab Report Ready: Thyrocare Metabolic Panel"}
                 </div>
                 <p style={{ fontSize: "0.85rem", color: "var(--text-main)", lineHeight: 1.4 }}>
-                  {lang === "hi" 
+                  {t.labReportSummaryTip || (lang === "hi" 
                     ? "आपका HbA1c 7.2% है। एआई ने डॉक्टर से पूछने के लिए 3 महत्वपूर्ण प्रश्न तैयार किए हैं।"
-                    : "Your HbA1c is 7.2%. AI has generated 3 doctor-targeted questions and plain-language breakdown."
+                    : "Your HbA1c is 7.2%. AI has generated 3 doctor-targeted questions and plain-language breakdown.")
                   }
                 </p>
                 <button
@@ -665,7 +666,7 @@ export default function Dashboard({
                     padding: 0
                   }}
                 >
-                  {lang === "hi" ? "रिपोर्ट विवरण देखें →" : "View Report Breakdown →"}
+                  {t.viewReportBreakdown || "View Report Breakdown →"}
                 </button>
               </div>
 
@@ -678,13 +679,10 @@ export default function Dashboard({
               }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 700, fontSize: "0.9rem", color: "var(--secondary)", marginBottom: "4px" }}>
                   <ShieldCheck size={16} />
-                  {lang === "hi" ? "दवा सुरक्षा जांच (No Conflict)" : "Drug-Drug Interaction Guard"}
+                  {t.drugInteractionAlert || "Drug-Drug Interaction Guard"}
                 </div>
                 <p style={{ fontSize: "0.85rem", color: "var(--text-main)", lineHeight: 1.4 }}>
-                  {lang === "hi"
-                    ? "आपकी सभी 4 नियमित दवाइयां सुरक्षित हैं। चेतावनी: बीपी की दवा के कारण ब्रूफेन (Ibuprofen) जैसी दर्द निवारक दवाओं से बचें।"
-                    : "All 4 active prescriptions verified for cross-compatibility. Alert: Avoid over-the-counter Ibuprofen due to your Telmisartan prescription."
-                  }
+                  {t.allMedsSafeAlert || "All 4 active prescriptions verified for cross-compatibility. Alert: Avoid over-the-counter Ibuprofen due to your Telmisartan prescription."}
                 </p>
               </div>
             </div>
@@ -704,14 +702,14 @@ export default function Dashboard({
                 🩺 {t.startSymptomCheck}
               </button>
               <button
-                onClick={() => onNavigate("copilot", lang === "hi" ? "मुझे दवा लेने के बाद चक्कर और कंपकंपी महसूस हो रही है। मुझे क्या करना चाहिए?" : "I feel dizzy and shaky after taking my medication. What should I do?")}
+                onClick={() => onNavigate("copilot", t.feelingDizzy || "Feeling dizzy / shaky")}
                 className="btn btn-secondary"
                 style={{ padding: "6px 12px", fontSize: "0.8rem", borderRadius: "8px" }}
               >
                 {t.feelingDizzy}
               </button>
               <button
-                onClick={() => onNavigate("copilot", lang === "hi" ? "क्या आप मुझे समझा सकते हैं कि मेरे 7.2% HbA1c का क्या मतलब है?" : "Can you explain what an HbA1c of 7.2% means for my diabetes?")}
+                onClick={() => onNavigate("copilot", t.explainA1c || "Explain HbA1c 7.2%")}
                 className="btn btn-secondary"
                 style={{ padding: "6px 12px", fontSize: "0.8rem", borderRadius: "8px" }}
               >
@@ -722,7 +720,7 @@ export default function Dashboard({
                 className="btn btn-secondary"
                 style={{ padding: "6px 12px", fontSize: "0.8rem", borderRadius: "8px", color: "var(--primary)", fontWeight: 700 }}
               >
-                👨‍⚕️ {lang === "hi" ? "विशेषज्ञ डॉक्टर खोजें" : "Find Specialist Doctor"}
+                👨‍⚕️ {t.findSpecialistDoctor || "Find Specialist Doctor"}
               </button>
             </div>
           </div>

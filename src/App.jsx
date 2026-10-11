@@ -21,6 +21,8 @@ import DeviceManager from './components/DeviceManager';
 import FloatingCopilot from './components/FloatingCopilot';
 import { mockPatients } from './data/mockPatientData';
 import { calculateAge } from './utils/dateUtils';
+import { translations } from './data/translations';
+import { applyDomTranslations, triggerGoogleTranslate } from './utils/translator';
 
 export default function App() {
   // ── Patient list (from localStorage or mock data) ──────────────────────────
@@ -111,6 +113,24 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('pulseai_theme', theme);
   }, [theme]);
+
+  const t = translations[lang] || translations.en;
+
+  useEffect(() => {
+    try {
+      triggerGoogleTranslate(lang);
+    } catch {
+      // Ignored
+    }
+    const timer = setTimeout(() => {
+      try {
+        applyDomTranslations(lang);
+      } catch {
+        // Ignored
+      }
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [lang, activeTab, currentPatientId]);
 
   // ── Current patient — age always recomputed from DOB ──────────────────────
   const rawPatient = (patients && patients.find(p => p.id === currentPatientId)) || (patients && patients[0]) || mockPatients[0];
@@ -261,9 +281,9 @@ export default function App() {
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ fontSize: "1.05rem" }}>📶</span>
                 <span>
-                  {lang === "hi"
+                  {t.offlineNotice || (lang === "hi"
                     ? "ऑफ़लाइन मोड सक्रिय: इंटरनेट डिस्कनेक्ट है। इमरजेंसी मेडिकल ID व दवाइयां बिना इंटरनेट सुरक्षित उपलब्ध हैं।"
-                    : "Offline Mode Active: Internet disconnected. Emergency Health ID & Medications remain fully accessible offline."}
+                    : "Offline Mode Active: Internet disconnected. Emergency Health ID & Medications remain fully accessible offline.")}
                 </span>
               </div>
               <button
@@ -281,7 +301,7 @@ export default function App() {
                   boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
                 }}
               >
-                {lang === "hi" ? "🚨 इमरजेंसी कार्ड देखें" : "🚨 View Emergency ID"}
+                {t.sosIce || "🚨 View Emergency ID"}
               </button>
             </div>
           )}
@@ -404,14 +424,10 @@ export default function App() {
               <span>
                 <strong style={{ color: 'var(--primary)' }}>PulseAI</strong>
                 {' — '}
-                {lang === 'hi'
-                  ? 'AI-संचालित व्यक्तिगत स्वास्थ्य कमांड सेंटर'
-                  : 'AI-Powered Personal Health Command Center'}
+                {t.appSubtitle}
               </span>
               <span className="hide-on-mobile">
-                {lang === 'hi'
-                  ? 'समझें • व्यवस्थित करें • प्रबंधित करें'
-                  : 'Understand • Organize • Manage'}
+                {t.tagline}
               </span>
             </footer>
           )}

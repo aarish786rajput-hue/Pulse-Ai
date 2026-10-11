@@ -88,22 +88,29 @@ export default function DoctorDetailModal({
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1100, padding: "16px" }}>
       <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
         style={{
           maxWidth: "760px",
+          width: "100%",
+          maxHeight: "92vh",
+          display: "flex",
+          flexDirection: "column",
           padding: 0,
           overflow: "hidden",
-          borderRadius: "24px"
+          borderRadius: "24px",
+          background: "var(--bg-card)",
+          boxShadow: "0 24px 64px rgba(0, 0, 0, 0.45)"
         }}
       >
         {/* Header Profile Hero */}
         <div style={{
+          flexShrink: 0,
           position: "relative",
           background: "linear-gradient(135deg, rgba(2, 132, 199, 0.15), rgba(5, 150, 105, 0.12), var(--bg-card))",
-          padding: "24px 28px 18px",
+          padding: "20px 24px 16px",
           borderBottom: "1px solid var(--border-color)"
         }}>
           {/* Close button */}
@@ -282,6 +289,7 @@ export default function DoctorDetailModal({
 
         {/* Tab Switcher */}
         <div style={{
+          flexShrink: 0,
           display: "flex",
           borderBottom: "1px solid var(--border-color)",
           background: "var(--bg-elevated)"
@@ -331,7 +339,7 @@ export default function DoctorDetailModal({
         </div>
 
         {/* Modal Body */}
-        <div style={{ padding: "24px 28px", maxHeight: "65vh", overflowY: "auto" }}>
+        <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "20px 24px" }}>
           {activeTab === "overview" ? (
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               {/* About */}
@@ -608,7 +616,7 @@ export default function DoctorDetailModal({
               </div>
 
               {/* Actions on slip */}
-              <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
                 <button
                   type="button"
                   onClick={handlePrint}
@@ -617,6 +625,16 @@ export default function DoctorDetailModal({
                 >
                   <Printer size={15} />
                   <span>{lang === "hi" ? "स्लिप प्रिंट करें" : "Print Slip"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="btn btn-secondary"
+                  style={{ padding: "8px 18px", fontSize: "0.85rem", fontWeight: 700 }}
+                >
+                  <CheckCircle2 size={15} />
+                  <span>{lang === "hi" ? "बुकिंग देखें (Done)" : "View Bookings"}</span>
                 </button>
 
                 <button
@@ -631,7 +649,7 @@ export default function DoctorDetailModal({
             </div>
           ) : (
             /* Booking Form */
-            <form onSubmit={handleConfirmBooking} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <form id="doctor-booking-form" onSubmit={handleConfirmBooking} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
               {/* Patient Badge */}
               <div style={{
                 background: "var(--bg-elevated)",
@@ -806,29 +824,106 @@ export default function DoctorDetailModal({
                 />
               </div>
 
-              {/* Submit CTA */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px" }}>
+              {/* In-Form Action Row */}
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "12px",
+                paddingTop: "14px",
+                borderTop: "1px dashed var(--border-color)",
+                flexWrap: "wrap",
+                gap: "12px"
+              }}>
                 <div>
                   <div style={{ fontSize: "0.74rem", color: "var(--text-muted)" }}>
                     {lang === "hi" ? "कुल देय शुल्क:" : "Total Payable Fee:"}
                   </div>
-                  <div style={{ fontWeight: 800, fontSize: "1.05rem", color: doctor.isFreeOpd ? "var(--secondary)" : "var(--primary)" }}>
+                  <div style={{ fontWeight: 800, fontSize: "1.1rem", color: doctor.isFreeOpd ? "var(--secondary)" : "var(--primary)" }}>
                     {doctor.isFreeOpd ? (lang === "hi" ? "मुफ़्त (आयुष्मान ओपीडी)" : "FREE (Ayushman OPD)") : `₹${doctor.fee}`}
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  style={{ padding: "11px 24px", fontSize: "0.92rem", fontWeight: 800 }}
-                >
-                  <CheckCircle2 size={16} />
-                  <span>{lang === "hi" ? "अपॉइंटमेंट कन्फर्म करें" : "Confirm Appointment"}</span>
-                </button>
+                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="btn btn-secondary"
+                    style={{ padding: "10px 18px", fontSize: "0.88rem", fontWeight: 700 }}
+                  >
+                    <span>{lang === "hi" ? "रद्द करें (Cancel)" : "Cancel"}</span>
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{ padding: "10px 24px", fontSize: "0.92rem", fontWeight: 800 }}
+                  >
+                    <CheckCircle2 size={16} />
+                    <span>{lang === "hi" ? "अपॉइंटमेंट कन्फर्म करें" : "Confirm Appointment"}</span>
+                  </button>
+                </div>
               </div>
             </form>
           )}
         </div>
+
+        {/* Sticky Action Footer - Always visible on screen for Book Appointment tab */}
+        {activeTab === "book" && !isBooked && (
+          <div style={{
+            flexShrink: 0,
+            background: "var(--bg-elevated)",
+            borderTop: "1px solid var(--border-color)",
+            padding: "12px 24px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
+            boxShadow: "0 -4px 16px rgba(0, 0, 0, 0.08)",
+            zIndex: 10
+          }}>
+            <div>
+              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700 }}>
+                {lang === "hi" ? "देय परामर्श शुल्क:" : "Consultation Fee:"}
+              </div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
+                <span style={{ fontWeight: 800, fontSize: "1.12rem", color: doctor.isFreeOpd ? "var(--secondary)" : "var(--primary)" }}>
+                  {doctor.isFreeOpd ? (lang === "hi" ? "मुफ़्त (आयुष्मान)" : "FREE (Ayushman)") : `₹${doctor.fee}`}
+                </span>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-dim)" }}>
+                  • {selectedDate === "today" ? (lang === "hi" ? "आज" : "Today") : selectedDate === "tomorrow" ? (lang === "hi" ? "कल" : "Tomorrow") : customDate || (lang === "hi" ? "तारीख" : "Date")} @ {selectedTimeSlot}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-secondary"
+                style={{ padding: "10px 18px", fontSize: "0.88rem", fontWeight: 700, borderRadius: "12px" }}
+              >
+                <span>{lang === "hi" ? "रद्द करें (Cancel)" : "Cancel"}</span>
+              </button>
+
+              <button
+                type="submit"
+                form="doctor-booking-form"
+                className="btn btn-primary"
+                style={{
+                  padding: "10px 24px",
+                  fontSize: "0.92rem",
+                  fontWeight: 800,
+                  borderRadius: "12px",
+                  boxShadow: "0 4px 16px var(--primary-glow)"
+                }}
+              >
+                <CheckCircle2 size={16} />
+                <span>{lang === "hi" ? "अपॉइंटमेंट कन्फर्म करें" : "Confirm Appointment"}</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -18,8 +18,126 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      /* Complete suppression of Google Translate top banner, toolbar & layout shifts */
+      .goog-te-banner-frame,
+      iframe.goog-te-banner-frame,
+      .VIpgJd-ZVi9od-ORHb-OEVmcd,
+      iframe.VIpgJd-ZVi9od-ORHb-OEVmcd,
+      body > .skiptranslate,
+      body > iframe.skiptranslate,
+      iframe.skiptranslate,
+      body > iframe[src*="translate.google"],
+      body > iframe[src*="translate.googleapis"],
+      div.skiptranslate,
+      #goog-gt-tt,
+      .goog-te-balloon-frame,
+      .goog-tooltip,
+      .goog-tooltip:hover {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
+        max-height: 0 !important;
+        max-width: 0 !important;
+        position: absolute !important;
+        top: -9999px !important;
+        left: -9999px !important;
+        pointer-events: none !important;
+        clip: rect(0, 0, 0, 0) !important;
+        z-index: -9999 !important;
+      }
+
+      html, body {
+        top: 0px !important;
+        position: static !important;
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+      }
+
+      /* Translation Immunity: CSS generated content cannot be translated */
+      .lang-static-title::before { content: attr(data-title); display: inline-block; }
+      .lang-static-label::before { content: attr(data-label); display: inline-block; font-weight: 700; font-size: 0.85rem; }
+      .lang-static-native::before { content: attr(data-native); display: inline-block; font-weight: 500; font-size: 0.78rem; margin-left: 4px; }
+    </style>
+    <script>
+      // Universal React + Translation DOM Protection: Prevents NotFoundError removeChild/insertBefore crashes
+      if (typeof Node === 'function' && Node.prototype) {
+        const origRemove = Node.prototype.removeChild;
+        Node.prototype.removeChild = function (child) {
+          if (child && child.parentNode !== this) {
+            return child;
+          }
+          return origRemove.apply(this, arguments);
+        };
+        const origInsert = Node.prototype.insertBefore;
+        Node.prototype.insertBefore = function (newNode, refNode) {
+          if (refNode && refNode.parentNode !== this) {
+            return newNode;
+          }
+          return origInsert.apply(this, arguments);
+        };
+      }
+    </script>
   </head>
   <body>
+    <div id="google_translate_element" style="display:none; visibility:hidden; position:absolute; left:-9999px;"></div>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        if (window.google && window.google.translate) {
+          new window.google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,hi,bn,mr,te,ta,gu,pa,kn',
+            autoDisplay: false
+          }, 'google_translate_element');
+        }
+      }
+
+      // Proactively suppress any Google Translate banner injection and reset body offset
+      (function() {
+        function suppressGoogleBanner() {
+          if (document.body) {
+            if (document.body.style.top && document.body.style.top !== '0px') {
+              document.body.style.top = '0px';
+            }
+            if (document.body.style.position === 'relative') {
+              document.body.style.position = 'static';
+            }
+          }
+          if (document.documentElement && document.documentElement.style.top && document.documentElement.style.top !== '0px') {
+            document.documentElement.style.top = '0px';
+          }
+          
+          const banners = document.querySelectorAll(
+            '.goog-te-banner-frame, iframe.goog-te-banner-frame, .VIpgJd-ZVi9od-ORHb-OEVmcd, iframe.VIpgJd-ZVi9od-ORHb-OEVmcd, body > .skiptranslate, body > iframe.skiptranslate, iframe.skiptranslate, iframe[src*="translate.google"]'
+          );
+          banners.forEach(function(el) {
+            if (el.style.display !== 'none' || el.style.height !== '0px') {
+              el.style.setProperty('display', 'none', 'important');
+              el.style.setProperty('visibility', 'hidden', 'important');
+              el.style.setProperty('height', '0px', 'important');
+              el.style.setProperty('width', '0px', 'important');
+              el.style.setProperty('opacity', '0', 'important');
+              el.style.setProperty('pointer-events', 'none', 'important');
+            }
+          });
+        }
+
+        setInterval(suppressGoogleBanner, 100);
+
+        if (window.MutationObserver) {
+          const obs = new MutationObserver(suppressGoogleBanner);
+          obs.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['style', 'class'],
+            childList: true,
+            subtree: true
+          });
+        }
+      })();
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

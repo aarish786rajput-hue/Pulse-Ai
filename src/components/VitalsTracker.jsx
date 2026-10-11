@@ -6,8 +6,10 @@ import {
   Scale, 
   Plus 
 } from "lucide-react";
+import { translations } from "../data/translations";
 
 export default function VitalsTracker({ patient, onAddVital, lang = 'en' }) {
+  const t = translations[lang] || translations.en;
   const [selectedMetric, setSelectedMetric] = useState("bp"); // 'bp' | 'glucose' | 'heart' | 'weight'
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -207,28 +209,28 @@ export default function VitalsTracker({ patient, onAddVital, lang = 'en' }) {
   const metricCards = [
     { 
       id: "bp", 
-      title: lang === "hi" ? "रक्तचाप (BP)" : "Blood Pressure", 
+      title: t.bloodPressure || (lang === "hi" ? "रक्तचाप (BP)" : "Blood Pressure"), 
       val: `${latestVital.bpSystolic}/${latestVital.bpDiastolic}`, 
       unit: "mmHg", 
       icon: Activity 
     },
     { 
       id: "glucose", 
-      title: lang === "hi" ? "ब्लड शुगर (ग्लूकोज)" : "Blood Sugar", 
+      title: t.fastingSugar || (lang === "hi" ? "ब्लड शुगर (ग्लूकोज)" : "Blood Sugar"), 
       val: `${latestVital.bloodSugarFasting} / ${latestVital.bloodSugarPost}`, 
       unit: "mg/dL", 
       icon: Droplet 
     },
     { 
       id: "heart", 
-      title: lang === "hi" ? "हृदय गति व SpO2" : "Heart Rate & SpO2", 
+      title: t.restingPulse || (lang === "hi" ? "हृदय गति व SpO2" : "Heart Rate & SpO2"), 
       val: `${latestVital.heartRate} bpm`, 
       unit: `${latestVital.spo2}% SpO2`, 
       icon: Heart 
     },
     { 
       id: "weight", 
-      title: lang === "hi" ? "वजन व बीएमआई" : "Body Weight & BMI", 
+      title: t.bodyWeight || (lang === "hi" ? "वजन व बीएमआई" : "Body Weight & BMI"), 
       val: `${latestVital.weight} kg`, 
       unit: `BMI ${patient?.bmi || 24.2}`, 
       icon: Scale 
@@ -246,18 +248,18 @@ export default function VitalsTracker({ patient, onAddVital, lang = 'en' }) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
           <div>
             <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
-              {lang === "hi" ? "वाइटल्स व शारीरिक रुझान (चार्ट्स)" : "Vitals & Physiological Trends"}
+              {t.navVitals || (lang === "hi" ? "वाइटल्स व शारीरिक रुझान (चार्ट्स)" : "Vitals & Physiological Trends")}
             </h1>
             <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", maxWidth: "650px", marginTop: "6px", marginBottom: 0 }}>
-              {lang === "hi"
+              {t.vitalsSub || (lang === "hi"
                 ? "रक्तचाप स्थिरीकरण और ब्लड ग्लूकोज का विज़ुअल चार्ट विश्लेषण। सुरक्षित लक्ष्य सीमा के साथ समय के साथ बदलाव देखें।"
-                : "Visual analytics for blood pressure stabilization and blood glucose curves. Track trends over time with safe target zones."}
+                : "Visual analytics for blood pressure stabilization and blood glucose curves. Track trends over time with safe target zones.")}
             </p>
           </div>
 
           <button onClick={() => setShowAddModal(true)} className="btn btn-primary" style={{ padding: "12px 20px" }}>
             <Plus size={18} />
-            <span>{lang === "hi" ? "नया वाइटल दर्ज करें" : "Record Daily Reading"}</span>
+            <span>{t.logVital || (lang === "hi" ? "नया वाइटल दर्ज करें" : "Record Daily Reading")}</span>
           </button>
         </div>
       </div>
@@ -379,10 +381,10 @@ export default function VitalsTracker({ patient, onAddVital, lang = 'en' }) {
 
               <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "10px" }}>
                 <button type="button" onClick={() => setShowAddModal(false)} className="btn btn-secondary">
-                  {lang === "hi" ? "रद्द करें" : "Cancel"}
+                  {t.cancel || (lang === "hi" ? "रद्द करें" : "Cancel")}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  {lang === "hi" ? "रीडिंग सुरक्षित करें" : "Save Reading"}
+                  {t.saveChanges || (lang === "hi" ? "रीडिंग सुरक्षित करें" : "Save Reading")}
                 </button>
               </div>
             </form>

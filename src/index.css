@@ -1088,3 +1088,82 @@ select option {
     margin: 10mm 12mm;
   }
 }
+
+/* ==========================================================================
+   Google Translate Seamless Integration & Banner Suppression
+   ========================================================================== */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner-frame,
+iframe.goog-te-banner-frame,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+iframe.VIpgJd-ZVi9od-ORHb-OEVmcd,
+body > .skiptranslate,
+body > iframe.skiptranslate,
+iframe.skiptranslate,
+body > iframe[src*="translate.google"],
+body > iframe[src*="translate.googleapis"],
+div.skiptranslate,
+.skiptranslate iframe {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  max-width: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  pointer-events: none !important;
+  clip: rect(0, 0, 0, 0) !important;
+  z-index: -9999 !important;
+}
+html, body {
+  top: 0px !important;
+  position: static !important;
+  margin-top: 0px !important;
+  padding-top: 0px !important;
+}
+#google_translate_element,
+.goog-te-gadget {
+  display: none !important;
+  visibility: hidden !important;
+}
+.goog-tooltip,
+.goog-tooltip:hover,
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+}
+
+/* ==========================================================================
+   TRANSLATION IMMUNITY RULES: Prevents translation engines from altering language names
+   ========================================================================== */
+.lang-static-title::before {
+  content: attr(data-title);
+  display: inline-block;
+}
+.lang-static-label::before {
+  content: attr(data-label);
+  display: inline-block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: inherit;
+}
+.lang-static-native::before {
+  content: attr(data-native);
+  display: inline-block;
+  font-weight: 500;
+  font-size: 0.78rem;
+  margin-left: 4px;
+  color: inherit;
+}
+
+

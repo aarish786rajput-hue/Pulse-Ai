@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { generatePatientReports, sampleReports } from "../data/sampleReports";
 import { analyzeReportFile } from "../services/geminiService";
+import { translations } from "../data/translations";
 
 export default function ReportExplainer({ 
   onAskCopilot, 
@@ -30,6 +31,7 @@ export default function ReportExplainer({
   onUpdateVitals,
   onAddTimelineEvent
 }) {
+  const t = translations[lang] || translations.en;
   // User uploaded reports from storage
   const [userUploadedReports, setUserUploadedReports] = useState(() => {
     try {
@@ -362,13 +364,11 @@ export default function ReportExplainer({
                 <FileText size={22} />
               </div>
               <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: 0, color: "var(--text-highlight)", letterSpacing: "-0.01em" }}>
-                {lang === "hi" ? "स्मार्ट लैब रिपोर्ट्स व एआई विश्लेषक" : "Smart Lab Reports & AI Analyzer"}
+                {t.smartLabReports || "Smart Lab Reports & AI Analyzer"}
               </h1>
             </div>
             <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", marginTop: "8px", marginBottom: 0, maxWidth: "680px" }}>
-              {lang === "hi"
-                ? "अपनी कोई भी मेडिकल रिपोर्ट (PDF या फोटो) अपलोड करें। एआई तुरंत सभी बायोमार्कर, संदर्भ सीमाएं और निष्कर्ष आम बोलचाल की हिंदी में समझाता है।"
-                : "Upload or scan any lab report (PDF or image). PulseAI extracts clinical biomarkers, compares standard references, and translates them into everyday language."}
+              {t.smartLabReportsDesc || "Upload or scan any lab report (PDF or image). PulseAI extracts clinical biomarkers, compares standard references, and translates them into everyday language."}
             </p>
           </div>
 

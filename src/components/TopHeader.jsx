@@ -19,23 +19,53 @@ import {
   Menu
 } from "lucide-react";
 import { translations } from "../data/translations";
+import { triggerGoogleTranslate } from "../utils/translator";
+
+// Crisp vector SVG flags for UK and India to prevent Windows "GB" / "IN" font fallback
+const UKFlagIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 36 36" style={{ borderRadius: "50%", flexShrink: 0, boxShadow: "0 1px 3px rgba(0,0,0,0.25)" }} aria-hidden="true">
+    <clipPath id="circle-uk-nav"><circle cx="18" cy="18" r="18" /></clipPath>
+    <g clipPath="url(#circle-uk-nav)">
+      <path fill="#00247D" d="M0 0h36v36H0z"/>
+      <path fill="#FFF" d="M0 0l36 36m0-36L0 36" stroke="#FFF" strokeWidth="6"/>
+      <path fill="#CF142B" d="M0 0l36 36m0-36L0 36" stroke="#CF142B" strokeWidth="2.5"/>
+      <path fill="#FFF" d="M18 0v36M0 18h36" stroke="#FFF" strokeWidth="8"/>
+      <path fill="#CF142B" d="M18 0v36M0 18h36" stroke="#CF142B" strokeWidth="4.5"/>
+    </g>
+  </svg>
+);
+
+const IndiaFlagIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 36 36" style={{ borderRadius: "50%", flexShrink: 0, boxShadow: "0 1px 3px rgba(0,0,0,0.25)" }} aria-hidden="true">
+    <clipPath id="circle-in-nav"><circle cx="18" cy="18" r="18" /></clipPath>
+    <g clipPath="url(#circle-in-nav)">
+      <path fill="#FF9933" d="M0 0h36v12H0z"/>
+      <path fill="#FFFFFF" d="M0 12h36v12H0z"/>
+      <path fill="#138808" d="M0 24h36v12H0z"/>
+      <circle cx="18" cy="18" r="3.6" fill="none" stroke="#000080" strokeWidth="0.8"/>
+      <circle cx="18" cy="18" r="0.9" fill="#000080"/>
+      <circle cx="18" cy="18" r="3.2" fill="none" stroke="#000080" strokeWidth="0.3" strokeDasharray="0.3 0.5"/>
+    </g>
+  </svg>
+);
 
 const SUPPORTED_NAV_LANGUAGES = [
-  { id: "en", label: "English", flag: "🇬🇧", sub: "English" },
-  { id: "hi", label: "हिन्दी", flag: "🇮🇳", sub: "Hindi" },
-  { id: "hinglish", label: "Hinglish", flag: "🇮🇳", sub: "हिंग्लिश" },
-  { id: "bn", label: "বাংলা", flag: "🇮🇳", sub: "Bengali" },
-  { id: "mr", label: "मराठी", flag: "🇮🇳", sub: "Marathi" },
-  { id: "te", label: "తెలుగు", flag: "🇮🇳", sub: "Telugu" },
-  { id: "ta", label: "தமிழ்", flag: "🇮🇳", sub: "Tamil" },
-  { id: "gu", label: "ગુજરાતી", flag: "🇮🇳", sub: "Gujarati" },
-  { id: "pa", label: "ਪੰਜਾਬੀ", flag: "🇮🇳", sub: "Punjabi" },
-  { id: "kn", label: "ಕನ್ನಡ", flag: "🇮🇳", sub: "Kannada" }
+  { id: "en", label: "English", native: "English", country: "uk" },
+  { id: "hi", label: "Hindi", native: "हिन्दी", country: "in" },
+  { id: "hinglish", label: "Hinglish", native: "हिंग्लिश", country: "in" },
+  { id: "bn", label: "Bengali", native: "বাংলা", country: "in" },
+  { id: "mr", label: "Marathi", native: "मराठी", country: "in" },
+  { id: "te", label: "Telugu", native: "తెలుగు", country: "in" },
+  { id: "ta", label: "Tamil", native: "தமிழ்", country: "in" },
+  { id: "gu", label: "Gujarati", native: "ગુજરાતી", country: "in" },
+  { id: "pa", label: "Punjabi", native: "ਪੰਜਾਬੀ", country: "in" },
+  { id: "kn", label: "Kannada", native: "ಕನ್ನಡ", country: "in" }
 ];
 
 const NAV_LINKS = [
   { 
     id: "dashboard", 
+    key: "navDashboard",
     label: "Home", 
     labelHi: "होम", 
     icon: Home,
@@ -46,6 +76,7 @@ const NAV_LINKS = [
   },
   { 
     id: "reports", 
+    key: "navReports",
     label: "Lab Reports", 
     labelHi: "लैब रिपोर्ट्स", 
     icon: FileText,
@@ -56,6 +87,7 @@ const NAV_LINKS = [
   },
   { 
     id: "doctors", 
+    key: "navDoctors",
     label: "Find Doctors", 
     labelHi: "डॉक्टर खोजें", 
     icon: Stethoscope,
@@ -67,14 +99,14 @@ const NAV_LINKS = [
 ];
 
 const SEARCH_CATEGORIES = [
-  { id: "passport", label: "Doctor Health Passport (PDF)", labelHi: "डॉक्टर हेल्थ पासपोर्ट (PDF)", tab: "passport", icon: FileCheck2, color: "#10b981", bg: "rgba(16, 185, 129, 0.16)", keywords: ["passport", "pdf", "print", "summary", "पासपोर्ट", "प्रिंट", "डॉक्टर"] },
-  { id: "doctors", label: "Specialist Doctors", labelHi: "विशेषज्ञ डॉक्टर", tab: "doctors", icon: Stethoscope, color: "#06b6d4", bg: "rgba(6, 182, 212, 0.16)", keywords: ["doctor", "dentist", "dermatologist", "eye", "skin", "डॉक्टर", "दंत", "क्लिनिक"] },
-  { id: "copilot", label: "AI Health Copilot", labelHi: "एआई स्वास्थ्य कोपायलट", tab: "copilot", icon: Sparkles, color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.16)", keywords: ["ai", "copilot", "ask", "chat", "voice", "सवाल", "मदद", "कोपायलट"] },
-  { id: "symptom-checker", label: "Symptom Checker", labelHi: "लक्षण जांच विज़ार्ड", tab: "symptom-checker", icon: Activity, color: "#f43f5e", bg: "rgba(244, 63, 94, 0.16)", keywords: ["symptom", "fever", "pain", "headache", "dizzy", "cough", "दर्द", "बुखार", "चक्कर"] },
-  { id: "medications", label: "Medications & Safety", labelHi: "दवाइयां और सुरक्षा", tab: "medications", icon: Pill, color: "#ec4899", bg: "rgba(236, 72, 153, 0.16)", keywords: ["medicine", "pill", "tablet", "statin", "telmisartan", "metformin", "dawa", "दवाई", "गोली"] },
-  { id: "reports", label: "Lab Test Reports", labelHi: "लैब टेस्ट रिपोर्ट", tab: "reports", icon: FileText, color: "#6366f1", bg: "rgba(99, 102, 241, 0.16)", keywords: ["report", "lab", "test", "hba1c", "blood", "sugar", "रिपोर्ट", "जांच"] },
-  { id: "vitals", label: "Vitals & Physiological Trends", labelHi: "वाइटल्स व रुझान", tab: "vitals", icon: Activity, color: "#10b981", bg: "rgba(16, 185, 129, 0.16)", keywords: ["vitals", "bp", "blood pressure", "glucose", "pulse", "बीपी", "शुगर", "पल्स"] },
-  { id: "profile", label: "Health Profile & ABHA", labelHi: "स्वास्थ्य प्रोफ़ाइल व आभा", tab: "profile", icon: User, color: "#3b82f6", bg: "rgba(59, 130, 246, 0.16)", keywords: ["profile", "abha", "id", "allergy", "आभा", "प्रोफाइल"] }
+  { id: "passport", key: "healthPassportPdf", label: "Doctor Health Passport (PDF)", labelHi: "डॉक्टर हेल्थ पासपोर्ट (PDF)", tab: "passport", icon: FileCheck2, color: "#10b981", bg: "rgba(16, 185, 129, 0.16)", keywords: ["passport", "pdf", "print", "summary", "पासपोर्ट", "प्रिंट", "डॉक्टर"] },
+  { id: "doctors", key: "navDoctors", label: "Specialist Doctors", labelHi: "विशेषज्ञ डॉक्टर", tab: "doctors", icon: Stethoscope, color: "#06b6d4", bg: "rgba(6, 182, 212, 0.16)", keywords: ["doctor", "dentist", "dermatologist", "eye", "skin", "डॉक्टर", "दंत", "क्लिनिक"] },
+  { id: "copilot", key: "navCopilot", label: "AI Health Copilot", labelHi: "एआई स्वास्थ्य कोपायलट", tab: "copilot", icon: Sparkles, color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.16)", keywords: ["ai", "copilot", "ask", "chat", "voice", "सवाल", "मदद", "कोपायलट"] },
+  { id: "symptom-checker", key: "navSymptomChecker", label: "Symptom Checker", labelHi: "लक्षण जांच विज़ार्ड", tab: "symptom-checker", icon: Activity, color: "#f43f5e", bg: "rgba(244, 63, 94, 0.16)", keywords: ["symptom", "fever", "pain", "headache", "dizzy", "cough", "दर्द", "बुखार", "चक्कर"] },
+  { id: "medications", key: "navMedications", label: "Medications & Safety", labelHi: "दवाइयां और सुरक्षा", tab: "medications", icon: Pill, color: "#ec4899", bg: "rgba(236, 72, 153, 0.16)", keywords: ["medicine", "pill", "tablet", "statin", "telmisartan", "metformin", "dawa", "दवाई", "गोली"] },
+  { id: "reports", key: "navReports", label: "Lab Test Reports", labelHi: "लैब टेस्ट रिपोर्ट", tab: "reports", icon: FileText, color: "#6366f1", bg: "rgba(99, 102, 241, 0.16)", keywords: ["report", "lab", "test", "hba1c", "blood", "sugar", "रिपोर्ट", "जांच"] },
+  { id: "vitals", key: "navVitals", label: "Vitals & Physiological Trends", labelHi: "वाइटल्स व रुझान", tab: "vitals", icon: Activity, color: "#10b981", bg: "rgba(16, 185, 129, 0.16)", keywords: ["vitals", "bp", "blood pressure", "glucose", "pulse", "बीपी", "शुगर", "पल्स"] },
+  { id: "profile", key: "navProfile", label: "Health Profile & ABHA", labelHi: "स्वास्थ्य प्रोफ़ाइल व आभा", tab: "profile", icon: User, color: "#3b82f6", bg: "rgba(59, 130, 246, 0.16)", keywords: ["profile", "abha", "id", "allergy", "आभा", "प्रोफाइल"] }
 ];
 
 export default function TopHeader({
@@ -220,7 +252,7 @@ export default function TopHeader({
               whiteSpace: "nowrap"
             }}
           >
-            {lang === "hi" ? "हेल्थ कमांड सेंटर" : "Health Command Center"}
+            {t.healthCommandCenter || "Health Command Center"}
           </h1>
         </div>
 
@@ -232,6 +264,7 @@ export default function TopHeader({
           {NAV_LINKS.map((link) => {
             const Icon = link.icon;
             const isActive = activeTab === link.id;
+            const linkLabel = t[link.key] || t[link.id] || link.label;
             return (
               <button
                 key={link.id}
@@ -245,7 +278,7 @@ export default function TopHeader({
                     ? `0 2px 14px ${link.bg}, inset 0 1px 0 rgba(255, 255, 255, 0.12)` 
                     : "var(--glass-highlight), var(--shadow-sm)"
                 }}
-                title={lang === "hi" ? link.labelHi : link.label}
+                title={linkLabel}
               >
                 <div style={{
                   width: "22px",
@@ -261,7 +294,7 @@ export default function TopHeader({
                 }}>
                   <Icon size={13} strokeWidth={isActive ? 2.5 : 2.2} />
                 </div>
-                <span style={{ fontWeight: isActive ? 700 : 600 }}>{lang === "hi" ? link.labelHi : link.label}</span>
+                <span style={{ fontWeight: isActive ? 700 : 600 }}>{linkLabel}</span>
               </button>
             );
           })}
@@ -300,7 +333,7 @@ export default function TopHeader({
                 setIsSearchOpen(true);
               }}
               onFocus={() => setIsSearchOpen(true)}
-              placeholder="Search..."
+              placeholder={t.searchPlaceholder || "Search..."}
               style={{
                 background: "transparent",
                 border: "none",
@@ -354,7 +387,7 @@ export default function TopHeader({
             }}
           >
             <div style={{ fontSize: "0.7rem", fontWeight: 800, color: "var(--text-dim)", textTransform: "uppercase", padding: "4px 8px" }}>
-              {trimmedQuery ? (lang === "hi" ? "सर्च परिणाम" : "Matching Results") : (lang === "hi" ? "त्वरित सुविधाएं" : "Quick Access")}
+              {trimmedQuery ? (t.searchMatching || "Matching Results") : (t.quickAccess || "Quick Access")}
             </div>
 
             {filteredResults.length === 0 ? (
@@ -376,7 +409,7 @@ export default function TopHeader({
               >
                 <Sparkles size={16} />
                 <div style={{ fontSize: "0.82rem", fontWeight: 700 }}>
-                  {lang === "hi" ? `कोपायलट से पूछें: "${searchQuery}"` : `Ask Copilot: "${searchQuery}"`}
+                  {`${t.askCopilot || "Ask Copilot"}: "${searchQuery}"`}
                 </div>
               </div>
             ) : (
@@ -414,11 +447,11 @@ export default function TopHeader({
                         <Icon size={15} color={item.color || "var(--primary)"} />
                       </div>
                       <span style={{ fontSize: "0.84rem", fontWeight: 700, color: "var(--text-highlight)" }}>
-                        {lang === "hi" ? item.labelHi : item.label}
+                        {(item.key && t[item.key]) || (lang === "hi" ? item.labelHi : item.label)}
                       </span>
                     </div>
                     <span style={{ fontSize: "0.72rem", color: "var(--text-dim)" }}>
-                      {lang === "hi" ? "खोलें →" : "Open →"}
+                      {t.openArrow || "Open →"}
                     </span>
                   </div>
                 );
@@ -435,7 +468,7 @@ export default function TopHeader({
           <button
             onClick={onOpenHealthPassport}
             className="header-icon-btn"
-            title={lang === "hi" ? "डॉक्टर हेल्थ पासपोर्ट (PDF)" : "Doctor Health Passport (PDF)"}
+            title={t.healthPassportPdf || "Doctor Health Passport (PDF)"}
             aria-label="Doctor Health Passport"
             style={{
               color: "#10b981",
@@ -474,10 +507,12 @@ export default function TopHeader({
         )}
 
         {/* Multilingual Selector Icon Button with Dropdown Popup */}
-        <div ref={langContainerRef} style={{ position: "relative" }}>
+        <div ref={langContainerRef} style={{ position: "relative" }} className="notranslate" translate="no" lang="zxx">
           <button
             onClick={() => setIsLangOpen(prev => !prev)}
-            className={`header-icon-btn ${isLangOpen ? "is-active" : ""}`}
+            className={`header-icon-btn notranslate ${isLangOpen ? "is-active" : ""}`}
+            translate="no"
+            lang="zxx"
             title="Change Language / भाषा बदलें"
             aria-label="Language Selector"
           >
@@ -486,12 +521,14 @@ export default function TopHeader({
 
           {isLangOpen && (
             <div 
-              className="glass-panel"
+              className="glass-panel notranslate"
+              translate="no"
+              lang="zxx"
               style={{
                 position: "absolute",
                 top: "calc(100% + 8px)",
                 right: 0,
-                minWidth: "215px",
+                minWidth: "220px",
                 background: "var(--bg-card)",
                 border: "1px solid var(--border-color)",
                 borderRadius: "14px",
@@ -506,39 +543,51 @@ export default function TopHeader({
                 animation: "fadeIn 0.15s ease"
               }}
             >
-              <div style={{ 
-                fontSize: "0.7rem", 
-                fontWeight: 800, 
-                color: "var(--text-dim)", 
-                textTransform: "uppercase", 
-                letterSpacing: "0.04em",
-                padding: "4px 8px 6px 8px",
-                borderBottom: "1px solid var(--border-color)",
-                marginBottom: "2px"
-              }}>
-                {lang === "hi" ? "भाषा चुनें" : "Select Language"}
-              </div>
+              <div 
+                className="notranslate lang-static-title"
+                data-title="SELECT LANGUAGE"
+                translate="no"
+                lang="zxx"
+                style={{ 
+                  fontSize: "0.7rem", 
+                  fontWeight: 800, 
+                  color: "var(--text-dim)", 
+                  textTransform: "uppercase", 
+                  letterSpacing: "0.04em",
+                  padding: "4px 8px 6px 8px",
+                  borderBottom: "1px solid var(--border-color)",
+                  marginBottom: "4px"
+                }} 
+              />
 
               {SUPPORTED_NAV_LANGUAGES.map((l) => {
                 const isSelected = lang === l.id;
                 return (
                   <button
                     key={l.id}
+                    type="button"
+                    className="notranslate"
+                    translate="no"
+                    lang="zxx"
+                    aria-label={`${l.label} (${l.native})`}
                     onClick={() => {
                       setLang(l.id);
                       setIsLangOpen(false);
+                      try {
+                        triggerGoogleTranslate(l.id);
+                      } catch {
+                        // Ignored
+                      }
                     }}
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      padding: "7px 10px",
+                      padding: "8px 12px",
                       borderRadius: "8px",
                       border: "none",
                       background: isSelected ? "var(--primary-soft)" : "transparent",
                       color: isSelected ? "var(--primary)" : "var(--text-main)",
-                      fontWeight: isSelected ? 700 : 500,
-                      fontSize: "0.82rem",
                       cursor: "pointer",
                       textAlign: "left",
                       width: "100%",
@@ -551,10 +600,19 @@ export default function TopHeader({
                       if (!isSelected) e.currentTarget.style.background = "transparent";
                     }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span>{l.flag}</span>
-                      <span>{l.label}</span>
-                      {l.sub && <span style={{ fontSize: "0.72rem", color: "var(--text-dim)" }}>({l.sub})</span>}
+                    <div className="notranslate" translate="no" lang="zxx" style={{ display: "flex", alignItems: "center", gap: "9px" }}>
+                      {l.country === "uk" ? <UKFlagIcon /> : <IndiaFlagIcon />}
+                      <span className="lang-static-label notranslate" data-label={l.label} translate="no" lang="zxx" />
+                      <span 
+                        className="lang-static-native notranslate" 
+                        data-native={`(${l.native})`} 
+                        translate="no" 
+                        lang="zxx"
+                        style={{ 
+                          color: isSelected ? "var(--primary)" : "var(--text-dim)", 
+                          opacity: 0.85 
+                        }} 
+                      />
                     </div>
                     {isSelected && <Check size={14} color="var(--primary)" />}
                   </button>

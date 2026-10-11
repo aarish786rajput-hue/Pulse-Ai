@@ -1,19 +1,242 @@
 // Comprehensive Doctors and Specialist Directory Data for PulseAI
 
 export const doctorSpecialties = [
-  { id: "all", label: "All Specialists", labelHi: "सभी विशेषज्ञ", icon: "Stethoscope", count: 12 },
-  { id: "dentist", label: "Dentist", labelHi: "दंत चिकित्सक", icon: "Smile", count: 2 },
-  { id: "dermatologist", label: "Dermatologist", labelHi: "त्वचा विशेषज्ञ", icon: "Sparkles", count: 1 },
-  { id: "ophthalmologist", label: "Ophthalmologist", labelHi: "नेत्र विशेषज्ञ", icon: "Eye", count: 1 },
-  { id: "cardiologist", label: "Cardiologist", labelHi: "हृदय रोग विशेषज्ञ", icon: "HeartPulse", count: 1 },
-  { id: "physician", label: "General Physician", labelHi: "सामान्य चिकित्सक", icon: "Activity", count: 1 },
-  { id: "pediatrician", label: "Pediatrician", labelHi: "बाल रोग विशेषज्ञ", icon: "Baby", count: 1 },
-  { id: "orthopedic", label: "Orthopedic", labelHi: "हड्डी रोग विशेषज्ञ", icon: "Bone", count: 1 },
-  { id: "ent", label: "ENT Specialist", labelHi: "कान-नाक-गला विशेषज्ञ", icon: "Ear", count: 1 },
-  { id: "gynecologist", label: "Gynecologist", labelHi: "स्त्री रोग विशेषज्ञ", icon: "UserCheck", count: 1 },
-  { id: "neurologist", label: "Neurologist", labelHi: "न्यूरोलॉजिस्ट", icon: "Brain", count: 1 },
-  { id: "psychiatrist", label: "Psychiatrist", labelHi: "मनोचिकित्सक", icon: "HeartHandshake", count: 1 }
+  { 
+    id: "all", 
+    label: "All Specialists", 
+    labelHi: "सभी विशेषज्ञ", 
+    icon: "Stethoscope", 
+    count: 12,
+    labels: {
+      en: "All Specialists",
+      hi: "सभी विशेषज्ञ",
+      hinglish: "Sabhi Specialists",
+      bn: "সকল বিশেষজ্ঞ",
+      mr: "सर्व तज्ज्ञ",
+      te: "అన్ని స్పెషలిస్టులు",
+      ta: "அனைத்து நிபுணர்கள்",
+      gu: "તમામ નિષ્ણાતો",
+      pa: "ਸਾਰੇ ਮਾਹਰ",
+      kn: "ಎಲ್ಲಾ ತಜ್ಞರು"
+    }
+  },
+  { 
+    id: "dentist", 
+    label: "Dentist", 
+    labelHi: "दंत चिकित्सक", 
+    icon: "Smile", 
+    count: 2,
+    labels: {
+      en: "Dentist",
+      hi: "दंत चिकित्सक",
+      hinglish: "Dentist",
+      bn: "দন্ত চিকিৎসক",
+      mr: "दंतचिकित्सक",
+      te: "దంత వైద్యుడు",
+      ta: "பல் மருத்துவர்",
+      gu: "દાંતના ડૉક્ટર",
+      pa: "ਦੰਦਾਂ ਦਾ ਡਾਕਟਰ",
+      kn: "ದಂತ ವೈದ್ಯರು"
+    }
+  },
+  { 
+    id: "dermatologist", 
+    label: "Dermatologist", 
+    labelHi: "त्वचा विशेषज्ञ", 
+    icon: "Sparkles", 
+    count: 1,
+    labels: {
+      en: "Dermatologist",
+      hi: "त्वचा विशेषज्ञ",
+      hinglish: "Skin Specialist",
+      bn: "চর্মরোগ বিশেষজ্ঞ",
+      mr: "त्वचारोगतज्ज्ञ",
+      te: "చర్మ నిపుణుడు",
+      ta: "தோல் மருத்துவர்",
+      gu: "ચામડીના નિષ્ણાત",
+      pa: "ਚਮੜੀ ਦਾ ਮਾਹਰ",
+      kn: "ಚರ್ಮ ತಜ್ಞರು"
+    }
+  },
+  { 
+    id: "ophthalmologist", 
+    label: "Ophthalmologist", 
+    labelHi: "नेत्र विशेषज्ञ", 
+    icon: "Eye", 
+    count: 1,
+    labels: {
+      en: "Ophthalmologist",
+      hi: "नेत्र विशेषज्ञ",
+      hinglish: "Eye Specialist",
+      bn: "চক্ষুরোগ বিশেষজ্ঞ",
+      mr: "नेत्रतज्ज्ञ",
+      te: "నేత్ర నిపుణుడు",
+      ta: "கண் மருத்துவர்",
+      gu: "આંખના નિષ્ણાત",
+      pa: "ਅੱਖਾਂ ਦਾ ਮਾਹਰ",
+      kn: "ಕಣ್ಣಿನ ತಜ್ಞರು"
+    }
+  },
+  { 
+    id: "cardiologist", 
+    label: "Cardiologist", 
+    labelHi: "हृदय रोग विशेषज्ञ", 
+    icon: "HeartPulse", 
+    count: 1,
+    labels: {
+      en: "Cardiologist",
+      hi: "हृदय रोग विशेषज्ञ",
+      hinglish: "Heart Specialist",
+      bn: "হৃদরোগ বিশেষজ্ঞ",
+      mr: "हृदयरोगतज्ज्ञ",
+      te: "గుండె నిపుణుడు",
+      ta: "இதய மருத்துவர்",
+      gu: "હૃદય રોગના નિષ્ણાત",
+      pa: "ਦਿਲ ਦਾ ਮਾਹਰ",
+      kn: "ಹೃದಯ ತಜ್ಞರು"
+    }
+  },
+  { 
+    id: "physician", 
+    label: "General Physician", 
+    labelHi: "सामान्य चिकित्सक", 
+    icon: "Activity", 
+    count: 1,
+    labels: {
+      en: "General Physician",
+      hi: "सामान्य चिकित्सक",
+      hinglish: "General Physician",
+      bn: "সাধারণ চিকিৎসক",
+      mr: "जनरल फिजिशियन",
+      te: "జనరల్ ఫిజీషియన్",
+      ta: "பொது மருத்துவர்",
+      gu: "સામાન્ય ચિકિત્સક",
+      pa: "ਜਨਰਲ ਫਿਜ਼ੀਸ਼ੀਅਨ",
+      kn: "ಸಾಮಾನ್ಯ ವೈದ್ಯರು"
+    }
+  },
+  { 
+    id: "pediatrician", 
+    label: "Pediatrician", 
+    labelHi: "बाल रोग विशेषज्ञ", 
+    icon: "Baby", 
+    count: 1,
+    labels: {
+      en: "Pediatrician",
+      hi: "बाल रोग विशेषज्ञ",
+      hinglish: "Child Specialist",
+      bn: "শিশু বিশেষজ্ঞ",
+      mr: "बालरोगतज्ज्ञ",
+      te: "పిల్లల వైద్యుడు",
+      ta: "குழந்தை மருத்துவர்",
+      gu: "બાળ રોગ નિષ્ણાત",
+      pa: "ਬੱਚਿਆਂ ਦਾ ਡਾਕਟਰ",
+      kn: "ಮಕ್ಕಳ ತಜ್ಞರು"
+    }
+  },
+  { 
+    id: "orthopedic", 
+    label: "Orthopedic", 
+    labelHi: "हड्डी रोग विशेषज्ञ", 
+    icon: "Bone", 
+    count: 1,
+    labels: {
+      en: "Orthopedic",
+      hi: "हड्डी रोग विशेषज्ञ",
+      hinglish: "Bone Specialist",
+      bn: "অস্থিরোগ বিশেষজ্ঞ",
+      mr: "अस्थिरोगतज्ज्ञ",
+      te: "ఆర్థోపెడిక్ నిపుణుడు",
+      ta: "எலும்பு மருத்துவர்",
+      gu: "હાડકાના નિષ્ણાત",
+      pa: "ਹੱਡੀਆਂ ਦਾ ਮਾਹਰ",
+      kn: "ಮೂಳೆ ತಜ್ಞರು"
+    }
+  },
+  { 
+    id: "ent", 
+    label: "ENT Specialist", 
+    labelHi: "कान-नाक-गला विशेषज्ञ", 
+    icon: "Ear", 
+    count: 1,
+    labels: {
+      en: "ENT Specialist",
+      hi: "कान-नाक-गला विशेषज्ञ",
+      hinglish: "ENT Specialist",
+      bn: "নাক-কান-গলা বিশেষজ্ঞ",
+      mr: "कान-नाक-घसा तज्ज्ञ",
+      te: "ఈఎన్‌టీ నిపుణుడు",
+      ta: "காது-மூக்கு-தொண்டை மருத்துவர்",
+      gu: "કાન-નાક-ગળાના નિષ્ણાત",
+      pa: "ਕੰਨ-ਨੱਕ-ਗਲੇ ਦਾ ਮਾਹਰ",
+      kn: "ಕಿವಿ-ಮೂಗು-ಗಂಟಲು ತಜ್ಞರು"
+    }
+  },
+  { 
+    id: "gynecologist", 
+    label: "Gynecologist", 
+    labelHi: "स्त्री रोग विशेषज्ञ", 
+    icon: "UserCheck", 
+    count: 1,
+    labels: {
+      en: "Gynecologist",
+      hi: "स्त्री रोग विशेषज्ञ",
+      hinglish: "Lady Specialist",
+      bn: "স্ত্রীরোগ বিশেষজ্ঞ",
+      mr: "स्त्रीरोगतज्ज्ञ",
+      te: "గైనకాలజిస్ట్",
+      ta: "மகப்பேறு மருத்துவர்",
+      gu: "સ્ત્રીરોગ નિષ્ણાત",
+      pa: "ਗਾਇਨੀਕੋਲੋਜਿਸਟ",
+      kn: "ಸ್ತ್ರೀರೋಗ ತಜ್ಞರು"
+    }
+  },
+  { 
+    id: "neurologist", 
+    label: "Neurologist", 
+    labelHi: "न्यूरोलॉजिस्ट", 
+    icon: "Brain", 
+    count: 1,
+    labels: {
+      en: "Neurologist",
+      hi: "न्यूरोलॉजिस्ट",
+      hinglish: "Brain Specialist",
+      bn: "স্নায়ুরোগ বিশেষজ্ঞ",
+      mr: "मज्जारोगतज्ज्ञ",
+      te: "న్యూరాలజిస్ట్",
+      ta: "நரம்பியல் மருத்துவர்",
+      gu: "ચેતાતંત્ર નિષ્ણાત",
+      pa: "ਨਿਊਰੋਲੋਜਿਸਟ",
+      kn: "ನರರೋಗ ತಜ್ಞರು"
+    }
+  },
+  { 
+    id: "psychiatrist", 
+    label: "Psychiatrist", 
+    labelHi: "मनोचिकित्सक", 
+    icon: "HeartHandshake", 
+    count: 1,
+    labels: {
+      en: "Psychiatrist",
+      hi: "मनोचिकित्सक",
+      hinglish: "Mind Specialist",
+      bn: "মনোরোগ বিশেষজ্ঞ",
+      mr: "मानसोपचारतज्ज्ञ",
+      te: "సైకియాట్రిస్ట్",
+      ta: "மனநல மருத்துவர்",
+      gu: "મનોચિકિત્સક",
+      pa: "ਦਿਮਾਗੀ ਡਾਕਟਰ",
+      kn: "ಮನೋವೈದ್ಯರು"
+    }
+  }
 ];
+
+export function getSpecialtyLabel(spec, lang = "en") {
+  if (!spec) return "";
+  if (spec.labels && spec.labels[lang]) return spec.labels[lang];
+  if (lang === "hi") return spec.labelHi || spec.label;
+  return spec.label;
+}
 
 export const mockDoctors = [
   {

@@ -11,12 +11,25 @@ import {
   MessageSquareHeart,
   ShieldCheck
 } from "lucide-react";
+import { translations } from "../data/translations";
 
 const bodyRegions = [
   {
     id: "chest",
     nameEn: "Chest, Heart & Lungs",
     nameHi: "छाती, हृदय और फेफड़े",
+    names: {
+      en: "Chest, Heart & Lungs",
+      hi: "छाती, हृदय और फेफड़े",
+      hinglish: "Chest, Heart & Lungs",
+      bn: "বুক, হৃদযন্ত্র ও ফুসফুস",
+      mr: "छाती, हृदय आणि फुफ्फुसे",
+      te: "ఛాతీ, గుండె & ఊపిరితిత్తులు",
+      ta: "மார்பு, இதயம் மற்றும் நுரையீரல்",
+      gu: "છાતી, હૃદય અને ફેਫસાં",
+      pa: "ਛਾਤੀ, ਦਿਲ ਅਤੇ ਫੇਫੜੇ",
+      kn: "ಎದೆ, ಹೃದಯ ಮತ್ತು ಶ್ವಾಸಕೋಶ"
+    },
     icon: "🫀",
     commonSymptoms: [
       { id: "chest_pain", en: "Chest tightness / pressure", hi: "छाती में जकड़न या भारीपन", isRedFlag: true },
@@ -30,6 +43,18 @@ const bodyRegions = [
     id: "head",
     nameEn: "Head, Eyes & Neck",
     nameHi: "सिर, आंखें और गर्दन",
+    names: {
+      en: "Head, Eyes & Neck",
+      hi: "सिर, आंखें और गर्दन",
+      hinglish: "Head, Eyes & Neck",
+      bn: "মাথা, চোখ ও ঘাড়",
+      mr: "डोके, डोळे आणि मान",
+      te: "తల, కళ్ళు & మెడ",
+      ta: "தலை, கண்கள் மற்றும் கழுத்து",
+      gu: "માથું, આંખો અને ગરદન",
+      pa: "ਸਿਰ, ਅੱਖਾਂ ਅਤੇ ਗਰਦਨ",
+      kn: "ತಲೆ, ಕಣ್ಣುಗಳು ಮತ್ತು ಕುತ್ತಿಗೆ"
+    },
     icon: "🧠",
     commonSymptoms: [
       { id: "headache", en: "Throbbing headache", hi: "सिर में तेज धड़कता दर्द", isRedFlag: false },
@@ -43,6 +68,18 @@ const bodyRegions = [
     id: "abdomen",
     nameEn: "Stomach & Digestion",
     nameHi: "पेट और पाचन तंत्र",
+    names: {
+      en: "Stomach & Digestion",
+      hi: "पेट और पाचन तंत्र",
+      hinglish: "Pet aur Digestion",
+      bn: "পেট ও হজম প্রক্রিয়া",
+      mr: "पोट आणि पचनसंस्था",
+      te: "కడుపు & జీర్ణవ్యవస్థ",
+      ta: "வயிறு மற்றும் செரிமானம்",
+      gu: "પેટ અને પાચનતંત્ર",
+      pa: "ਢਿੱਡ ਅਤੇ ਪਾਚਨ ਪ੍ਰਣਾਲੀ",
+      kn: "ಹೊಟ್ಟೆ ಮತ್ತು ಜೀರ್ಣಕ್ರಿಯೆ"
+    },
     icon: "🫄",
     commonSymptoms: [
       { id: "acid_burn", en: "Heartburn / acid reflux", hi: "सीने में जलन व खट्टी डकारें", isRedFlag: false },
@@ -55,6 +92,18 @@ const bodyRegions = [
     id: "limbs",
     nameEn: "Joints, Muscles & Feet",
     nameHi: "जोड़, मांसपेशियां और पैर",
+    names: {
+      en: "Joints, Muscles & Feet",
+      hi: "जोड़, मांसपेशियां और पैर",
+      hinglish: "Joints, Muscles & Feet",
+      bn: "জয়েন্ট, পেশী ও পা",
+      mr: "सांधे, स्नायू आणि पाय",
+      te: "కీళ్ళు, కండరాలు & పాదాలు",
+      ta: "மூட்டுகள், தசைகள் மற்றும் பாதங்கள்",
+      gu: "સાંધા, સ્નાયુઓ અને પગ",
+      pa: "ਜੋੜ, ਮਾਸਪੇਸ਼ੀਆਂ ਅਤੇ ਪੈਰ",
+      kn: "ಕೀಲುಗಳು, ಸ್ನಾಯುಗಳು ಮತ್ತು ಪಾದಗಳು"
+    },
     icon: "🦴",
     commonSymptoms: [
       { id: "joint_stiff", en: "Knee / finger joint stiffness", hi: "घुटने या उंगलियों के जोड़ों में अकड़न", isRedFlag: false },
@@ -67,6 +116,18 @@ const bodyRegions = [
     id: "general",
     nameEn: "Whole Body & Systemic",
     nameHi: "पूरा शरीर और सामान्य लक्षण",
+    names: {
+      en: "Whole Body & Systemic",
+      hi: "पूरा शरीर और सामान्य लक्षण",
+      hinglish: "Full Body & Common Symptoms",
+      bn: "সমগ্র শরীর ও সাধারণ লক্ষণ",
+      mr: "संपूर्ण शरीर आणि सामान्य लक्षणे",
+      te: "మొత్తం శరీరం & సాధారణ లక్షణాలు",
+      ta: "முழு உடல் மற்றும் பொதுவான அறிகுறிகள்",
+      gu: "આખું શરીર અને સામાન્ય લક્ષણો",
+      pa: "ਸਾਰਾ ਸਰੀਰ ਅਤੇ ਆਮ ਲੱਛਣ",
+      kn: "ಇಡೀ ದೇಹ ಮತ್ತು ಸಾಮಾನ್ಯ ಲಕ್ಷಣಗಳು"
+    },
     icon: "🌡️",
     commonSymptoms: [
       { id: "fever", en: "Fever > 101°F (38.3°C)", hi: "तेज बुखार (101°F से अधिक)", isRedFlag: false },
@@ -77,7 +138,15 @@ const bodyRegions = [
   }
 ];
 
+function getRegionName(region, lang = "en") {
+  if (!region) return "";
+  if (region.names && region.names[lang]) return region.names[lang];
+  if (lang === "hi") return region.nameHi || region.nameEn;
+  return region.nameEn;
+}
+
 export default function SymptomChecker({ patient, lang = "en", onAskCopilot }) {
+  const t = translations[lang] || translations.en;
   const [step, setStep] = useState(1);
   const [selectedRegionId, setSelectedRegionId] = useState("chest");
   const [selectedSymptoms, setSelectedSymptoms] = useState(["shortness_breath"]);
@@ -201,23 +270,20 @@ export default function SymptomChecker({ patient, lang = "en", onAskCopilot }) {
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
               <span className="badge badge-primary">Clinical Triage Wizard</span>
               <span style={{ fontSize: "0.82rem", color: "var(--text-muted)", fontWeight: 600 }}>
-                {lang === "hi" ? "कदम-दर-कदम लक्षण परीक्षक" : "Guided Evidence-Based Triage"}
+                {t.symptomGuideSub}
               </span>
             </div>
             <h1 style={{ fontSize: "1.75rem", fontWeight: 800 }}>
-              {lang === "hi" ? "इंटरैक्टिव लक्षण जांच (Symptom Checker)" : "Interactive Clinical Symptom Checker"}
+              {t.symptomCheckerTitle}
             </h1>
             <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", maxWidth: "680px" }}>
-              {lang === "hi" 
-                ? "प्रभावित अंग चुनें, लक्षणों को मार्क करें और दर्द की तीव्रता बताएं। पल्स-एआई तुरंत आपको सुरक्षित चिकित्सीय सलाह देगा।"
-                : "Select affected body region, check your symptoms, and set discomfort intensity to receive instant triage recommendations tailored to your health profile."
-              }
+              {t.symptomCheckerDesc}
             </p>
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span className="badge badge-good" style={{ padding: "6px 12px" }}>
-              <ShieldCheck size={14} /> {lang === "hi" ? "सुरक्षा गार्ड एक्टिव" : "Clinical Guard Active"}
+              <ShieldCheck size={14} /> {t.clinicalGuardActive}
             </span>
           </div>
         </div>
@@ -225,10 +291,10 @@ export default function SymptomChecker({ patient, lang = "en", onAskCopilot }) {
         {/* Step Progress Bar */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "20px", gap: "8px" }}>
           {[
-            { num: 1, titleEn: "1. Body Region", titleHi: "1. शरीर का अंग" },
-            { num: 2, titleEn: "2. Symptoms", titleHi: "2. मुख्य लक्षण" },
-            { num: 3, titleEn: "3. Severity & Time", titleHi: "3. तीव्रता व समय" },
-            { num: 4, titleEn: "4. Triage Result", titleHi: "4. परिणाम व सलाह" }
+            { num: 1, title: t.step1Region },
+            { num: 2, title: t.step2Symptoms },
+            { num: 3, title: t.step3Severity },
+            { num: 4, title: t.step4Outcome }
           ].map((s) => (
             <div
               key={s.num}
@@ -253,7 +319,7 @@ export default function SymptomChecker({ patient, lang = "en", onAskCopilot }) {
                 color: step === s.num ? "var(--primary)" : "var(--text-muted)",
                 whiteSpace: "nowrap"
               }}>
-                {lang === "hi" ? s.titleHi : s.titleEn}
+                {s.title}
               </span>
             </div>
           ))}
@@ -292,7 +358,7 @@ export default function SymptomChecker({ patient, lang = "en", onAskCopilot }) {
                     {region.icon}
                   </div>
                   <div style={{ fontWeight: 800, fontSize: "1rem", color: isSelected ? "var(--primary)" : "var(--text-highlight)" }}>
-                    {lang === "hi" ? region.nameHi : region.nameEn}
+                    {getRegionName(region, lang)}
                   </div>
                   <div style={{ fontSize: "0.74rem", color: "var(--text-muted)", marginTop: "4px" }}>
                     {region.commonSymptoms.length} {lang === "hi" ? "लक्षण शामिल" : "markers mapped"}
@@ -304,7 +370,7 @@ export default function SymptomChecker({ patient, lang = "en", onAskCopilot }) {
 
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <button onClick={() => setStep(2)} className="btn btn-primary" style={{ padding: "12px 24px" }}>
-              <span>{lang === "hi" ? "लक्षण चुनें" : "Next: Choose Symptoms"}</span>
+              <span>{t.chooseSymptomsBtn}</span>
               <ArrowRight size={16} />
             </button>
           </div>
@@ -316,7 +382,7 @@ export default function SymptomChecker({ patient, lang = "en", onAskCopilot }) {
         <div className="glass-panel" style={{ padding: "24px 28px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
             <h2 style={{ fontSize: "1.2rem", fontWeight: 800 }}>
-              {lang === "hi" ? `2. ${activeRegion.nameHi} के लक्षण चुनें` : `2. Select Symptoms for ${activeRegion.nameEn}`}
+              2. {getRegionName(activeRegion, lang)}
             </h2>
             <span className="badge badge-primary">
               {selectedSymptoms.length} {lang === "hi" ? "चयनित" : "selected"}

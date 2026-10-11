@@ -12,8 +12,11 @@ import {
   BellRing
 } from "lucide-react";
 import { analyzeMedicationList, checkPairInteraction } from "../data/drugInteractions";
+import { translations } from "../data/translations";
+import { translateMedicalTerm } from "../utils/translator";
 
 export default function MedicineTracker({ patient, onToggleMedication, onAddMedication, lang = 'en' }) {
+  const t = translations[lang] || translations.en;
   const [activeTab, setActiveTab] = useState("schedule"); // 'schedule' | 'interactions'
   const [testMedName, setTestMedName] = useState("");
   const [testResult, setTestResult] = useState(null);
@@ -26,7 +29,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
   const [newMedPurpose, setNewMedPurpose] = useState("");
 
   const medsList = patient?.todayMedications || [];
-  const activeAlerts = analyzeMedicationList(medsList);
+  const activeAlerts = analyzeMedicationList(medsList, lang);
 
   const handleTestInteraction = (e) => {
     e.preventDefault();
@@ -34,7 +37,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
 
     const conflicts = [];
     patient.todayMedications.forEach((currentMed) => {
-      const match = checkPairInteraction(currentMed.name, testMedName);
+      const match = checkPairInteraction(currentMed.name, testMedName, lang);
       if (match) {
         conflicts.push({
           currentMed: currentMed.name,
@@ -84,12 +87,10 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
           <div>
             <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: 0, color: "var(--text-main)" }}>
-              {lang === "hi" ? "दवा प्रबंधन व ट्रैकर" : "Smart Medicine Center"}
+              {t.navMedications || "Smart Medicine Center"}
             </h1>
             <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", maxWidth: "650px", marginTop: "6px", marginBottom: 0 }}>
-              {lang === "hi"
-                ? "अपनी दैनिक दवाइयों का सही समय पर सेवन ट्रैक करें और नए विकल्पों के साथ ड्रग इंटरैक्शन चेक करें।"
-                : "Track daily doses with timely food reminders, and protect yourself against dangerous drug-drug interactions before consuming over-the-counter painkillers."}
+              {t.medsSub || "Track daily doses with timely food reminders, and protect yourself against dangerous drug-drug interactions before consuming over-the-counter painkillers."}
             </p>
           </div>
 
@@ -98,7 +99,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
             className="btn btn-primary"
           >
             <Plus size={16} />
-            <span>{showAddForm ? "Close Form" : "Add Medication"}</span>
+            <span>{showAddForm ? translateMedicalTerm("Close Form", lang) : translateMedicalTerm("Add Medication", lang)}</span>
           </button>
         </div>
       </div>
@@ -106,10 +107,10 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
       {/* Add Medication Form */}
       {showAddForm && (
         <form onSubmit={handleCreateMed} className="glass-panel" style={{ padding: "20px 24px" }}>
-          <h3 style={{ fontSize: "1.1rem", fontWeight: 800, marginBottom: "14px" }}>Add New Prescription</h3>
+          <h3 style={{ fontSize: "1.1rem", fontWeight: 800, marginBottom: "14px" }}>{translateMedicalTerm("Add New Prescription", lang)}</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", marginBottom: "14px" }}>
             <div>
-              <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>Medication Name</label>
+              <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>{translateMedicalTerm("Medication Name", lang)}</label>
               <input
                 type="text"
                 placeholder="e.g. Atorvastatin, Metformin"
@@ -119,7 +120,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
               />
             </div>
             <div>
-              <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>Dosage</label>
+              <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>{translateMedicalTerm("Dosage", lang)}</label>
               <input
                 type="text"
                 placeholder="e.g. 500 mg, 10 mcg"
@@ -129,15 +130,15 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
               />
             </div>
             <div>
-              <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>Daily Timing</label>
+              <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>{translateMedicalTerm("Daily Timing", lang)}</label>
               <select value={newMedSlot} onChange={(e) => setNewMedSlot(e.target.value)}>
-                <option value="morning">Morning (Breakfast)</option>
-                <option value="afternoon">Afternoon (Lunch)</option>
-                <option value="night">Night (Dinner / Bedtime)</option>
+                <option value="morning">{translateMedicalTerm("Morning Routine", lang)}</option>
+                <option value="afternoon">{translateMedicalTerm("Afternoon Routine", lang)}</option>
+                <option value="night">{translateMedicalTerm("Night Routine", lang)}</option>
               </select>
             </div>
             <div>
-              <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>Purpose / Condition</label>
+              <label style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>{translateMedicalTerm("Purpose / Condition", lang)}</label>
               <input
                 type="text"
                 placeholder="e.g. Blood Sugar, Blood Pressure"
@@ -148,10 +149,10 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
             <button type="button" onClick={() => setShowAddForm(false)} className="btn btn-secondary">
-              Cancel
+              {t.cancel || "Cancel"}
             </button>
             <button type="submit" className="btn btn-primary">
-              Save to Daily Regimen
+              {translateMedicalTerm("Save to Daily Regimen", lang)}
             </button>
           </div>
         </form>
@@ -170,7 +171,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
             fontWeight: 700
           }}
         >
-          <Clock size={16} /> Daily Dosage Schedule
+          <Clock size={16} /> {translateMedicalTerm("Daily Dosage Schedule", lang)}
         </button>
         <button
           onClick={() => setActiveTab("interactions")}
@@ -183,7 +184,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
             fontWeight: 700
           }}
         >
-          <ShieldAlert size={16} /> Drug Interaction Scanner
+          <ShieldAlert size={16} /> {translateMedicalTerm("Drug Interaction Scanner", lang)}
         </button>
       </div>
 
@@ -200,18 +201,18 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", borderBottom: "1px solid var(--border-color)", paddingBottom: "10px" }}>
                   <div>
                     <h3 style={{ fontSize: "1.1rem", fontWeight: 800 }}>
-                      {slotTitle}
+                      {translateMedicalTerm(slotTitle, lang)}
                     </h3>
                     <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>{slotTime}</div>
                   </div>
                   <span className="badge badge-primary">
-                    {slotMeds.filter(m => m.taken).length} / {slotMeds.length} Completed
+                    {slotMeds.filter(m => m.taken).length} / {slotMeds.length} {translateMedicalTerm("Completed", lang)}
                   </span>
                 </div>
 
                 {slotMeds.length === 0 ? (
                   <div style={{ color: "var(--text-muted)", fontSize: "0.86rem", fontStyle: "italic", padding: "8px 0" }}>
-                    No medications scheduled for this time.
+                    {translateMedicalTerm("No medications scheduled for this time.", lang)}
                   </div>
                 ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -247,16 +248,16 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
                               {med.name} <span style={{ color: "var(--primary)", fontSize: "0.85rem" }}>({med.dosage})</span>
                             </div>
                             <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "12px", marginTop: "3px" }}>
-                              <span>{med.purpose}</span>
+                              <span>{translateMedicalTerm(med.purpose, lang)}</span>
                               <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                                <Utensils size={13} /> {med.withFood ? "Take with/after meals" : "Take on empty stomach"}
+                                <Utensils size={13} /> {med.withFood ? translateMedicalTerm("Take with/after meals", lang) : translateMedicalTerm("Take on empty stomach", lang)}
                               </span>
                             </div>
                           </div>
                         </div>
 
                         <span className={`badge ${med.refillDaysLeft <= 7 ? "badge-critical" : "badge-good"}`}>
-                          <BellRing size={12} /> {med.refillDaysLeft} days supply
+                          <BellRing size={12} /> {med.refillDaysLeft} {translateMedicalTerm("days supply", lang)}
                         </span>
                       </div>
                     ))}
@@ -275,7 +276,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
           <div className="glass-panel" style={{ padding: "22px 26px" }}>
             <h3 style={{ fontSize: "1.1rem", fontWeight: 800, display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
               <ShieldCheck size={20} color="var(--secondary)" />
-              {lang === "hi" ? "सक्रिय दवा संयोजन सुरक्षा जांच" : "Active Regimen Cross-Compatibility Scan"}
+              {translateMedicalTerm("Active Regimen Cross-Compatibility Scan", lang)}
             </h3>
             <p style={{ fontSize: "0.86rem", color: "var(--text-muted)", marginBottom: "14px" }}>
               {lang === "hi"
@@ -296,7 +297,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
                 <CheckCircle2 size={24} color="var(--secondary)" />
                 <div>
                   <div style={{ fontWeight: 800, color: "var(--status-good-text)" }}>
-                    {lang === "hi" ? "शेड्यूल में कोई दवा टकराव नहीं" : "Zero Internal Conflicts Detected"}
+                    {translateMedicalTerm("Zero Internal Conflicts Detected", lang)}
                   </div>
                   <div style={{ fontSize: "0.84rem", color: "var(--text-main)", marginTop: "2px" }}>
                     {lang === "hi"
@@ -336,7 +337,7 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
           <div className="glass-panel" style={{ padding: "22px 26px" }}>
             <h3 style={{ fontSize: "1.1rem", fontWeight: 800, display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
               <Search size={20} color="var(--primary)" />
-              Test An Over-The-Counter Medicine Before Taking
+              {translateMedicalTerm("Test An Over-The-Counter Medicine Before Taking", lang)}
             </h3>
             <p style={{ fontSize: "0.86rem", color: "var(--text-muted)", marginBottom: "16px" }}>
               Planning to take a painkiller, fever tablet, or supplement? Test it below to check compatibility with <strong>{patient.name}’s</strong> active medications:
@@ -347,17 +348,17 @@ export default function MedicineTracker({ patient, onToggleMedication, onAddMedi
                 type="text"
                 value={testMedName}
                 onChange={(e) => setTestMedName(e.target.value)}
-                placeholder={lang === "hi" ? "दवाई का नाम लिखें..." : "Search medicine name..."}
+                placeholder={t.searchPlaceholder || "Search medicine name..."}
                 style={{ flex: 1 }}
               />
               <button type="submit" className="btn btn-primary" style={{ whiteSpace: "nowrap" }}>
-                Scan Safety
+                {translateMedicalTerm("Scan Safety", lang)}
               </button>
             </form>
 
             {/* Quick Test Chips */}
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "18px" }}>
-              <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 700 }}>Quick Test:</span>
+              <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 700 }}>{translateMedicalTerm("Quick Test:", lang)}</span>
               {["Ibuprofen (Painkiller)", "Aspirin", "Paracetamol", "Potassium Supplement", "Warfarin"].map((drug, i) => (
                 <button
                   key={i}

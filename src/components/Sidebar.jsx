@@ -38,11 +38,11 @@ export default function Sidebar({
   const navSections = [
     {
       id: "overview",
-      title: lang === "hi" ? "मुख्य सेवाएँ" : "Overview",
+      title: t.navOverview || "Overview",
       items: [
         { 
           id: "dashboard", 
-          label: lang === "hi" ? "होम" : "Home", 
+          label: t.navDashboard || "Home", 
           icon: Home,
           color: "#3b82f6",
           bg: "rgba(59, 130, 246, 0.16)",
@@ -51,7 +51,7 @@ export default function Sidebar({
         },
         { 
           id: "symptom-checker", 
-          label: t.navSymptomChecker, 
+          label: t.navSymptomChecker || "Symptom Checker", 
           icon: Stethoscope,
           color: "#f43f5e",
           bg: "rgba(244, 63, 94, 0.16)",
@@ -60,7 +60,7 @@ export default function Sidebar({
         },
         { 
           id: "doctors", 
-          label: t.navDoctors, 
+          label: t.navDoctors || "Find Doctors", 
           icon: BriefcaseMedical,
           color: "#10b981",
           bg: "rgba(16, 185, 129, 0.16)",
@@ -71,11 +71,11 @@ export default function Sidebar({
     },
     {
       id: "records",
-      title: lang === "hi" ? "मेडिकल रिकॉर्ड्स" : "Medical Records",
+      title: t.navRecords || "Medical Records",
       items: [
         { 
           id: "reports", 
-          label: t.navReports, 
+          label: t.navReports || "Lab Reports", 
           icon: FileText,
           color: "#6366f1",
           bg: "rgba(99, 102, 241, 0.16)",
@@ -84,7 +84,7 @@ export default function Sidebar({
         },
         { 
           id: "discharge", 
-          label: lang === "hi" ? "डिस्चार्ज सारांश" : (t.navDischarge || "Discharge Summary"), 
+          label: t.navDischarge || "Discharge Summary", 
           icon: ClipboardCheck,
           color: "#8b5cf6",
           bg: "rgba(139, 92, 246, 0.16)",
@@ -93,7 +93,7 @@ export default function Sidebar({
         },
         { 
           id: "profile", 
-          label: t.navProfile, 
+          label: t.navProfile || "Health Profile", 
           icon: UserCheck,
           color: "#06b6d4",
           bg: "rgba(6, 182, 212, 0.16)",
@@ -104,11 +104,11 @@ export default function Sidebar({
     },
     {
       id: "monitoring",
-      title: lang === "hi" ? "दैनिक देखभाल व वाइटल्स" : "Daily Monitoring",
+      title: t.navMonitoring || "Daily Monitoring",
       items: [
         { 
           id: "medications", 
-          label: t.navMedications, 
+          label: t.navMedications || "Medications", 
           icon: Pill,
           color: "#ec4899",
           bg: "rgba(236, 72, 153, 0.16)",
@@ -117,7 +117,7 @@ export default function Sidebar({
         },
         { 
           id: "devices", 
-          label: lang === "hi" ? "स्मार्ट वॉच व डिवाइसेज" : (t.navDevices || "Smart Watch & Devices"), 
+          label: t.navDevices || "Smart Watch & Devices", 
           icon: Watch,
           color: "#14b8a6",
           bg: "rgba(20, 184, 166, 0.16)",
@@ -126,7 +126,7 @@ export default function Sidebar({
         },
         { 
           id: "vitals", 
-          label: t.navVitals, 
+          label: t.navVitals || "Vitals & Trends", 
           icon: TrendingUp,
           color: "#10b981",
           bg: "rgba(16, 185, 129, 0.16)",
@@ -135,7 +135,7 @@ export default function Sidebar({
         },
         { 
           id: "timeline", 
-          label: t.navTimeline, 
+          label: t.navTimeline || "Health Dossier", 
           icon: History,
           color: "#0284c7",
           bg: "rgba(2, 132, 199, 0.16)",
@@ -486,10 +486,10 @@ export default function Sidebar({
                   </div>
                   <div>
                     <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-highlight)" }}>
-                      {lang === "hi" ? "गेस्ट मोड" : "Guest Mode"}
+                      {t.guestMode || "Guest Mode"}
                     </div>
                     <div style={{ fontSize: "0.7rem", color: "var(--text-dim)" }}>
-                      {lang === "hi" ? "ऑफ़लाइन सत्र" : "Offline Session"}
+                      {t.offlineSession || "Offline Session"}
                     </div>
                   </div>
                 </div>
@@ -501,7 +501,7 @@ export default function Sidebar({
                   style={{ padding: "6px 12px", fontSize: "0.78rem" }}
                 >
                   <LogIn size={13} />
-                  <span>{lang === "hi" ? "लॉगिन" : "Sign In"}</span>
+                  <span>{t.signIn || "Sign In"}</span>
                 </button>
               </div>
             ) : (
@@ -511,7 +511,7 @@ export default function Sidebar({
                   onClick={onOpenAuthModal}
                   className="btn btn-secondary"
                   style={{ width: "38px", height: "38px", padding: 0, borderRadius: "12px", color: "var(--primary)" }}
-                  title={lang === "hi" ? "आभा लॉगिन करें" : "Sign In with ABHA"}
+                  title={t.signIn || "Sign In with ABHA"}
                 >
                   <LogIn size={18} />
                 </button>

@@ -3,6 +3,25 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
+// Robust React + DOM Translation Guard: Prevents Google Translate / browser font node crashes
+if (typeof Node === 'function' && Node.prototype) {
+  const originalRemoveChild = Node.prototype.removeChild;
+  Node.prototype.removeChild = function (child) {
+    if (child && child.parentNode !== this) {
+      return child;
+    }
+    return originalRemoveChild.apply(this, arguments);
+  };
+
+  const originalInsertBefore = Node.prototype.insertBefore;
+  Node.prototype.insertBefore = function (newNode, refNode) {
+    if (refNode && refNode.parentNode !== this) {
+      return newNode;
+    }
+    return originalInsertBefore.apply(this, arguments);
+  };
+}
+
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
@@ -10,10 +29,19 @@ class ErrorBoundary extends Component {
   }
 
   static getDerivedStateFromError(error) {
+    const msg = error?.message || (typeof error === 'string' ? error : "");
+    if (msg.includes("removeChild") || msg.includes("insertBefore") || msg.includes("Node") || msg.includes("NotFound")) {
+      console.warn("[PulseAI] Suppressed benign translation DOM conflict:", msg);
+      return { hasError: false, error: null };
+    }
     return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
+    const msg = error?.message || "";
+    if (msg.includes("removeChild") || msg.includes("insertBefore") || msg.includes("Node") || msg.includes("NotFound")) {
+      return;
+    }
     console.error("PulseAI Root ErrorBoundary:", error, errorInfo);
   }
 
