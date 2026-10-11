@@ -252,6 +252,7 @@ export default function App() {
             onOpenEmergency={() => setIsEmergencyOpen(true)}
             onOpenDoctorPrep={() => setIsDoctorPrepOpen(true)}
             onOpenHealthPassport={() => setIsHealthPassportOpen(true)}
+            onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
             lang={lang}
@@ -475,6 +476,7 @@ export default function App() {
           lang={lang}
           onNavigate={handleNavigate}
           activeTab={activeTab}
+          onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
         />
       </div>
     </AppContext.Provider>

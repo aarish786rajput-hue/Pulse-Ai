@@ -16,10 +16,12 @@ import {
   Activity,
   Pill,
   User,
-  Menu
+  Menu,
+  Key
 } from "lucide-react";
 import { translations } from "../data/translations";
 import { triggerGoogleTranslate } from "../utils/translator";
+import { getStoredApiKey } from "../services/geminiService";
 
 // Crisp vector SVG flags for UK and India to prevent Windows "GB" / "IN" font fallback
 const UKFlagIcon = () => (
@@ -120,7 +122,8 @@ export default function TopHeader({
   setLang,
   theme,
   setTheme,
-  onNavigate
+  onNavigate,
+  onOpenApiKeyModal
 }) {
   const t = translations[lang] || translations.en;
   const [searchQuery, setSearchQuery] = useState("");
@@ -493,6 +496,36 @@ export default function TopHeader({
 
         {/* Vertical Divider */}
         <div className="nav-vertical-divider" style={{ margin: "0 2px" }} />
+
+        {/* Gemini AI Engine Configuration Button */}
+        {onOpenApiKeyModal && (
+          <button
+            onClick={onOpenApiKeyModal}
+            className="header-icon-btn"
+            title={getStoredApiKey() ? "Google Gemini Live AI Connected 🟢 (Click to configure)" : "Configure Gemini API Key / AI Engine 🔑"}
+            aria-label="Configure AI Engine"
+            style={{
+              color: getStoredApiKey() ? "#10b981" : "var(--primary)",
+              borderColor: getStoredApiKey() ? "rgba(16, 185, 129, 0.45)" : "var(--border-color)",
+              background: getStoredApiKey() ? "rgba(16, 185, 129, 0.12)" : "var(--bg-elevated)",
+              position: "relative"
+            }}
+          >
+            <Key size={17} />
+            {getStoredApiKey() && (
+              <span style={{
+                position: "absolute",
+                top: "4px",
+                right: "4px",
+                width: "6px",
+                height: "6px",
+                borderRadius: "50%",
+                background: "#10b981",
+                boxShadow: "0 0 6px #10b981"
+              }} />
+            )}
+          </button>
+        )}
 
         {/* Light / Dark Mode Toggle Button */}
         {setTheme && (

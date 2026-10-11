@@ -27,29 +27,94 @@ function generateIntelligentMedicalResponse(userQuery, patient, activeLang = "hi
     (activeLang === "hi" ? "सामान्य स्वास्थ्य" : "General Health");
   const cleanQuery = query.trim().replace(/[?!.,]/g, "");
 
-  // 1. Friendly Greetings (hi, hello, namaste, नमस्ते, etc.) - Warm, polite 1-2 sentence reply without clinical bullet dumps!
+  // 1. Friendly Greetings - ONLY trigger if the message is purely a greeting (1-3 words, no clinical query)
   const greetings = [
     "hi", "hello", "hey", "namaste", "namaskar", "kese ho", "kaise ho", "hlo", "hii", "helo", "halo", "hola", "sup",
     "good morning", "good evening", "good afternoon",
     "नमस्ते", "प्रणाम", "हेलो", "हाय", "नमस्कार", "राम राम"
   ];
-  const isGreeting = greetings.some(g => cleanQuery === g || cleanQuery.startsWith(g + " ") || cleanQuery.endsWith(" " + g));
+  const words = cleanQuery.split(/\s+/).filter(Boolean);
+  const isGreeting = words.length <= 3 && greetings.some(g => 
+    cleanQuery === g || 
+    cleanQuery === `${g} copilot` || 
+    cleanQuery === `${g} doc` || 
+    cleanQuery === `${g} doctor` || 
+    cleanQuery === `${g} ai` ||
+    cleanQuery === `${g} ji` ||
+    cleanQuery === `hey ${g}`
+  );
 
   if (isGreeting) {
     if (activeLang === "hi") {
       return {
-        text: `नमस्ते ${patientName} जी! 🙏 मैं आपका AI Copilot हूँ। मैं आपकी दवाओं, रिपोर्ट्स या सेहत से जुड़े किसी भी सवाल में मदद कर सकता हूँ। आप क्या पूछना चाहते हैं?`,
+        text: `नमस्ते ${patientName} जी! 🙏 मैं आपका AI Copilot हूँ। मैं आपकी दवाओं, रिपोर्ट्स, ब्लड प्रेशर, शुगर या किसी भी लक्षण में मदद कर सकता हूँ। आप क्या पूछना चाहते हैं?`,
         triageLevel: "routine"
       };
     } else if (activeLang === "hinglish") {
       return {
-        text: `Namaste ${patientName} ji! 👋 Main aapka AI Copilot hoon. Aap mujhse apni dawai, sugar, BP ya reports ke baare me aasan bhasha me pooch sakte hain. Aaj main aapki kya madad karoon?`,
+        text: `Namaste ${patientName} ji! 👋 Main aapka AI Copilot hoon. Aap mujhse apni dawai, sugar, BP, thakan ya kisi bhi lakshan ke baare me pooch sakte hain. Aaj main aapki kya madad karoon?`,
         triageLevel: "routine"
       };
     } else {
       return {
-        text: `Hello ${patientName}! 👋 I am your AI Copilot. How can I help you with your medications, health readings, or test reports today?`,
+        text: `Hello ${patientName}! 👋 I am your AI Copilot. How can I help you with your symptoms, medications, health readings, or test reports today?`,
         triageLevel: "routine"
+      };
+    }
+  }
+
+  // Strip conversational prefixes so queries like "hey today i am lazy feel" match properly
+  const coreQuery = cleanQuery.replace(/^(hey|hello|hi|namaste|hlo|hii|helo)\s+/i, "").trim();
+
+  // 1b. Fatigue / Laziness / Lethargy / Weakness / Thakan / Kamzori (e.g. "today i am lazy feel", "bohot thaka hu")
+  if (
+    query.includes("lazy") || query.includes("tired") || query.includes("fatigue") ||
+    query.includes("exhausted") || query.includes("weak") || query.includes("weakness") ||
+    query.includes("sluggish") || query.includes("lethargic") || query.includes("low energy") ||
+    query.includes("thaka") || query.includes("thakan") || query.includes("kamzor") ||
+    query.includes("kamzori") || query.includes("susti") || query.includes("sust") ||
+    query.includes("aalas") || query.includes("alas") ||
+    query.includes("आलस") || query.includes("सुस्ती") || query.includes("थकान") || query.includes("कमजोरी")
+  ) {
+    if (activeLang === "hi") {
+      return {
+        text: `😴 **थकान व सुस्ती (Fatigue):** सुस्ती महसूस होने के आम कारण पानी की कमी (dehydration), अधूरी नींद, या ब्लड प्रेशर/शुगर का उतार-चढ़ाव हो सकते हैं। 1 ग्लास ताज़ा पानी पिएं, हल्का पौष्टिक नाश्ता करें और 15-20 मिनट ताज़ी हवा में टहलें या आराम करें। यदि आप नियमित दवाएं लेते हैं, तो अपने बीपी व शुगर की रीडिंग ज़रूर जांचें।`,
+        triageLevel: "routine"
+      };
+    } else if (activeLang === "hinglish") {
+      return {
+        text: `😴 **Thakan aur Laziness (Low Energy):** Aaj lazy ya thaka hua feel hone ke mukhya kaaran dehydration, neend poori na hona ya BP/sugar ka level change hona ho sakta hai. Sabse pehle 1 glass paani piyein, 15-20 minute aaram karein aur regular medicines ki timing check karein. Agar lagatar aalas ya kamzori rahe toh vitals check karein.`,
+        triageLevel: "routine"
+      };
+    } else {
+      return {
+        text: `😴 **Fatigue & Low Energy:** Feeling lazy or sluggish is commonly triggered by mild dehydration, poor sleep, or fluctuations in blood sugar or blood pressure. Drink a glass of water, rest for 15–20 minutes, and ensure you've eaten a light balanced snack. If you take routine medications, check your vitals to ensure they are on target.`,
+        triageLevel: "routine"
+      };
+    }
+  }
+
+  // 1c. Fever / Cold / Cough / Bukhar / Sardi
+  if (
+    query.includes("fever") || query.includes("temperature") || query.includes("cold") ||
+    query.includes("cough") || query.includes("khansi") || query.includes("bukhar") ||
+    query.includes("sardi") || query.includes("gala") || query.includes("throat") ||
+    query.includes("बुखार") || query.includes("जुकाम") || query.includes("खांसी")
+  ) {
+    if (activeLang === "hi") {
+      return {
+        text: `🤒 **हल्का बुखार व जुकाम:** थर्मामीटर से तापमान नापें (100°F से अधिक होने पर ध्यान दें)। गुनगुना पानी पिएं और आराम करें। सामान्य बुखार में पैरासिटामोल (Paracetamol 500/650mg) डॉक्टर की सलाह से सुरक्षित है। यदि 2 दिन से अधिक बुखार रहे तो चिकित्सक को दिखाएं।`,
+        triageLevel: "caution"
+      };
+    } else if (activeLang === "hinglish") {
+      return {
+        text: `🤒 **Bukhar ya Sardi (Cold/Fever):** Thermometer se temperature check karein. Kosa paani piyein aur aaram karein. Halka bukhar hone par plain Paracetamol safe rehti hai, par Brufen lene se bachein. Agar bukhar 101°F se zyada ho ya 2 din se rahe toh doctor ko dikhayein.`,
+        triageLevel: "caution"
+      };
+    } else {
+      return {
+        text: `🤒 **Fever & Cold Care:** Check your temperature with a thermometer. Stay hydrated with warm fluids and get adequate rest. Plain Paracetamol is generally safe for mild fever, but avoid NSAIDs without advice. Consult a doctor if fever exceeds 101°F or persists beyond 48 hours.`,
+        triageLevel: "caution"
       };
     }
   }
@@ -243,19 +308,26 @@ function generateIntelligentMedicalResponse(userQuery, patient, activeLang = "hi
   }
 
   // 10. General / Fallback Empathetic Response (Short, Simple, Direct)
+  const shortSnippet = userQuery && userQuery.length > 40 ? `${userQuery.slice(0, 40)}...` : userQuery;
   if (activeLang === "hi") {
     return {
-      text: `मैंने आपकी बात समझ ली है। आपकी सेहत की स्थिति (${conditionsStr}) के अनुसार सब कुछ नियंत्रण में है। यदि आपको कोई विशेष लक्षण, दर्द या परेशानी है, तो बताएं—मैं आसान भाषा में आपकी मदद करूँगा।`,
+      text: shortSnippet
+        ? `मैंने आपके प्रश्न ("${shortSnippet}") को नोट कर लिया है। आपकी प्रोफ़ाइल (${conditionsStr}) के अनुसार स्वास्थ्य स्थिर है। यदि आप किसी खास लक्षण, दवा या डाइट के बारे में पूछना चाहते हैं, तो बेझिझक बताएं।`
+        : `मैंने आपकी बात समझ ली है। आपकी सेहत की स्थिति (${conditionsStr}) के अनुसार सब कुछ नियंत्रण में है। यदि आपको कोई विशेष लक्षण, दर्द या परेशानी है, तो बताएं।`,
       triageLevel: "routine"
     };
   } else if (activeLang === "hinglish") {
     return {
-      text: `Maine aapka sawal samajh liya hai. Aapki medical profile (${conditionsStr}) ke hisaab se sab theek chal raha hai. Agar aapko koi specific dard, lakshan ya dawai ke baare me poochhna hai toh batayein, main aasan bhasha me samjhaunga.`,
+      text: shortSnippet
+        ? `Maine aapka sawal ("${shortSnippet}") samajh liya hai. Aapki health profile (${conditionsStr}) abhi stable chal rahi hai. Agar aapko koi specific lakshan, dawai ka dose ya diet ke baare me poochhna hai toh batayein.`
+        : `Maine aapka sawal samajh liya hai. Aapki medical profile (${conditionsStr}) ke hisaab se sab theek chal raha hai. Agar aapko koi specific dard, lakshan ya dawai ke baare me poochhna hai toh batayein.`,
       triageLevel: "routine"
     };
   } else {
     return {
-      text: `I understand your query. Based on your health profile (${conditionsStr}), everything looks steady. If you have a specific symptom, ache, or medication question, let me know and I will explain simply.`,
+      text: shortSnippet
+        ? `I have noted your query ("${shortSnippet}"). Based on your clinical profile (${conditionsStr}), your status is steady. If you have a specific symptom, ache, or medication question, let me know and I will assist you.`
+        : `I understand your query. Based on your health profile (${conditionsStr}), everything looks steady. If you have a specific symptom, ache, or medication question, let me know and I will explain simply.`,
       triageLevel: "routine"
     };
   }

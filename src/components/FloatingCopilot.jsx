@@ -18,9 +18,10 @@ import {
   Plus,
   Volume2,
   VolumeX,
-  Square
+  Square,
+  Key
 } from "lucide-react";
-import { sendChatMessage } from "../services/geminiService";
+import { sendChatMessage, getStoredApiKey } from "../services/geminiService";
 
 const SUPPORTED_LANGUAGES = [
   { id: "hinglish", label: "🇮🇳 Hinglish (हिंग्लिश)" },
@@ -54,12 +55,21 @@ export default function FloatingCopilot({
   patient, 
   lang = "en", 
   onNavigate,
-  _activeTab
+  _activeTab,
+  onOpenApiKeyModal
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [notificationMsg, setNotificationMsg] = useState("");
+  const [hasApiKey, setHasApiKey] = useState(() => Boolean(getStoredApiKey()));
+
+  useEffect(() => {
+    const checkKey = () => setHasApiKey(Boolean(getStoredApiKey()));
+    checkKey();
+    window.addEventListener("storage", checkKey);
+    return () => window.removeEventListener("storage", checkKey);
+  }, [isOpen]);
   
   const [inputQuery, setInputQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
@@ -823,6 +833,27 @@ export default function FloatingCopilot({
                 )}
               </button>
 
+              {/* Gemini AI Key / Engine Configuration */}
+              <button
+                onClick={onOpenApiKeyModal}
+                title={hasApiKey ? "Google Gemini Live AI Connected 🟢 (Click to manage)" : "Set Gemini API Key 🔑"}
+                style={{
+                  background: hasApiKey ? "rgba(34, 197, 94, 0.25)" : "rgba(255, 255, 255, 0.15)",
+                  border: hasApiKey ? "1px solid rgba(34, 197, 94, 0.5)" : "none",
+                  borderRadius: "8px",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: hasApiKey ? "#86efac" : "#ffffff",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                <Key size={15} />
+              </button>
+
               {/* New / Reset Chat Button */}
               <button
                 onClick={handleStartNewChat}
@@ -891,7 +922,7 @@ export default function FloatingCopilot({
             </div>
           </div>
 
-          {/* ── Language Bar with Rich Indian Languages Dropdown ── */}
+          {/* ── Language & AI Engine Status Bar ── */}
           <div 
             style={{
               padding: "7px 14px",
@@ -937,6 +968,36 @@ export default function FloatingCopilot({
                 </option>
               ))}
             </select>
+
+            {/* Live AI Status Pill */}
+            <button
+              onClick={onOpenApiKeyModal}
+              title={hasApiKey ? "Google Gemini 1.5 Flash Connected! Click to configure." : "Running on Fast Built-in Clinical AI. Click to connect Gemini Key."}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                background: hasApiKey ? "rgba(34, 197, 94, 0.12)" : "rgba(59, 130, 246, 0.1)",
+                border: `1px solid ${hasApiKey ? "rgba(34, 197, 94, 0.35)" : "rgba(59, 130, 246, 0.25)"}`,
+                borderRadius: "6px",
+                padding: "3px 8px",
+                color: hasApiKey ? "#16a34a" : "var(--primary)",
+                fontSize: "0.72rem",
+                fontWeight: 700,
+                cursor: "pointer",
+                flexShrink: 0,
+                transition: "all 0.2s"
+              }}
+            >
+              <span style={{
+                width: "6px",
+                height: "6px",
+                borderRadius: "50%",
+                background: hasApiKey ? "#22c55e" : "#0ea5e9",
+                boxShadow: hasApiKey ? "0 0 5px #22c55e" : "none"
+              }} />
+              <span>{hasApiKey ? "Gemini Live" : "Fast Engine"}</span>
+            </button>
           </div>
 
           {/* Active Speaking Banner for Seniors */}
