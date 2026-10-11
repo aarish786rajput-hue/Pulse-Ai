@@ -23,6 +23,8 @@ export function setStoredApiKey(key) {
 function generateIntelligentMedicalResponse(userQuery, patient, activeLang = "hinglish") {
   const query = (userQuery || "").toLowerCase();
   const patientName = patient?.name || "Patient";
+  const conditionsStr = patient?.conditions?.map(c => typeof c === "string" ? c : c.name).join(", ") || 
+    (activeLang === "hi" ? "सामान्य स्वास्थ्य" : "General Health");
   const cleanQuery = query.trim().replace(/[?!.,]/g, "");
 
   // 1. Friendly Greetings (hi, hello, namaste, नमस्ते, etc.) - Warm, polite 1-2 sentence reply without clinical bullet dumps!
@@ -272,11 +274,11 @@ export async function sendChatMessage(messages, patientContext, lang = 'en', cha
   }
 
   if (!apiKey) {
-    // Zero-latency intelligent fallback with localized simple language
+    // Snappy zero-latency intelligent fallback with localized simple language
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(generateIntelligentMedicalResponse(latestMessage, patientContext, resolvedLang));
-      }, 350);
+      }, 150);
     });
   }
 
@@ -366,24 +368,32 @@ STRICT SIMPLICITY INSTRUCTIONS (MANDATORY):
 }
 
 /**
- * Robust Multi-Model Gemini API Caller with Instant Model Cascade
- * Tries fast and active Gemini 3.6 Flash first, with fallback to 3.8 and 3.7.
+ * Robust Multi-Model Gemini API Caller with Real Production Models & Fast Timeout
+ * Primary: gemini-1.5-flash (ultra-fast sub-second response)
+ * Secondary: gemini-2.0-flash / gemini-1.5-flash-8b
  */
 async function callGeminiWithFallback(apiKey, requestBody) {
-  const models = ["gemini-3.6-flash", "gemini-3.8-flash", "gemini-3.7-flash"];
+  // Use real Google Gemini production models
+  const models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-flash-8b"];
   for (const model of models) {
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
+        signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(3200) : undefined
       });
       if (response.ok) {
         return await response.json();
       }
+      // If API key is rejected (400, 401, 403), stop querying to avoid cascading network delay
+      if (response.status === 400 || response.status === 401 || response.status === 403) {
+        console.warn(`Gemini API key returned HTTP ${response.status}. Fast fallback to local clinical engine.`);
+        break;
+      }
       console.warn(`Model ${model} returned HTTP ${response.status}, trying next model in cascade.`);
     } catch (err) {
-      console.warn(`Network error querying ${model}:`, err.message);
+      console.warn(`Network error or timeout querying ${model}:`, err.message);
     }
   }
   return null;
