@@ -34,6 +34,7 @@ import {
 import { mockDoctors, doctorSpecialties, getSpecialtyLabel } from "../data/doctorsData";
 import DoctorDetailModal from "./DoctorDetailModal";
 import { translations } from "../data/translations";
+import { syncAppointmentToCloud } from "../services/firebase";
 
 export default function DoctorsDashboard({
   patient,
@@ -211,6 +212,9 @@ export default function DoctorsDashboard({
       }
       return updated;
     });
+
+    // Cloud Sync to Firebase Cloud Firestore
+    syncAppointmentToCloud(newAppointment);
 
     // Show top banner alert
     setBookingSuccessAlert({
